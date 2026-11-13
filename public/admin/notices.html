@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Admin - Admission Notices</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    .notice-card-item {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+    .notice-card-item:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .notice-card-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--color-accent);
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    }
+    .notice-card-item.priority-high::before {
+      background: var(--color-danger);
+    }
+    .notice-card-item.priority-medium::before {
+      background: var(--color-warning);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout" id="appLayout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="/admin/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-admin">Admin</span>
+          </div>
+        </a>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/admin/dashboard.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              <span class="sidebar-menu-text">Manage Students</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/managers.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="sidebar-menu-text">Manage Managers</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html?filter=unverified" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Verify Documents</span>
+              <span class="sidebar-badge" id="sidebarDocBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/notices.html" class="sidebar-menu-link active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Admission Notices</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Verify Applications</span>
+              <span class="sidebar-badge" id="sidebarAppBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html?filter=approved_no_id" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+              <span class="sidebar-menu-text">Assign IDs</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/records.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span class="sidebar-menu-text">Manage Records</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/payments.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Verify Payments</span>
+              <span class="sidebar-badge" id="sidebarPayBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem;">
+            <a href="#" class="sidebar-menu-link" id="logoutBtn" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="sidebarUserAvatar">AD</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">System Admin</div>
+            <div class="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn btn-sm" id="quickLogoutBtn" title="Logout" style="background:transparent; border:none; color:rgba(255,255,255,0.7); font-size:1.15rem; cursor:pointer;">
+          🚪
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/admin/dashboard.html">Admin</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Admission Notices</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="avatar avatar-md" id="topbarUserAvatar" style="background:var(--color-primary-dark); color:#fff; font-weight:700;">
+            AD
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="page-header">
+          <div class="page-header-content">
+            <h1 class="page-title">
+              <span>📢</span> Admission Notices & Circulars
+            </h1>
+            <p class="page-subtitle">Publish system-wide circulars, deadline extensions, test schedules, and university notices</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openCreateNoticeModal()">
+              ➕ Create Notice
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="content-card" style="padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1; min-width: 280px;">
+              <div style="position: relative; flex: 1; min-width: 220px;">
+                <input type="text" id="noticeSearch" class="form-control" placeholder="Search notices by title or content..." onkeyup="filterNotices()">
+              </div>
+              <div style="min-width: 200px;">
+                <select id="universityFilter" class="form-control" onchange="filterNotices()">
+                  <option value="all">All Targets (General & Specific)</option>
+                  <option value="general">Central System-Wide Only</option>
+                  <!-- Populated via JS -->
+                </select>
+              </div>
+            </div>
+            <div id="noticeCountBadge" class="badge badge-teal">0 Notices</div>
+          </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" style="text-align: center; padding: 3rem 0;">
+          <div class="spinner"></div>
+          <p style="margin-top: 1rem; color: var(--color-text-secondary);">Loading notices...</p>
+        </div>
+
+        <!-- Notices List Container -->
+        <div id="noticesListContainer" style="display: none;">
+          <!-- Injected via JavaScript -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Create Notice Modal -->
+  <div class="modal-overlay" id="createNoticeModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title">Publish Admission Notice</h3>
+        <button class="modal-close-btn" onclick="closeModal('createNoticeModal')">&times;</button>
+      </div>
+      <form id="createNoticeForm" onsubmit="handleCreateNotice(event)">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Notice Title <span style="color:var(--color-danger);">*</span></label>
+            <input type="text" id="createTitle" class="form-control" required placeholder="e.g. Admission Test Schedule 2026-2027">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Target University</label>
+            <select id="createUniversity" class="form-control">
+              <option value="">All Universities (General System Notice)</option>
+              <!-- Injected dynamically -->
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Priority Level</label>
+            <select id="createPriority" class="form-control">
+              <option value="normal">Normal Priority</option>
+              <option value="high">Urgent / High Priority</option>
+              <option value="medium">Important Notice</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notice Content <span style="color:var(--color-danger);">*</span></label>
+            <textarea id="createContent" class="form-control" rows="5" required placeholder="Type the detailed circular or instructions..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('createNoticeModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="createNoticeSubmitBtn">Publish Notice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Notice Modal -->
+  <div class="modal-overlay" id="viewNoticeModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title" id="viewNoticeTitle">Notice</h3>
+        <button class="modal-close-btn" onclick="closeModal('viewNoticeModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="viewNoticeBody">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('viewNoticeModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Notice Modal -->
+  <div class="modal-overlay" id="editNoticeModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Notice</h3>
+        <button class="modal-close-btn" onclick="closeModal('editNoticeModal')">&times;</button>
+      </div>
+      <form id="editNoticeForm" onsubmit="handleEditNotice(event)">
+        <input type="hidden" id="editNoticeId">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Notice Title <span style="color:var(--color-danger);">*</span></label>
+            <input type="text" id="editTitle" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Target University</label>
+            <select id="editUniversity" class="form-control">
+              <option value="">All Universities (General System Notice)</option>
+              <!-- Injected dynamically -->
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Status</label>
+            <select id="editStatus" class="form-control">
+              <option value="1">Active / Published</option>
+              <option value="0">Archived / Hidden</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notice Content <span style="color:var(--color-danger);">*</span></label>
+            <textarea id="editContent" class="form-control" rows="5" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('editNoticeModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="editNoticeSubmitBtn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/admin/admin-common.js"></script>
+  <script>
+    let allNotices = [];
+    let universitiesList = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAdminAuth();
+      if (user) {
+        await loadUniversities();
+        loadNotices();
+      }
+    });
+
+    async function loadUniversities() {
+      try {
+        const res = await fetch('/api/universities');
+        if (!res.ok) return;
+        const data = await res.json();
+        universitiesList = data.universities || [];
+
+        const createSel = document.getElementById('createUniversity');
+        const editSel = document.getElementById('editUniversity');
+        const filterSel = document.getElementById('universityFilter');
+
+        universitiesList.forEach(u => {
+          const opt1 = document.createElement('option');
+          opt1.value = u.id;
+          opt1.textContent = `${u.name} (${u.short_name})`;
+          createSel.appendChild(opt1);
+
+          const opt2 = document.createElement('option');
+          opt2.value = u.id;
+          opt2.textContent = `${u.name} (${u.short_name})`;
+          editSel.appendChild(opt2);
+
+          const opt3 = document.createElement('option');
+          opt3.value = u.id;
+          opt3.textContent = `${u.short_name || u.name}`;
+          filterSel.appendChild(opt3);
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadNotices() {
+      const loading = document.getElementById('loadingIndicator');
+      const container = document.getElementById('noticesListContainer');
+
+      loading.style.display = 'block';
+      container.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/admin/notices');
+        if (!res.ok) throw new Error('Failed to load notices.');
+
+        const data = await res.json();
+        allNotices = data.notices || [];
+
+        filterNotices();
+
+        loading.style.display = 'none';
+        container.style.display = 'block';
+      } catch (err) {
+        console.error(err);
+        loading.innerHTML = `<div class="alert alert-danger" style="margin:2rem auto; max-width:450px;">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    function filterNotices() {
+      const container = document.getElementById('noticesListContainer');
+      const query = document.getElementById('noticeSearch').value.toLowerCase().trim();
+      const uniFilter = document.getElementById('universityFilter').value;
+      const countBadge = document.getElementById('noticeCountBadge');
+
+      const filtered = allNotices.filter(n => {
+        const matchesUni = uniFilter === 'all'
+          ? true
+          : uniFilter === 'general'
+            ? (!n.university_id)
+            : (n.university_id == uniFilter);
+
+        const matchesQuery = !query ||
+          (n.title && n.title.toLowerCase().includes(query)) ||
+          (n.content && n.content.toLowerCase().includes(query));
+
+        return matchesUni && matchesQuery;
+      });
+
+      countBadge.textContent = `${filtered.length} Notice${filtered.length === 1 ? '' : 's'}`;
+      container.innerHTML = '';
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="content-card" style="text-align:center; padding:3rem 1rem; color:var(--color-text-secondary);">
+            <div style="font-size:2rem; margin-bottom:8px;">📭</div>
+            <div style="font-weight:600;">No admission notices found</div>
+            <p style="font-size:0.85rem; margin-top:4px;">Click <strong>Create Notice</strong> above to publish a new circular.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(n => {
+        const isGeneral = !n.university_id;
+        const targetLabel = isGeneral 
+          ? '<span class="badge badge-pill badge-primary">🌐 All Universities</span>'
+          : `<span class="badge badge-pill badge-teal">🏛️ ${escapeHtml(n.university_short_name || n.university_name)}</span>`;
+
+        const card = document.createElement('div');
+        card.className = 'notice-card-item';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 260px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                ${targetLabel}
+                <span class="badge badge-pill badge-approved">Active</span>
+                <span style="font-size: 0.75rem; color: var(--color-text-secondary);">
+                  📅 ${formatDate(n.created_at)} ${n.created_by_name ? '• By ' + escapeHtml(n.created_by_name) : ''}
+                </span>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--color-primary-dark); margin: 0 0 6px 0;">
+                ${escapeHtml(n.title)}
+              </h3>
+              <p style="font-size: 0.9rem; color: var(--color-text-primary); line-height: 1.5; margin: 0; white-space: pre-line;">
+                ${escapeHtml(n.content.length > 220 ? n.content.substring(0, 220) + '...' : n.content)}
+              </p>
+            </div>
+
+            <div class="table-actions" style="flex-shrink: 0;">
+              <button class="btn btn-sm btn-outline" onclick="openViewNoticeModal(${n.id})">
+                👁️ View
+              </button>
+              <button class="btn btn-sm btn-outline" onclick="openEditNoticeModal(${n.id})">
+                ✏️ Edit
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteNotice(${n.id})">
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openCreateNoticeModal() {
+      document.getElementById('createNoticeForm').reset();
+      openModal('createNoticeModal');
+    }
+
+    async function handleCreateNotice(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('createNoticeSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Publishing...';
+
+      const title = document.getElementById('createTitle').value.trim();
+      const university_id = document.getElementById('createUniversity').value;
+      const content = document.getElementById('createContent').value.trim();
+
+      try {
+        const res = await fetch('/api/admin/notices', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            content,
+            university_id: university_id ? parseInt(university_id, 10) : null
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Creation failed.');
+
+        showToast('Notice published successfully!');
+        closeModal('createNoticeModal');
+        loadNotices();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Publish Notice';
+      }
+    }
+
+    function openViewNoticeModal(id) {
+      const n = allNotices.find(item => item.id === id);
+      if (!n) return;
+
+      document.getElementById('viewNoticeTitle').textContent = n.title;
+      const body = document.getElementById('viewNoticeBody');
+      body.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid var(--color-border);">
+          <div>
+            <strong>Target:</strong> ${n.university_name ? escapeHtml(n.university_name) : 'All Universities (Central)'}
+          </div>
+          <div style="font-size:0.8rem; color:var(--color-text-secondary);">
+            Published: ${formatDateTime(n.created_at)}
+          </div>
+        </div>
+        <div style="font-size:0.95rem; line-height:1.6; color:var(--color-text-main); white-space:pre-wrap; background:#f8fafc; padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--color-border);">
+          ${escapeHtml(n.content)}
+        </div>
+      `;
+      openModal('viewNoticeModal');
+    }
+
+    function openEditNoticeModal(id) {
+      const n = allNotices.find(item => item.id === id);
+      if (!n) return;
+
+      document.getElementById('editNoticeId').value = n.id;
+      document.getElementById('editTitle').value = n.title || '';
+      document.getElementById('editUniversity').value = n.university_id || '';
+      document.getElementById('editStatus').value = n.is_active === 0 ? '0' : '1';
+      document.getElementById('editContent').value = n.content || '';
+
+      openModal('editNoticeModal');
+    }
+
+    async function handleEditNotice(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('editNoticeSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const id = document.getElementById('editNoticeId').value;
+      const title = document.getElementById('editTitle').value.trim();
+      const university_id = document.getElementById('editUniversity').value;
+      const is_active = parseInt(document.getElementById('editStatus').value, 10);
+      const content = document.getElementById('editContent').value.trim();
+
+      try {
+        const res = await fetch(`/api/admin/notices/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            university_id: university_id ? parseInt(university_id, 10) : null,
+            is_active,
+            content
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Update failed.');
+
+        showToast('Notice updated successfully!');
+        closeModal('editNoticeModal');
+        loadNotices();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Changes';
+      }
+    }
+
+    async function deleteNotice(id) {
+      if (!confirm('Are you sure you want to permanently delete this admission notice?')) return;
+
+      try {
+        const res = await fetch(`/api/admin/notices/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Delete failed.');
+
+        showToast('Notice deleted successfully.');
+        loadNotices();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

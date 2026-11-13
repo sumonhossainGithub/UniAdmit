@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Manager - Generate Reports</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/manager/manager.css?v=3">
+</head>
+<body>
+  <div class="manager-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Manager Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/manager/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-manager">Manager</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/manager/dashboard.html" class="sidebar-menu-link" data-nav="dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/applications.html" class="sidebar-menu-link" data-nav="applications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Review Applications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/statistics.html" class="sidebar-menu-link" data-nav="statistics">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span class="sidebar-menu-text">Statistics</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/merit-list.html" class="sidebar-menu-link" data-nav="merit-list">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+              <span class="sidebar-menu-text">Merit Lists</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/notifications.html" class="sidebar-menu-link" data-nav="notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Send Notifications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/financial.html" class="sidebar-menu-link" data-nav="financial">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Financial Summary</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/reports.html" class="sidebar-menu-link active" data-nav="reports">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Reports</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/admission-stats.html" class="sidebar-menu-link" data-nav="admission-stats">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span class="sidebar-menu-text">Admission Stats</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/activity.html" class="sidebar-menu-link" data-nav="activity">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span class="sidebar-menu-text">System Activity</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.5rem;">
+            <a href="javascript:void(0)" onclick="ManagerApp.logout()" class="sidebar-menu-link" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar manager-avatar-initial">M</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name manager-full-name">Admission Manager</div>
+            <div class="sidebar-user-role manager-email">manager@uniadmit.com</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Toggle navigation">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/manager/dashboard.html">Manager</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Reports</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="live-clock-badge">
+            <span>🕒</span>
+            <span id="liveClock">Loading...</span>
+          </div>
+          <div class="topbar-user-pill">
+            <span class="manager-avatar-initial" style="width:24px; height:24px; border-radius:50%; background:#2ca4a0; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;">M</span>
+            <span class="manager-full-name" style="font-size:0.85rem; font-weight:600;">Manager</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Generate Official Analytical Reports</h1>
+            <p class="page-subtitle">Export formatted audit summaries, financial ledgers, and institutional enrollment reports.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-outline" onclick="exportReportCSV()">
+              <span>📥</span> Export CSV
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+              <span>🖨️</span> Print / Save PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Report Generator Selector Panel -->
+        <div class="content-card no-print">
+          <div class="content-card-header">
+            <h2 class="content-card-title">
+              <span>⚙️</span> Report Parameters & Filters
+            </h2>
+            <span class="badge badge-teal">Official Analytics</span>
+          </div>
+          <div class="content-card-body">
+            <div style="display:flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+              <div class="filter-group" style="flex: 2 1 240px;">
+                <label class="filter-label" for="reportTypeSelect">Report Type *</label>
+                <select id="reportTypeSelect" class="filter-select">
+                  <option value="application_summary">1. Application Summary Report</option>
+                  <option value="financial_report">2. Financial & Revenue Report</option>
+                  <option value="university_report">3. University Performance Report</option>
+                  <option value="admission_stats">4. Admission Statistics & Enrollment</option>
+                </select>
+              </div>
+
+              <div class="filter-group" style="flex: 1 1 150px;">
+                <label class="filter-label" for="reportStartDate">Date From</label>
+                <input type="date" id="reportStartDate" class="filter-input" value="2026-10-01">
+              </div>
+
+              <div class="filter-group" style="flex: 1 1 150px;">
+                <label class="filter-label" for="reportEndDate">Date To</label>
+                <input type="date" id="reportEndDate" class="filter-input" value="2026-12-31">
+              </div>
+
+              <div>
+                <button class="btn btn-primary" id="btnGenerateReport" onclick="generateSelectedReport()">
+                  <span>📊</span> Generate Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formatted Report Display Area -->
+        <div class="content-card" id="reportPrintArea">
+          <div class="content-card-body">
+            <!-- Official Header -->
+            <div style="border-bottom: 2px solid #0d9488; padding-bottom: 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <img src="/Logo.png" alt="UniAdmit" style="width: 48px; height: 48px; object-fit: contain; background: #0A2647; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 4px;">
+                <div>
+                  <h2 style="margin: 0; color: #0a2647; font-size: 1.35rem;" id="docReportTitle">Application Summary Report</h2>
+                  <div style="color: #0d9488; font-weight: 600; font-size: 0.85rem;">UniAdmit - Central Admission Management System</div>
+                </div>
+              </div>
+              <div style="text-align: right; font-size: 0.8rem; color: #64748b;">
+                <div>Generated: <strong id="docGeneratedTime">—</strong></div>
+                <div>Session: <strong>2026-2027 Academic Intake</strong></div>
+                <div>Status: <span class="badge badge-success">Official Audit</span></div>
+              </div>
+            </div>
+
+            <!-- Dynamic Report Content -->
+            <div id="reportDynamicContainer">
+              <div class="loading-box"><div class="spinner"></div><span>Generating report data...</span></div>
+            </div>
+
+            <!-- Report Footer / Signatures -->
+            <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.85rem; color: #64748b;">
+              <div>
+                <div style="font-weight: 700; color: #0f172a;" class="manager-full-name">Admission Manager</div>
+                <div>Operations & Review Directorate</div>
+                <div>Central Admission Management System</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="height: 40px; border-bottom: 1px solid #0f172a; width: 180px; margin-bottom: 6px; display: inline-block;"></div>
+                <div>Authorized Manager Signature</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/manager-common.js"></script>
+  <script>
+    let currentReportType = 'application_summary';
+    let cachedReportData = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      ManagerApp.initSession('reports', 'Generate Reports', () => {
+        generateSelectedReport();
+      });
+    });
+
+    async function generateSelectedReport() {
+      const type = document.getElementById('reportTypeSelect').value;
+      currentReportType = type;
+      const container = document.getElementById('reportDynamicContainer');
+      container.innerHTML = '<div class="loading-box"><div class="spinner"></div><span>Compiling official report data...</span></div>';
+
+      document.getElementById('docGeneratedTime').textContent = new Date().toLocaleString();
+
+      const typeTitles = {
+        application_summary: 'Application Summary & Intake Report',
+        financial_report: 'Financial Summary & Revenue Audit Report',
+        university_report: 'University Performance & Seat Capacity Report',
+        admission_stats: 'Admission Statistics & Enrollment Demographics'
+      };
+      document.getElementById('docReportTitle').textContent = typeTitles[type] || 'Admission System Report';
+
+      try {
+        const [repRes, statsRes, finRes, admRes] = await Promise.all([
+          fetch('/api/manager/reports'),
+          fetch('/api/manager/statistics'),
+          fetch('/api/manager/financial-summary'),
+          fetch('/api/manager/admission-stats')
+        ]);
+
+        const rep = repRes.ok ? await repRes.json() : null;
+        const stats = statsRes.ok ? await statsRes.json() : null;
+        const fin = finRes.ok ? await finRes.json() : null;
+        const adm = admRes.ok ? await admRes.json() : null;
+
+        cachedReportData = { rep, stats, fin, adm };
+
+        if (type === 'application_summary') {
+          renderApplicationSummaryReport(rep, stats);
+        } else if (type === 'financial_report') {
+          renderFinancialReport(fin, stats);
+        } else if (type === 'university_report') {
+          renderUniversityReport(rep, fin);
+        } else if (type === 'admission_stats') {
+          renderAdmissionDemographicsReport(adm, stats);
+        }
+
+        ManagerApp.showToast('Report Ready', 'Official report generated successfully.', 'success');
+      } catch (err) {
+        console.error('Error generating report:', err);
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error Generating Report</div><div class="empty-desc">${err.message}</div></div>`;
+      }
+    }
+
+    // 1. Application Summary Report Renderer
+    function renderApplicationSummaryReport(rep, stats) {
+      const s = stats ? stats.statistics : {};
+      const r = rep ? rep.report : {};
+      const statusCounts = r.applications_by_status || [];
+      const groupCounts = r.applications_by_group || [];
+
+      const container = document.getElementById('reportDynamicContainer');
+      container.innerHTML = `
+        <!-- KPI Row -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:1rem; text-align:center;">
+            <div style="font-size:0.8rem; color:#64748b; font-weight:600;">Total Applicants</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#0a2647;">${s.total_applications || 0}</div>
+          </div>
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:1rem; text-align:center;">
+            <div style="font-size:0.8rem; color:#065f46; font-weight:600;">Approved Applicants</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#10b981;">${s.approved_applications || 0}</div>
+          </div>
+          <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:1rem; text-align:center;">
+            <div style="font-size:0.8rem; color:#92400e; font-weight:600;">Under Review / Pending</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#f59e0b;">${(s.pending_applications || 0) + (s.under_review_applications || 0)}</div>
+          </div>
+          <div style="background:#ebf8ff; border:1px solid #bfdbfe; border-radius:8px; padding:1rem; text-align:center;">
+            <div style="font-size:0.8rem; color:#1e40af; font-weight:600;">Acceptance Rate</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#2563eb;">${r.acceptance_rate || '60%'}</div>
+          </div>
+        </div>
+
+        <h4 style="color:#0f172a; margin-bottom:0.75rem;">Applications Breakdown by Status</h4>
+        <table class="data-table" style="margin-bottom:2rem;">
+          <thead>
+            <tr>
+              <th>Status Categorization</th>
+              <th style="text-align:center;">Application Count</th>
+              <th style="text-align:right;">Ratio %</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${statusCounts.map(st => {
+              const total = s.total_applications || 1;
+              const pct = Math.round((st.count / total) * 100);
+              return `
+                <tr>
+                  <td>${ManagerApp.getStatusBadge(st.status)}</td>
+                  <td style="text-align:center; font-weight:700;">${st.count}</td>
+                  <td style="text-align:right; font-weight:600; color:#1a5276;">${pct}%</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+
+        <h4 style="color:#0f172a; margin-bottom:0.75rem;">Applications Breakdown by Academic Background (HSC Group)</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Academic Group</th>
+              <th style="text-align:center;">Applicants</th>
+              <th style="text-align:right;">Distribution</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${groupCounts.map(g => {
+              const total = s.total_applications || 1;
+              const pct = Math.round((g.count / total) * 100);
+              return `
+                <tr>
+                  <td><strong style="color:#0a2647;">${escapeHtml(g.hsc_group)}</strong></td>
+                  <td style="text-align:center; font-weight:700;">${g.count}</td>
+                  <td style="text-align:right;">${pct}%</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // 2. Financial Report Renderer
+    function renderFinancialReport(fin, stats) {
+      const fs = fin ? fin.financial_summary : {};
+      const unis = fs.by_university || [];
+
+      const container = document.getElementById('reportDynamicContainer');
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:1rem; text-align:center;">
+            <div style="font-size:0.8rem; color:#64748b; font-weight:600;">Total Revenue Collected</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#10b981;">${ManagerApp.formatBDT(fs.total_collected || 0)}</div>
+          </div>
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:1rem; text-align:center;">
+            <div style="font-size:0.8rem; color:#065f46; font-weight:600;">Verified Settlements</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#0d9488;">${ManagerApp.formatBDT(fs.total_verified || 0)}</div>
+          </div>
+          <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:1rem; text-align:center;">
+            <div style="font-size:0.8rem; color:#92400e; font-weight:600;">Pending Invoices</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#f59e0b;">${ManagerApp.formatBDT(fs.total_pending || 0)}</div>
+          </div>
+        </div>
+
+        <h4 style="color:#0f172a; margin-bottom:0.75rem;">Revenue Realized by Partner University</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>University Name</th>
+              <th style="text-align:center;">Paid Applications</th>
+              <th style="text-align:right;">Total Fee Collected</th>
+              <th style="text-align:right;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${unis.map(u => `
+              <tr>
+                <td><strong style="color:#0a2647;">${escapeHtml(u.university_name)}</strong></td>
+                <td style="text-align:center; font-weight:600;">${u.paid_count || 0}</td>
+                <td style="text-align:right; font-weight:700; color:#10b981;">${ManagerApp.formatBDT(u.total_fee_collected || 0)}</td>
+                <td style="text-align:right;"><span class="badge badge-success">Reconciled</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // 3. University Report Renderer
+    function renderUniversityReport(rep, fin) {
+      const topUnis = rep && rep.report ? rep.report.top_universities || [] : [];
+      const topProgs = rep && rep.report ? rep.report.top_programs || [] : [];
+
+      const container = document.getElementById('reportDynamicContainer');
+      container.innerHTML = `
+        <h4 style="color:#0f172a; margin-bottom:0.75rem;">Top Universities Ranked by Student Demand</h4>
+        <table class="data-table" style="margin-bottom:2rem;">
+          <thead>
+            <tr>
+              <th>University</th>
+              <th>Short Code</th>
+              <th style="text-align:center;">Total Applications</th>
+              <th style="text-align:right;">Institutional Rank</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${topUnis.map((u, i) => `
+              <tr>
+                <td><strong style="color:#0a2647;">${escapeHtml(u.name)}</strong></td>
+                <td><span class="badge badge-teal">${escapeHtml(u.short_name)}</span></td>
+                <td style="text-align:center; font-weight:700;">${u.total_applications}</td>
+                <td style="text-align:right; font-weight:700; color:#1a5276;">#${i + 1}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <h4 style="color:#0f172a; margin-bottom:0.75rem;">High-Demand Degree Programs</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Program Name</th>
+              <th>University</th>
+              <th style="text-align:center;">Application Count</th>
+              <th style="text-align:right;">Demand Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${topProgs.map(p => `
+              <tr>
+                <td><strong style="color:#0f172a;">${escapeHtml(p.name)}</strong></td>
+                <td><span class="badge badge-primary">${escapeHtml(p.university)}</span></td>
+                <td style="text-align:center; font-weight:700;">${p.application_count}</td>
+                <td style="text-align:right;"><span class="badge badge-danger">Competitive</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // 4. Admission Demographics Report Renderer
+    function renderAdmissionDemographicsReport(adm, stats) {
+      const a = adm ? adm.admission_stats : {};
+      const depts = a.by_department || [];
+      const genders = a.by_gender || [];
+      const boards = a.by_board || [];
+
+      const container = document.getElementById('reportDynamicContainer');
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+          <div>
+            <h4 style="color:#0f172a; margin-bottom:0.75rem;">Gender Distribution</h4>
+            <table class="data-table">
+              <thead><tr><th>Gender</th><th style="text-align:center;">Count</th></tr></thead>
+              <tbody>
+                ${genders.map(g => `<tr><td>${escapeHtml(g.gender)}</td><td style="text-align:center; font-weight:700;">${g.count}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h4 style="color:#0f172a; margin-bottom:0.75rem;">Top Education Boards</h4>
+            <table class="data-table">
+              <thead><tr><th>Board</th><th style="text-align:center;">Applicants</th></tr></thead>
+              <tbody>
+                ${boards.map(b => `<tr><td>${escapeHtml(b.board)}</td><td style="text-align:center; font-weight:700;">${b.count}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <h4 style="color:#0f172a; margin-bottom:0.75rem;">Department Capacity & Applicant Load</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Department</th>
+              <th style="text-align:center;">Total Capacity Seats</th>
+              <th style="text-align:center;">Total Applicants</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${depts.map(d => `
+              <tr>
+                <td><strong style="color:#0a2647;">${escapeHtml(d.department)}</strong></td>
+                <td style="text-align:center; font-weight:600;">${d.total_seats || 50}</td>
+                <td style="text-align:center; font-weight:700; color:#0d9488;">${d.applications_count}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function exportReportCSV() {
+      if (!cachedReportData) return;
+      let csvContent = 'data:text/csv;charset=utf-8,';
+      csvContent += `"UniAdmit Official Report - ${currentReportType}"\n`;
+      csvContent += `"Generated At","${new Date().toISOString()}"\n\n`;
+
+      if (currentReportType === 'financial_report') {
+        csvContent += '"University Name","Paid Count","Total Fee Collected"\n';
+        const unis = cachedReportData.fin?.financial_summary?.by_university || [];
+        unis.forEach(u => {
+          csvContent += `"${u.university_name}",${u.paid_count},${u.total_fee_collected}\n`;
+        });
+      } else {
+        csvContent += '"Category","Count"\n';
+        const st = cachedReportData.rep?.report?.applications_by_status || [];
+        st.forEach(s => {
+          csvContent += `"${s.status}",${s.count}\n`;
+        });
+      }
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `UniAdmit_${currentReportType}_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      ManagerApp.showToast('Downloaded', 'Report CSV exported successfully.', 'success');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

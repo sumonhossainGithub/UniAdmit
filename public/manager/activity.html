@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Manager - System Activity</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/manager/manager.css?v=3">
+</head>
+<body>
+  <div class="manager-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Manager Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/manager/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-manager">Manager</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/manager/dashboard.html" class="sidebar-menu-link" data-nav="dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/applications.html" class="sidebar-menu-link" data-nav="applications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Review Applications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/statistics.html" class="sidebar-menu-link" data-nav="statistics">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span class="sidebar-menu-text">Statistics</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/merit-list.html" class="sidebar-menu-link" data-nav="merit-list">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+              <span class="sidebar-menu-text">Merit Lists</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/notifications.html" class="sidebar-menu-link" data-nav="notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Send Notifications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/financial.html" class="sidebar-menu-link" data-nav="financial">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Financial Summary</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/reports.html" class="sidebar-menu-link" data-nav="reports">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Reports</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/admission-stats.html" class="sidebar-menu-link" data-nav="admission-stats">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span class="sidebar-menu-text">Admission Stats</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/activity.html" class="sidebar-menu-link active" data-nav="activity">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span class="sidebar-menu-text">System Activity</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.5rem;">
+            <a href="javascript:void(0)" onclick="ManagerApp.logout()" class="sidebar-menu-link" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar manager-avatar-initial">M</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name manager-full-name">Admission Manager</div>
+            <div class="sidebar-user-role manager-email">manager@uniadmit.com</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Toggle navigation">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/manager/dashboard.html">Manager</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">System Activity</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="live-clock-badge">
+            <span>🕒</span>
+            <span id="liveClock">Loading...</span>
+          </div>
+          <div class="topbar-user-pill">
+            <span class="manager-avatar-initial" style="width:24px; height:24px; border-radius:50%; background:#2ca4a0; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;">M</span>
+            <span class="manager-full-name" style="font-size:0.85rem; font-weight:600;">Manager</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">System Activity & Audit Log</h1>
+            <p class="page-subtitle">Track operational transactions, applicant submissions, decisions, and system alerts in chronological audit order.</p>
+          </div>
+          <div class="page-actions">
+            <!-- Auto-refresh Toggle -->
+            <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem; font-weight:600; color:#475569; cursor:pointer; background:#fff; padding:6px 12px; border-radius:8px; border:1px solid #cbd5e1;">
+              <input type="checkbox" id="autoRefreshToggle" checked onchange="toggleAutoRefresh(this.checked)">
+              <span>⚡ Auto-refresh (<span id="refreshCountdown">15s</span>)</span>
+            </label>
+            <button class="btn btn-outline" onclick="loadActivityLog(true)">
+              <span>🔄</span> Refresh Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label class="filter-label" for="filterActionType">Action Type</label>
+            <select id="filterActionType" class="filter-select" onchange="filterLogs()">
+              <option value="all">All Actions</option>
+              <option value="REVIEW">Application Reviews</option>
+              <option value="MERIT">Merit Lists</option>
+              <option value="NOTIF">Notifications Dispatched</option>
+              <option value="PAYMENT">Payments & Fees</option>
+              <option value="REGISTER">Registrations</option>
+              <option value="SYSTEM">System & Config</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filterDate">Filter Date</label>
+            <input type="date" id="filterDate" class="filter-input" onchange="filterLogs()">
+          </div>
+
+          <div class="filter-group" style="flex: 2 1 200px;">
+            <label class="filter-label" for="filterSearch">Search Log Details</label>
+            <input type="text" id="filterSearch" class="filter-input" placeholder="User name, email, action details..." oninput="filterLogs()">
+          </div>
+
+          <div style="align-self:flex-end;">
+            <button class="btn btn-outline btn-sm" onclick="resetFilters()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Activity Log Table Card -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h2 class="content-card-title">
+              <span>📋</span> Event Log Records (<span id="logCount">0</span>)
+            </h2>
+            <div style="font-size:0.85rem; color:#64748b;">
+              Showing page <span id="currentPageNum">1</span> of <span id="totalPageNum">1</span>
+            </div>
+          </div>
+          <div class="content-card-body" style="padding:0;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 170px;">Timestamp</th>
+                    <th>User / Initiator</th>
+                    <th style="text-align:center; width: 110px;">Role</th>
+                    <th>Action</th>
+                    <th>Details & Payload</th>
+                  </tr>
+                </thead>
+                <tbody id="activityTableBody">
+                  <tr><td colspan="5"><div class="loading-box"><div class="spinner"></div><span>Loading activity log...</span></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Pagination Footer -->
+          <div style="padding: 1rem 1.25rem; border-top: 1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; background:#f8fafc;">
+            <div style="display:flex; align-items:center; gap:8px; font-size:0.875rem; color:#64748b;">
+              <span>Rows per page:</span>
+              <select id="itemsPerPageSelect" class="filter-select" style="padding:2px 8px;" onchange="changeItemsPerPage()">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button class="btn btn-sm btn-outline" id="btnPrevPage" onclick="prevPage()">
+                &larr; Previous
+              </button>
+              <span style="font-size:0.85rem; font-weight:600; padding:0 6px;" id="pageIndicatorText">Page 1 / 1</span>
+              <button class="btn btn-sm btn-outline" id="btnNextPage" onclick="nextPage()">
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/manager-common.js"></script>
+  <script>
+    let allLogs = [];
+    let filteredLogs = [];
+    let currentPage = 1;
+    let itemsPerPage = 25;
+    let refreshTimer = null;
+    let countdownVal = 15;
+    let countdownInterval = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      ManagerApp.initSession('activity', 'System Activity', () => {
+        loadActivityLog();
+        startAutoRefresh();
+      });
+    });
+
+    async function loadActivityLog(showNotice = false) {
+      try {
+        const res = await fetch('/api/manager/activity-log');
+        if (!res.ok) throw new Error('Failed to retrieve activity log');
+        const data = await res.json();
+        allLogs = data.logs || [];
+        filterLogs();
+        if (showNotice) {
+          ManagerApp.showToast('Refreshed', 'Activity log updated.', 'info');
+        }
+      } catch (err) {
+        console.error('Error fetching activity log:', err);
+        document.getElementById('activityTableBody').innerHTML = `
+          <tr><td colspan="5"><div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error Loading Logs</div><div class="empty-desc">${err.message}</div></div></td></tr>
+        `;
+      }
+    }
+
+    function filterLogs() {
+      const actionType = document.getElementById('filterActionType').value;
+      const date = document.getElementById('filterDate').value;
+      const search = document.getElementById('filterSearch').value.trim().toLowerCase();
+
+      filteredLogs = allLogs.filter(log => {
+        // Filter by action type
+        if (actionType !== 'all') {
+          const act = (log.action || '').toUpperCase();
+          if (!act.includes(actionType)) return false;
+        }
+
+        // Filter by date
+        if (date) {
+          if (!log.created_at || !log.created_at.startsWith(date)) return false;
+        }
+
+        // Search text
+        if (search) {
+          const matchUser = (log.user_name || '').toLowerCase().includes(search);
+          const matchEmail = (log.user_email || '').toLowerCase().includes(search);
+          const matchAction = (log.action || '').toLowerCase().includes(search);
+          const matchDetails = (log.details || '').toLowerCase().includes(search);
+          if (!matchUser && !matchEmail && !matchAction && !matchDetails) return false;
+        }
+
+        return true;
+      });
+
+      currentPage = 1;
+      document.getElementById('logCount').textContent = filteredLogs.length;
+      renderLogTable();
+    }
+
+    function resetFilters() {
+      document.getElementById('filterActionType').value = 'all';
+      document.getElementById('filterDate').value = '';
+      document.getElementById('filterSearch').value = '';
+      filterLogs();
+    }
+
+    function renderLogTable() {
+      const tbody = document.getElementById('activityTableBody');
+      const total = filteredLogs.length;
+      const totalPages = Math.max(Math.ceil(total / itemsPerPage), 1);
+
+      document.getElementById('currentPageNum').textContent = currentPage;
+      document.getElementById('totalPageNum').textContent = totalPages;
+      document.getElementById('pageIndicatorText').textContent = `Page ${currentPage} / ${totalPages}`;
+
+      document.getElementById('btnPrevPage').disabled = (currentPage <= 1);
+      document.getElementById('btnNextPage').disabled = (currentPage >= totalPages);
+
+      if (!total) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <div class="empty-title">No Activity Logs Found</div>
+                <div class="empty-desc">No events matched your current filters.</div>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageSlice = filteredLogs.slice(start, end);
+
+      tbody.innerHTML = pageSlice.map(log => {
+        const initial = (log.user_name || 'U').charAt(0).toUpperCase();
+        const role = (log.user_role || 'system').toLowerCase();
+        
+        let roleBadge = '<span class="badge badge-teal">Student</span>';
+        if (role === 'manager') roleBadge = '<span class="badge badge-primary">Manager</span>';
+        else if (role === 'admin') roleBadge = '<span class="badge badge-gold">Admin</span>';
+        else if (role === 'system') roleBadge = '<span class="badge badge-review">System</span>';
+
+        let actionBadge = `<span class="badge badge-primary">${escapeHtml(log.action || 'ACTION')}</span>`;
+        if (log.action && (log.action.includes('APPROVED') || log.action.includes('SUCCESS'))) {
+          actionBadge = `<span class="badge badge-success">${escapeHtml(log.action)}</span>`;
+        } else if (log.action && (log.action.includes('REJECT') || log.action.includes('FAIL'))) {
+          actionBadge = `<span class="badge badge-danger">${escapeHtml(log.action)}</span>`;
+        } else if (log.action && log.action.includes('REVIEW')) {
+          actionBadge = `<span class="badge badge-review">${escapeHtml(log.action)}</span>`;
+        }
+
+        return `
+          <tr>
+            <td style="color:#64748b; font-size:0.8rem; white-space:nowrap;">
+              ${ManagerApp.formatDateTime(log.created_at)}
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px; height:28px; border-radius:50%; background:#e2e8f0; color:#1e293b; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem;">
+                  ${initial}
+                </div>
+                <div>
+                  <div style="font-weight:600; color:#0f172a; font-size:0.85rem;">${escapeHtml(log.user_name || 'System / Batch')}</div>
+                  <div style="font-size:0.75rem; color:#64748b;">${escapeHtml(log.user_email || '—')}</div>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:center;">
+              ${roleBadge}
+            </td>
+            <td>
+              ${actionBadge}
+            </td>
+            <td style="color:#334155; font-size:0.85rem;">
+              ${escapeHtml(log.details || '')}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderLogTable();
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderLogTable();
+      }
+    }
+
+    function changeItemsPerPage() {
+      itemsPerPage = parseInt(document.getElementById('itemsPerPageSelect').value, 10);
+      currentPage = 1;
+      renderLogTable();
+    }
+
+    // Auto Refresh Logic
+    function startAutoRefresh() {
+      stopAutoRefresh();
+      countdownVal = 15;
+      document.getElementById('refreshCountdown').textContent = `${countdownVal}s`;
+
+      countdownInterval = setInterval(() => {
+        countdownVal--;
+        if (countdownVal <= 0) {
+          countdownVal = 15;
+          loadActivityLog();
+        }
+        document.getElementById('refreshCountdown').textContent = `${countdownVal}s`;
+      }, 1000);
+    }
+
+    function stopAutoRefresh() {
+      if (countdownInterval) clearInterval(countdownInterval);
+      if (refreshTimer) clearTimeout(refreshTimer);
+    }
+
+    function toggleAutoRefresh(enable) {
+      if (enable) {
+        startAutoRefresh();
+        ManagerApp.showToast('Auto-refresh On', 'Activity log will refresh every 15 seconds.', 'info');
+      } else {
+        stopAutoRefresh();
+        document.getElementById('refreshCountdown').textContent = 'Off';
+        ManagerApp.showToast('Auto-refresh Paused', 'Manual refresh only.', 'info');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

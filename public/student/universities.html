@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit - Browse Universities</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    .program-card-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      background: var(--color-surface-hover, #f8fafc);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md, 10px);
+      margin-bottom: 10px;
+      transition: all var(--transition-fast, 0.2s);
+    }
+    .program-card-item:hover {
+      border-color: var(--color-accent);
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+    .match-pill-qualified {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: var(--color-success-subtle);
+      color: var(--color-success);
+      font-size: 11.5px;
+      font-weight: 700;
+      border: 1px solid var(--color-success-border);
+    }
+    .match-pill-ineligible {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: var(--color-surface-muted);
+      color: var(--color-text-muted);
+      font-size: 11px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="app-layout">
+
+  <!-- =========================================================================
+       SIDEBAR NAVIGATION
+       ========================================================================= -->
+  <aside class="sidebar" aria-label="Student Navigation">
+    <div class="sidebar-header">
+      <a href="/student/dashboard.html" class="sidebar-brand">
+        <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+        <div class="brand-text">
+          <span class="brand-name">Uni<span>Admit</span></span>
+          <span class="brand-role-badge badge-student">Student</span>
+        </div>
+      </a>
+      <button type="button" class="sidebar-toggle-btn mobile-menu-close" id="sidebarCloseBtn" aria-label="Close sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main Menu</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <a href="/student/dashboard.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            <span class="sidebar-menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/profile.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="sidebar-menu-text">My Profile</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/universities.html" class="sidebar-menu-link active">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 10h1v2H9z"/><path d="M9 14h1v2H9z"/><path d="M14 10h1v2H14z"/><path d="M14 14h1v2H14z"/></svg>
+            <span class="sidebar-menu-text">Browse Universities</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/applications.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span class="sidebar-menu-text">My Applications</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/payments.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span class="sidebar-menu-text">Payments</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/merit-list.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+            <span class="sidebar-menu-text">Merit Lists</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/notifications.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="sidebar-menu-text">Notifications</span>
+            <span class="sidebar-badge" id="sidebarNotifBadge" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section" style="margin-top:20px;">Session</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <button type="button" class="sidebar-menu-link" onclick="handleLogout()" style="width:100%; border:none; text-align:left; background:transparent; cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span class="sidebar-menu-text">Logout</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar">
+          <span id="sidebarUserInitials">S</span>
+        </div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name" id="sidebarUserName">Student</span>
+          <span class="sidebar-user-role" id="sidebarUserEmail">student@uniadmit.com</span>
+        </div>
+      </div>
+      <button class="sidebar-logout-btn" onclick="handleLogout()" title="Logout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       MAIN WRAPPER & TOPBAR
+       ========================================================================= -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="breadcrumbs">
+          <span class="breadcrumb-item"><a href="/student/dashboard.html">Portal</a></span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item active">Browse Universities</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div style="position:relative;">
+          <a href="/student/notifications.html" class="topbar-action-btn" title="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="topbar-badge" id="topbarNotifBadge" style="display:none;">0</span>
+          </a>
+        </div>
+
+        <div style="position:relative;">
+          <div class="topbar-user" id="topbarUserBtn" tabindex="0">
+            <div class="topbar-avatar" id="topbarAvatar">
+              <span id="topbarInitials">S</span>
+            </div>
+            <div class="topbar-user-meta">
+              <span class="topbar-user-name" id="topbarUserName">Student</span>
+              <span class="topbar-user-role">Student Candidate</span>
+            </div>
+            <svg class="topbar-user-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="notifications-dropdown" id="userDropdown" style="width: 220px; right: 0;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-border); background: var(--color-surface-muted);">
+              <div style="font-weight: 700; color: var(--color-primary-dark); font-size: 14px;" id="dropdownUserName">Student</div>
+              <div style="font-size: 12px; color: var(--color-text-secondary);" id="dropdownUserEmail">student@uniadmit.com</div>
+            </div>
+            <div style="padding: 8px 0;">
+              <a href="/student/profile.html" style="display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-text-primary); text-decoration:none; font-size:13px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+              </a>
+              <button onclick="handleLogout()" style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-danger); font-size:13px; background:none; border:none; text-align:left; cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =========================================================================
+         MAIN CONTENT: SEARCH & DIRECTORY
+         ========================================================================= -->
+    <main class="main-content">
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Browse & Search Universities</h1>
+          <p class="page-subtitle">Discover accredited institutions across Bangladesh, inspect admission requirements, and submit applications directly.</p>
+        </div>
+        <div class="page-actions">
+          <span style="font-size:13px; color:var(--color-text-secondary);" id="resultsCountBadge">
+            Showing all universities
+          </span>
+        </div>
+      </div>
+
+      <!-- Search & Multi-Filter Bar -->
+      <section class="filter-bar">
+        <div class="filter-group">
+          <!-- Search input -->
+          <div class="filter-search input-with-icon">
+            <span class="input-icon">🔍</span>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by name, acronym, location..." oninput="debouncedSearch()">
+          </div>
+
+          <!-- Type filter -->
+          <select id="typeFilter" class="filter-select" onchange="applyFilters()">
+            <option value="all">All Types (Public & Private)</option>
+            <option value="public">Public Universities</option>
+            <option value="private">Private Universities</option>
+          </select>
+
+          <!-- Min GPA filter -->
+          <select id="minGpaFilter" class="filter-select" onchange="applyFilters()">
+            <option value="">Any Minimum GPA</option>
+            <option value="3.0">Min GPA 3.00+</option>
+            <option value="3.5">Min GPA 3.50+</option>
+            <option value="4.0">Min GPA 4.00+</option>
+            <option value="4.5">Min GPA 4.50+</option>
+            <option value="5.0">GPA 5.00 Only</option>
+          </select>
+
+          <!-- Discipline / Group Filter -->
+          <select id="groupFilter" class="filter-select" onchange="applyFilters()">
+            <option value="">All Academic Disciplines</option>
+            <option value="Science">Science Programs</option>
+            <option value="Commerce">Commerce / Business Programs</option>
+            <option value="Arts">Humanities / Arts Programs</option>
+          </select>
+
+          <!-- Status Filter -->
+          <select id="statusFilter" class="filter-select" onchange="applyFilters()">
+            <option value="all">Admission Status: All</option>
+            <option value="open">Open / Active Deadlines</option>
+            <option value="closed">Closed / Past Deadline</option>
+          </select>
+
+          <button type="button" class="btn" onclick="resetFilters()" style="background:var(--color-surface-muted); color:var(--color-primary-dark); font-size:12.5px; padding:8px 12px;">
+            Reset Filters
+          </button>
+        </div>
+      </section>
+
+      <!-- University Cards Grid (3 columns desktop, 2 tablet, 1 mobile) -->
+      <div id="universitiesGrid" class="university-grid">
+        <div style="grid-column: 1 / -1; text-align:center; padding: 40px; color:var(--color-text-muted);">
+          <div class="spinner" style="border-top-color:var(--color-accent); margin-bottom:10px;"></div>
+          <p>Loading universities directory...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       UNIVERSITY DETAIL & PROGRAM APPLY MODAL
+       ========================================================================= -->
+  <div class="modal-overlay" id="uniDetailModal" role="dialog" aria-modal="true" aria-labelledby="uniDetailTitle">
+    <div class="modal-dialog modal-lg" style="overflow:hidden; padding:0;">
+      <div id="modalUniCoverBanner" style="height:150px; position:relative; overflow:hidden; background:#0A2647;">
+        <img id="modalUniCoverImg" src="" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Campus Cover" onerror="this.style.opacity='0'">
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,38,71,0.2) 0%, rgba(10,38,71,0.85) 100%);"></div>
+        <button type="button" class="modal-close-btn" onclick="closeUniDetailModal()" style="position:absolute; top:12px; right:12px; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:18px; line-height:1; z-index:5;" aria-label="Close modal">×</button>
+        <div style="position:absolute; bottom:14px; left:20px; right:20px; display:flex; align-items:center; gap:14px; z-index:3;">
+          <span id="uniDetailLogo" style="display:inline-flex; width:48px; height:48px; border-radius:8px; background:#fff; align-items:center; justify-content:center; overflow:hidden; padding:4px; box-sizing:border-box; box-shadow:0 4px 12px rgba(0,0,0,0.3); flex-shrink:0;"></span>
+          <h3 class="modal-title" id="uniDetailTitle" style="color:white; margin:0; font-size:1.25rem; font-weight:700; text-shadow:0 2px 6px rgba(0,0,0,0.6); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            <span id="uniDetailName">University Details</span>
+          </h3>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 24px;">
+        <!-- University Meta Header -->
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+              <span class="badge badge-teal" id="modalUniTypeBadge">Public</span>
+              <span style="font-size:12px; color:var(--color-text-secondary);" id="modalUniLocation">Dhaka</span>
+            </div>
+            <p style="font-size:13.5px; color:var(--color-text-primary); max-width:650px; line-height:1.5;" id="modalUniDesc">
+              Description text here.
+            </p>
+            <div style="margin-top:8px;">
+              <a href="#" target="_blank" id="modalUniWebsite" style="font-size:12.5px; color:var(--color-accent); font-weight:600;">Visit Official Website ↗</a>
+            </div>
+          </div>
+          <div style="background:var(--color-surface-muted); padding:12px 18px; border-radius:var(--radius-md); text-align:right;">
+            <div style="font-size:11px; text-transform:uppercase; color:var(--color-text-secondary); font-weight:700;">Application Fee</div>
+            <div style="font-size:1.35rem; font-weight:800; color:var(--color-primary-dark);" id="modalUniFee">BDT 1,000</div>
+            <div style="font-size:11.5px; color:var(--color-danger); font-weight:600;" id="modalUniDeadline">Deadline: Dec 31, 2026</div>
+          </div>
+        </div>
+
+        <!-- Admission Circular Text / Notice -->
+        <div style="padding:14px 18px; background:var(--color-primary-subtle); border-radius:var(--radius-md); margin-bottom:24px; border-left:4px solid var(--color-primary);">
+          <div style="font-weight:700; font-size:13px; color:var(--color-primary-dark); margin-bottom:4px;">Admission Circular Notice:</div>
+          <div style="font-size:12.5px; color:var(--color-text-primary);" id="modalUniCircular">
+            Standard eligibility requirements apply.
+          </div>
+        </div>
+
+        <!-- Available Programs List -->
+        <h4 style="font-size:1.05rem; font-weight:700; color:var(--color-primary-dark); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+          <span>Available Academic Programs & Faculties</span>
+          <span style="font-size:12px; font-weight:normal; color:var(--color-text-secondary);" id="modalProgramsCount">0 Programs</span>
+        </h4>
+
+        <div id="modalProgramsList">
+          <!-- Populated dynamically with apply buttons -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeUniDetailModal()" style="background:var(--color-surface-muted); color:var(--color-primary-dark);">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/student.js"></script>
+  <script>
+    let allUniversities = [];
+    let studentUser = null;
+    let studentProfile = null;
+    let debounceTimer = null;
+    let appliedProgramIds = new Set();
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authData = await initStudentAuth('universities');
+      if (!authData) return;
+
+      studentUser = authData.user;
+      studentProfile = authData.profile;
+
+      // Fetch user's existing applications to know if already applied
+      await loadExistingApplications();
+
+      // Load universities
+      await fetchUniversities();
+    });
+
+    async function loadExistingApplications() {
+      try {
+        const res = await fetch('/api/applications');
+        const data = await res.json();
+        if (data.success && data.applications) {
+          appliedProgramIds = new Set(data.applications.map(a => `${a.university_id}-${a.program_id}`));
+        }
+      } catch (e) {
+        console.error('Error fetching existing applications:', e);
+      }
+    }
+
+    async function fetchUniversities() {
+      const grid = document.getElementById('universitiesGrid');
+      try {
+        const res = await fetch('/api/universities');
+        const data = await res.json();
+
+        if (data.success) {
+          allUniversities = data.universities || [];
+          renderUniversities(allUniversities);
+        } else {
+          grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; color:var(--color-danger); padding:30px;">Error loading universities.</div>`;
+        }
+      } catch (err) {
+        console.error('Fetch universities error:', err);
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; color:var(--color-danger); padding:30px;">Network error while fetching directory.</div>`;
+      }
+    }
+
+    function debouncedSearch() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        applyFilters();
+      }, 250);
+    }
+
+    function applyFilters() {
+      const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+      const typeTerm = document.getElementById('typeFilter').value;
+      const minGpaTerm = document.getElementById('minGpaFilter').value ? parseFloat(document.getElementById('minGpaFilter').value) : null;
+      const groupTerm = document.getElementById('groupFilter').value.toLowerCase();
+      const statusTerm = document.getElementById('statusFilter').value;
+
+      const now = new Date();
+
+      const filtered = allUniversities.filter(u => {
+        // Search text
+        if (searchTerm) {
+          const matchName = (u.name || '').toLowerCase().includes(searchTerm);
+          const matchShort = (u.short_name || '').toLowerCase().includes(searchTerm);
+          const matchLoc = (u.location || '').toLowerCase().includes(searchTerm);
+          if (!matchName && !matchShort && !matchLoc) return false;
+        }
+
+        // Type
+        if (typeTerm !== 'all' && u.type.toLowerCase() !== typeTerm) {
+          return false;
+        }
+
+        // Min GPA requirement
+        if (minGpaTerm !== null) {
+          if (u.min_gpa_hsc < minGpaTerm && u.min_gpa_ssc < minGpaTerm) {
+            return false;
+          }
+        }
+
+        // Group filter on programs
+        if (groupTerm) {
+          const progs = u.programs || [];
+          const hasGroupProg = progs.some(p => {
+            if (!p.required_group) return true;
+            return p.required_group.toLowerCase() === groupTerm;
+          });
+          if (!hasGroupProg) return false;
+        }
+
+        // Status filter (Open / Closed)
+        if (statusTerm !== 'all' && u.admission_end) {
+          const endDate = new Date(u.admission_end);
+          const isOpen = endDate >= now;
+          if (statusTerm === 'open' && !isOpen) return false;
+          if (statusTerm === 'closed' && isOpen) return false;
+        }
+
+        return true;
+      });
+
+      renderUniversities(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('typeFilter').value = 'all';
+      document.getElementById('minGpaFilter').value = '';
+      document.getElementById('groupFilter').value = '';
+      document.getElementById('statusFilter').value = 'all';
+      renderUniversities(allUniversities);
+    }
+
+    // Check student eligibility for this university
+    function checkStudentEligibility(uni) {
+      if (!studentProfile || studentProfile.ssc_gpa === null || studentProfile.hsc_gpa === null) {
+        return { qualifies: false, reason: 'Profile incomplete' };
+      }
+      const sscGpa = parseFloat(studentProfile.ssc_gpa) || 0;
+      const hscGpa = parseFloat(studentProfile.hsc_gpa) || 0;
+
+      const reqSsc = parseFloat(uni.min_gpa_ssc) || 0;
+      const reqHsc = parseFloat(uni.min_gpa_hsc) || 0;
+
+      const meetsSsc = sscGpa >= reqSsc;
+      const meetsHsc = hscGpa >= reqHsc;
+
+      return {
+        qualifies: meetsSsc && meetsHsc,
+        meetsSsc,
+        meetsHsc,
+        sscGpa,
+        hscGpa
+      };
+    }
+
+    function renderUniversities(unis) {
+      const grid = document.getElementById('universitiesGrid');
+      const countBadge = document.getElementById('resultsCountBadge');
+
+      if (countBadge) {
+        countBadge.textContent = `Showing ${unis.length} of ${allUniversities.length} universities`;
+      }
+
+      if (unis.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding: 48px 20px; background:var(--color-card-bg); border-radius:var(--radius-lg); border:1px solid var(--color-border);">
+            <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
+            <h3 style="color:var(--color-primary-dark); margin-bottom: 6px;">No Universities Match Your Criteria</h3>
+            <p style="color:var(--color-text-secondary); font-size:13.5px; max-width:450px; margin:0 auto 16px;">
+              Try loosening your search terms or clearing GPA/Group filters.
+            </p>
+            <button type="button" class="btn btn-primary" onclick="resetFilters()">Reset All Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = unis.map(u => {
+        const logoSrc = u.logo_url || '/Logo.png';
+        const coverSrc = u.cover_image || `/images/universities/covers/${(u.short_name || '').toLowerCase()}.jpg`;
+        const progCount = (u.programs || []).length;
+        const deadlineText = u.admission_end
+          ? new Date(u.admission_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          : 'Open';
+
+        const elig = checkStudentEligibility(u);
+        let matchPill = '';
+        if (elig.qualifies) {
+          matchPill = `<span class="match-pill-qualified"><img src="/images/icons/check-minimal.png" alt="" style="width:11px; height:11px; vertical-align:middle; margin-right:3px;"> You Qualify</span>`;
+        } else if (elig.reason === 'Profile incomplete') {
+          matchPill = `<span class="match-pill-ineligible">Add GPA in Profile</span>`;
+        } else {
+          matchPill = `<span class="match-pill-ineligible">Requires Min HSC ${u.min_gpa_hsc.toFixed(2)}</span>`;
+        }
+
+        const typeBadge = u.type === 'public' ? 'badge-teal' : 'badge-navy';
+
+        return `
+          <div class="uni-card" onclick="openUniDetailModal(${u.id})">
+            <div class="uni-card-cover">
+              <img src="${coverSrc}" class="uni-cover-img" alt="${u.name} Campus" loading="lazy" onerror="this.style.opacity='0'">
+              <div class="uni-cover-overlay"></div>
+              <span class="uni-logo-badge">
+                <img src="${logoSrc}" alt="${u.name}" onerror="this.src='/Logo.png'">
+              </span>
+            </div>
+
+            <div class="uni-card-body">
+              <div class="uni-card-header-info">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span class="badge ${typeBadge}" style="font-size:10.5px; text-transform:uppercase;">${u.type}</span>
+                  ${matchPill}
+                </div>
+                <h3 class="uni-name" title="${u.name}">${u.name}</h3>
+                <div class="uni-location">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  ${u.location}
+                </div>
+              </div>
+
+              <div class="uni-specs-grid">
+                <div class="uni-spec-item">
+                  <span class="uni-spec-label">Min GPA HSC</span>
+                  <span class="uni-spec-val">${u.min_gpa_hsc.toFixed(2)}</span>
+                </div>
+                <div class="uni-spec-item">
+                  <span class="uni-spec-label">Application Fee</span>
+                  <span class="uni-spec-val" style="color:var(--color-primary);">BDT ${u.application_fee}</span>
+                </div>
+                <div class="uni-spec-item">
+                  <span class="uni-spec-label">Programs Offered</span>
+                  <span class="uni-spec-val" style="color:var(--color-accent);">${progCount} Degree Programs</span>
+                </div>
+                <div class="uni-spec-item">
+                  <span class="uni-spec-label">Min GPA SSC</span>
+                  <span class="uni-spec-val">${u.min_gpa_ssc.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="uni-card-footer" onclick="event.stopPropagation()">
+              <div class="uni-deadline">
+                <span>Ends: <strong>${deadlineText}</strong></span>
+              </div>
+              <button type="button" class="btn btn-primary" style="padding:6px 14px; font-size:12.5px;" onclick="openUniDetailModal(${u.id})">
+                View & Apply
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Detail Modal with Programs Breakdown
+    function openUniDetailModal(uniId) {
+      const u = allUniversities.find(item => item.id === uniId);
+      if (!u) return;
+
+      const modal = document.getElementById('uniDetailModal');
+      document.getElementById('uniDetailName').textContent = u.name;
+      const coverSrc = u.cover_image || `/images/universities/covers/${(u.short_name || '').toLowerCase()}.jpg`;
+      const coverImg = document.getElementById('modalUniCoverImg');
+      if (coverImg) {
+        coverImg.src = coverSrc;
+        coverImg.style.opacity = '1';
+      }
+      document.getElementById('modalUniLocation').textContent = u.location;
+      document.getElementById('modalUniDesc').textContent = u.description || 'No description provided.';
+      document.getElementById('modalUniFee').textContent = `BDT ${u.application_fee}`;
+      
+      const deadline = u.admission_end
+        ? new Date(u.admission_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : 'Open for admissions';
+      document.getElementById('modalUniDeadline').textContent = `Deadline: ${deadline}`;
+
+      const typeBadge = document.getElementById('modalUniTypeBadge');
+      typeBadge.textContent = u.type.toUpperCase();
+      typeBadge.className = `badge ${u.type === 'public' ? 'badge-teal' : 'badge-navy'}`;
+
+      const websiteLink = document.getElementById('modalUniWebsite');
+      if (u.website) {
+        websiteLink.href = u.website;
+        websiteLink.style.display = 'inline-block';
+      } else {
+        websiteLink.style.display = 'none';
+      }
+
+      document.getElementById('modalUniCircular').textContent = u.circular_text || `Undergraduate admission circular 2026. SSC Min GPA ${u.min_gpa_ssc.toFixed(2)}, HSC Min GPA ${u.min_gpa_hsc.toFixed(2)}.`;
+
+      const logoElem = document.getElementById('uniDetailLogo');
+      if (u.logo_url) {
+        logoElem.innerHTML = `<img src="${u.logo_url}" style="width:100%; height:100%; object-fit:contain;" alt="${u.name}" onerror="this.src='/Logo.png'">`;
+      } else {
+        logoElem.textContent = u.short_name || 'UNI';
+      }
+
+      // Populate Programs
+      const programs = u.programs || [];
+      document.getElementById('modalProgramsCount').textContent = `${programs.length} Programs`;
+      const progsList = document.getElementById('modalProgramsList');
+
+      if (programs.length === 0) {
+        progsList.innerHTML = `<div style="text-align:center; padding:20px; color:var(--color-text-muted);">No programs currently listed for this institution.</div>`;
+      } else {
+        progsList.innerHTML = programs.map(p => {
+          const appKey = `${u.id}-${p.id}`;
+          const isApplied = appliedProgramIds.has(appKey);
+          const reqGroup = p.required_group ? `Stream: ${p.required_group}` : 'All Streams Eligible';
+
+          let applyButtonHtml = '';
+          if (isApplied) {
+            applyButtonHtml = `<button type="button" class="btn" disabled style="background:var(--color-success-subtle); color:var(--color-success); border:1px solid var(--color-success-border); padding:6px 14px; font-size:12px; cursor:default; display:inline-flex; align-items:center; gap:5px;"><img src="/images/icons/check-minimal.png" alt="" style="width:11px; height:11px; vertical-align:middle;"> Already Applied</button>`;
+          } else {
+            applyButtonHtml = `<button type="button" class="btn btn-primary" style="padding:6px 14px; font-size:12px;" onclick="applyToProgram(${u.id}, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">Apply Now</button>`;
+          }
+
+          return `
+            <div class="program-card-item">
+              <div>
+                <div style="font-weight:700; color:var(--color-primary-dark); font-size:14px;">${p.name}</div>
+                <div style="font-size:12px; color:var(--color-text-secondary); margin:2px 0;">${p.department}</div>
+                <div style="display:flex; gap:12px; font-size:11.5px; color:var(--color-text-muted);">
+                  <span>Seats: <strong>${p.seats || 50}</strong></span>
+                  <span>•</span>
+                  <span>Min GPA: <strong>${p.min_gpa.toFixed(2)}</strong></span>
+                  <span>•</span>
+                  <span style="color:var(--color-primary);">${reqGroup}</span>
+                </div>
+              </div>
+              <div>
+                ${applyButtonHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeUniDetailModal() {
+      const modal = document.getElementById('uniDetailModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Direct apply to program
+    async function applyToProgram(uniId, progId, progName) {
+      // ── Profile completion gate (frontend) ──
+      if (!studentUser || !studentUser.profile_completed) {
+        const goToProfile = confirm(
+          '⚠️ You must complete your profile before applying.\n\n' +
+          'Your personal information, address, and academic details are required.\n\n' +
+          'Click OK to go to your Profile page now.'
+        );
+        if (goToProfile) {
+          window.location.href = '/student/profile.html';
+        }
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to apply for "${progName}"?\n\nAfter applying, you will be taken to the payment section.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            university_id: uniId,
+            program_id: progId
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          appliedProgramIds.add(`${uniId}-${progId}`);
+          // Re-render modal to show applied state
+          openUniDetailModal(uniId);
+
+          // Redirect to payments page so student can pay immediately
+          showToast(`Application submitted! Redirecting to payment...`, 'success');
+          setTimeout(() => {
+            window.location.href = '/student/payments.html?pay=' + data.application_id;
+          }, 1200);
+        } else {
+          // Handle profile-incomplete error from backend
+          if (data.redirect) {
+            alert(data.message);
+            window.location.href = data.redirect;
+            return;
+          }
+          alert(data.message || 'Failed to submit application.');
+        }
+      } catch (err) {
+        console.error('Error applying to program:', err);
+        alert('Network error while applying.');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Admin - Verify Applications</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    .bulk-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--color-primary-dark);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .bulk-bar.visible {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout" id="appLayout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="/admin/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-admin">Admin</span>
+          </div>
+        </a>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/admin/dashboard.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              <span class="sidebar-menu-text">Manage Students</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/managers.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="sidebar-menu-text">Manage Managers</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html?filter=unverified" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Verify Documents</span>
+              <span class="sidebar-badge" id="sidebarDocBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/notices.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Admission Notices</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html" class="sidebar-menu-link active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Verify Applications</span>
+              <span class="sidebar-badge" id="sidebarAppBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html?filter=approved_no_id" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+              <span class="sidebar-menu-text">Assign IDs</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/records.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span class="sidebar-menu-text">Manage Records</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/payments.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Verify Payments</span>
+              <span class="sidebar-badge" id="sidebarPayBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem;">
+            <a href="#" class="sidebar-menu-link" id="logoutBtn" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="sidebarUserAvatar">AD</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">System Admin</div>
+            <div class="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn btn-sm" id="quickLogoutBtn" title="Logout" style="background:transparent; border:none; color:rgba(255,255,255,0.7); font-size:1.15rem; cursor:pointer;">
+          🚪
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/admin/dashboard.html">Admin</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Applications</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="avatar avatar-md" id="topbarUserAvatar" style="background:var(--color-primary-dark); color:#fff; font-weight:700;">
+            AD
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="page-header">
+          <div class="page-header-content">
+            <h1 class="page-title">
+              <span>✅</span> Verify Applications
+            </h1>
+            <p class="page-subtitle">Review, approve, or reject student admission applications and assign official roll IDs</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-sm btn-outline" onclick="loadApplications()">
+              🔄 Refresh Queue
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="content-card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
+            <!-- Search -->
+            <div class="form-group">
+              <label class="form-label">Search Query</label>
+              <input type="text" id="searchInput" class="form-control" placeholder="Student name, email, roll ID..." onkeyup="handleSearch(event)">
+            </div>
+
+            <!-- Status Filter -->
+            <div class="form-group">
+              <label class="form-label">Application Status</label>
+              <select id="statusFilter" class="form-control" onchange="loadApplications()">
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending Review</option>
+                <option value="under_review">Under Review</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="waitlisted">Waitlisted</option>
+              </select>
+            </div>
+
+            <!-- University Filter -->
+            <div class="form-group">
+              <label class="form-label">University</label>
+              <select id="universityFilter" class="form-control" onchange="loadApplications()">
+                <option value="all">All Universities</option>
+                <!-- Populated via JS -->
+              </select>
+            </div>
+
+            <!-- Payment Filter -->
+            <div class="form-group">
+              <label class="form-label">Payment Status</label>
+              <select id="paymentFilter" class="form-control" onchange="loadApplications()">
+                <option value="all">All Payment Statuses</option>
+                <option value="verified">Verified</option>
+                <option value="paid">Paid (Pending Verification)</option>
+                <option value="unpaid">Unpaid</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bulk Action Floating/Top Bar -->
+        <div class="bulk-bar" id="bulkBar">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-weight: 700; font-size: 1rem;">⚡ Bulk Actions:</span>
+            <span id="selectedCountText">0 applications selected</span>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-sm btn-success" onclick="bulkUpdateStatus('approved')">
+              ✓ Bulk Approve
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="bulkUpdateStatus('rejected')">
+              ❌ Bulk Reject
+            </button>
+            <button class="btn btn-sm btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.4);" onclick="clearSelection()">
+              Deselect All
+            </button>
+          </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-primary-dark); margin:0;">
+                Application Queue
+              </h3>
+              <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 2px;">
+                Direct verification portal
+              </p>
+            </div>
+            <div id="appCountBadge" class="badge badge-teal">
+              0 Applications
+            </div>
+          </div>
+
+          <div id="loadingIndicator" style="text-align: center; padding: 3rem 0;">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; color: var(--color-text-secondary);">Loading applications queue...</p>
+          </div>
+
+          <div class="table-responsive" id="tableWrap" style="display: none;">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">
+                    <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" title="Select all visible">
+                  </th>
+                  <th>App ID</th>
+                  <th>Student Name</th>
+                  <th>University</th>
+                  <th>Program</th>
+                  <th>Applied Date</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Assigned ID</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="applicationsTableBody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Detail Modal with Full App Info & Student Summary -->
+  <div class="modal-overlay" id="appDetailModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="appDetailTitle">Application Details</h3>
+        <button class="modal-close-btn" onclick="closeModal('appDetailModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="appDetailBody">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="modal-footer" id="appDetailFooter">
+        <!-- Actions -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Verify / Reject Modal -->
+  <div class="modal-overlay" id="verifyActionModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title" id="verifyActionTitle">Update Application Status</h3>
+        <button class="modal-close-btn" onclick="closeModal('verifyActionModal')">&times;</button>
+      </div>
+      <form id="verifyActionForm" onsubmit="handleVerifySubmit(event)">
+        <input type="hidden" id="actionAppId">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Decision Status <span style="color:var(--color-danger);">*</span></label>
+            <select id="actionStatusSelect" class="form-control" required>
+              <option value="approved">Approved</option>
+              <option value="under_review">Under Review</option>
+              <option value="waitlisted">Waitlisted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Official Remarks / Comments</label>
+            <textarea id="actionRemarks" class="form-control" rows="3" placeholder="Reason or instructions for candidate..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('verifyActionModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveDecisionBtn">Save Decision</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Assign ID Modal -->
+  <div class="modal-overlay" id="assignIdModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title">Assign Candidate Roll ID</h3>
+        <button class="modal-close-btn" onclick="closeModal('assignIdModal')">&times;</button>
+      </div>
+      <form id="assignIdForm" onsubmit="handleAssignIdSubmit(event)">
+        <input type="hidden" id="assignAppId">
+        <div class="modal-body">
+          <div id="assignStudentPrompt" style="margin-bottom: 1rem; font-size: 0.9rem;"></div>
+          <div class="form-group">
+            <label class="form-label">Assigned Roll / Registration ID <span style="color:var(--color-danger);">*</span></label>
+            <input type="text" id="assignIdInput" class="form-control" required placeholder="e.g. DU-2026-CSE-00102">
+            <small style="color:var(--color-text-secondary); margin-top:4px; display:block;">
+              This ID will appear on candidate's Admit Card and official registration records.
+            </small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('assignIdModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm & Assign ID</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/admin/admin-common.js"></script>
+  <script>
+    let applicationsList = [];
+    let selectedAppIds = new Set();
+    let searchTimeout = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAdminAuth();
+      if (!user) return;
+
+      loadUniversitiesDropdown();
+
+      // Check URL parameters (e.g. ?id=1 or ?filter=approved_no_id)
+      const urlParams = new URLSearchParams(window.location.search);
+      const filter = urlParams.get('filter');
+      const targetId = urlParams.get('id');
+
+      if (filter === 'approved_no_id') {
+        document.getElementById('statusFilter').value = 'approved';
+      }
+
+      await loadApplications();
+
+      if (targetId) {
+        viewApplicationDetail(parseInt(targetId, 10));
+      }
+    });
+
+    async function loadUniversitiesDropdown() {
+      try {
+        const res = await fetch('/api/universities');
+        if (!res.ok) return;
+        const data = await res.json();
+        const unis = data.universities || [];
+
+        const select = document.getElementById('universityFilter');
+        unis.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u.id;
+          opt.textContent = `${u.short_name || u.name} (${u.location})`;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Failed to load universities for dropdown:', e);
+      }
+    }
+
+    function handleSearch(e) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadApplications();
+      }, 350);
+    }
+
+    async function loadApplications() {
+      const loading = document.getElementById('loadingIndicator');
+      const tableWrap = document.getElementById('tableWrap');
+      const tbody = document.getElementById('applicationsTableBody');
+      const countBadge = document.getElementById('appCountBadge');
+
+      loading.style.display = 'block';
+      tableWrap.style.display = 'none';
+      selectedAppIds.clear();
+      updateBulkBar();
+
+      const search = document.getElementById('searchInput').value.trim();
+      const status = document.getElementById('statusFilter').value;
+      const university_id = document.getElementById('universityFilter').value;
+      const payment_status = document.getElementById('paymentFilter').value;
+
+      try {
+        let url = `/api/admin/applications?status=${encodeURIComponent(status)}&university_id=${encodeURIComponent(university_id)}&payment_status=${encodeURIComponent(payment_status)}&search=${encodeURIComponent(search)}`;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Failed to load applications.');
+
+        const data = await res.json();
+        applicationsList = data.applications || [];
+
+        countBadge.textContent = `${applicationsList.length} Application${applicationsList.length === 1 ? '' : 's'}`;
+
+        tbody.innerHTML = '';
+        if (applicationsList.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="10" style="text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary);">
+                <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
+                <div style="font-weight: 600;">No matching applications found</div>
+                <p style="font-size: 0.85rem; margin-top: 4px;">Try selecting different filters or clearing search query.</p>
+              </td>
+            </tr>
+          `;
+        } else {
+          applicationsList.forEach(a => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="text-align: center;">
+                <input type="checkbox" class="row-checkbox" value="${a.id}" onchange="toggleSelectRow(${a.id}, this)">
+              </td>
+              <td><strong>#${a.id}</strong></td>
+              <td>
+                <div class="table-user-cell">
+                  <div class="table-user-avatar">${escapeHtml((a.student_name || 'S').charAt(0).toUpperCase())}</div>
+                  <div class="table-user-details">
+                    <span class="table-user-name">${escapeHtml(a.student_name)}</span>
+                    <span class="table-user-email">${escapeHtml(a.student_email)}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span style="font-weight:600; color:var(--color-primary-dark);">${escapeHtml(a.university_short_name || a.university_name)}</span>
+              </td>
+              <td>
+                <span style="font-weight:500;">${escapeHtml(a.program_name)}</span>
+                <span style="font-size:0.75rem; color:var(--color-text-secondary); display:block;">${escapeHtml(a.program_department || '')}</span>
+              </td>
+              <td style="font-size:0.85rem; color:var(--color-text-secondary);">${formatDate(a.application_date)}</td>
+              <td>${getStatusBadge(a.status)}</td>
+              <td>${getPaymentBadge(a.payment_status)}</td>
+              <td>
+                ${a.assigned_id 
+                  ? `<span style="font-weight:700; color:var(--color-accent); font-family:monospace;">${escapeHtml(a.assigned_id)}</span>` 
+                  : '<span style="color:var(--color-text-light); font-size:0.8rem;">None</span>'}
+              </td>
+              <td style="text-align: right;">
+                <div class="table-actions" style="justify-content: flex-end;">
+                  <button class="btn btn-sm btn-outline" title="View Application Details" onclick="viewApplicationDetail(${a.id})">
+                    👁️ Detail
+                  </button>
+                  <button class="btn btn-sm btn-outline" title="Verify / Reject" onclick="openVerifyModal(${a.id})">
+                    ⚖️ Verify
+                  </button>
+                  <button class="btn btn-sm btn-primary" title="Assign ID" onclick="openAssignModal(${a.id})">
+                    🆔 ID
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        loading.style.display = 'none';
+        tableWrap.style.display = 'block';
+      } catch (err) {
+        console.error(err);
+        loading.innerHTML = `<div class="alert alert-danger" style="margin:2rem auto; max-width:450px;">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    /**
+     * Checkbox & Bulk Actions
+     */
+    function toggleSelectAll(master) {
+      const checkboxes = document.querySelectorAll('.row-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = master.checked;
+        const id = parseInt(cb.value, 10);
+        if (master.checked) selectedAppIds.add(id);
+        else selectedAppIds.delete(id);
+      });
+      updateBulkBar();
+    }
+
+    function toggleSelectRow(id, cb) {
+      if (cb.checked) selectedAppIds.add(id);
+      else selectedAppIds.delete(id);
+
+      const all = document.querySelectorAll('.row-checkbox');
+      const master = document.getElementById('selectAllCheckbox');
+      master.checked = all.length > 0 && selectedAppIds.size === all.length;
+      updateBulkBar();
+    }
+
+    function clearSelection() {
+      selectedAppIds.clear();
+      document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = false);
+      const master = document.getElementById('selectAllCheckbox');
+      if (master) master.checked = false;
+      updateBulkBar();
+    }
+
+    function updateBulkBar() {
+      const bar = document.getElementById('bulkBar');
+      const text = document.getElementById('selectedCountText');
+      if (selectedAppIds.size > 0) {
+        bar.classList.add('visible');
+        text.textContent = `${selectedAppIds.size} application${selectedAppIds.size === 1 ? '' : 's'} selected`;
+      } else {
+        bar.classList.remove('visible');
+      }
+    }
+
+    async function bulkUpdateStatus(status) {
+      if (selectedAppIds.size === 0) return;
+      const count = selectedAppIds.size;
+      if (!confirm(`Are you sure you want to mark ${count} applications as ${status.toUpperCase()}?`)) return;
+
+      const ids = Array.from(selectedAppIds);
+      let successCount = 0;
+
+      for (const id of ids) {
+        try {
+          const res = await fetch(`/api/admin/applications/${id}/verify`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status, remarks: `Bulk updated to ${status} by admin.` })
+          });
+          if (res.ok) successCount++;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      showToast(`Successfully updated ${successCount} of ${count} applications!`);
+      clearSelection();
+      loadApplications();
+      loadSidebarBadgeCounts();
+    }
+
+    /**
+     * View Details Modal
+     */
+    function viewApplicationDetail(appId) {
+      const app = applicationsList.find(a => a.id === appId);
+      if (!app) return;
+
+      document.getElementById('appDetailTitle').textContent = `Application #${app.id} - ${app.student_name}`;
+      const body = document.getElementById('appDetailBody');
+      const footer = document.getElementById('appDetailFooter');
+
+      body.innerHTML = `
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem; margin-bottom:1.5rem;">
+          <!-- Program Card -->
+          <div style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:1.25rem; background:#fafbfc;">
+            <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--color-text-secondary);">Application Overview</div>
+            <h4 style="margin:6px 0; color:var(--color-primary-dark); font-size:1.15rem;">${escapeHtml(app.university_name)}</h4>
+            <div style="font-size:0.95rem; font-weight:600; color:var(--color-accent);">${escapeHtml(app.program_name)}</div>
+            <div style="font-size:0.8rem; color:var(--color-text-secondary); margin-top:2px;">Department: ${escapeHtml(app.program_department || 'General')}</div>
+            <div style="margin-top:12px; display:flex; gap:8px;">
+              ${getStatusBadge(app.status)}
+              ${getPaymentBadge(app.payment_status)}
+            </div>
+            <div style="margin-top:10px; font-size:0.85rem;">
+              <strong>Assigned Roll ID:</strong> ${app.assigned_id ? `<span style="color:var(--color-accent); font-weight:700;">${escapeHtml(app.assigned_id)}</span>` : '<span style="color:var(--color-text-secondary);">None assigned yet</span>'}
+            </div>
+          </div>
+
+          <!-- Student Profile Summary -->
+          <div style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:1.25rem; background:#fafbfc;">
+            <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--color-text-secondary);">Candidate Details</div>
+            <h4 style="margin:6px 0; color:var(--color-primary-dark); font-size:1.15rem;">${escapeHtml(app.student_name)}</h4>
+            <div style="font-size:0.85rem; color:var(--color-text-secondary);">${escapeHtml(app.student_email)}</div>
+            <div style="font-size:0.85rem; color:var(--color-text-secondary);">${escapeHtml(app.student_phone || 'No phone')}</div>
+            <div style="margin-top:10px; display:flex; gap:12px; font-size:0.85rem;">
+              <div><strong>SSC GPA:</strong> ${app.ssc_gpa || 'N/A'}</div>
+              <div><strong>HSC GPA:</strong> ${app.hsc_gpa || 'N/A'}</div>
+              <div><strong>Group:</strong> ${app.hsc_group || 'N/A'}</div>
+            </div>
+            <div style="margin-top:6px;">
+              <strong>Documents:</strong> ${getDocBadge(app.documents_verified)}
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:1rem; margin-bottom:1rem;">
+          <div style="font-size:0.8rem; font-weight:700; color:var(--color-text-secondary); text-transform:uppercase;">Financial / Payment Summary</div>
+          <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.9rem;">
+            <span>Amount: <strong>${formatCurrency(app.payment_amount)}</strong></span>
+            <span>Status: <strong>${escapeHtml(app.payment_status || 'unpaid').toUpperCase()}</strong></span>
+            <span>Transaction: <strong>${escapeHtml(app.payment_transaction_id || 'N/A')}</strong></span>
+            <span>Date: <strong>${formatDateTime(app.payment_date)}</strong></span>
+          </div>
+        </div>
+
+        ${app.remarks ? `
+          <div class="alert alert-info" style="margin-top:1rem;">
+            <strong>Remarks / History:</strong> ${escapeHtml(app.remarks)}
+          </div>
+        ` : ''}
+      `;
+
+      footer.innerHTML = `
+        <button class="btn btn-outline" onclick="closeModal('appDetailModal')">Close</button>
+        <button class="btn btn-primary" onclick="closeModal('appDetailModal'); openAssignModal(${app.id});">
+          🆔 Assign Roll ID
+        </button>
+        <button class="btn btn-success" onclick="closeModal('appDetailModal'); openVerifyModal(${app.id});">
+          ⚖️ Verify / Change Status
+        </button>
+      `;
+
+      openModal('appDetailModal');
+    }
+
+    /**
+     * Verify Modal
+     */
+    function openVerifyModal(appId) {
+      const app = applicationsList.find(a => a.id === appId);
+      if (!app) return;
+
+      document.getElementById('actionAppId').value = app.id;
+      document.getElementById('actionStatusSelect').value = app.status || 'approved';
+      document.getElementById('actionRemarks').value = app.remarks || '';
+      document.getElementById('verifyActionTitle').textContent = `Decision for Application #${app.id} (${app.student_name})`;
+
+      openModal('verifyActionModal');
+    }
+
+    async function handleVerifySubmit(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveDecisionBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const appId = document.getElementById('actionAppId').value;
+      const status = document.getElementById('actionStatusSelect').value;
+      const remarks = document.getElementById('actionRemarks').value.trim();
+
+      try {
+        const res = await fetch(`/api/admin/applications/${appId}/verify`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, remarks })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Verification failed.');
+
+        showToast(data.message || `Status updated to ${status}.`);
+        closeModal('verifyActionModal');
+        loadApplications();
+        loadSidebarBadgeCounts();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Decision';
+      }
+    }
+
+    /**
+     * Assign ID Modal
+     */
+    function openAssignModal(appId) {
+      const app = applicationsList.find(a => a.id === appId);
+      if (!app) return;
+
+      document.getElementById('assignAppId').value = app.id;
+      const prompt = document.getElementById('assignStudentPrompt');
+      prompt.innerHTML = `
+        Assign Roll ID for <strong>${escapeHtml(app.student_name)}</strong> &bull;
+        ${escapeHtml(app.university_short_name || app.university_name)} (${escapeHtml(app.program_name)})
+      `;
+
+      const input = document.getElementById('assignIdInput');
+      if (app.assigned_id) {
+        input.value = app.assigned_id;
+      } else {
+        const prefix = app.university_short_name || 'UNI';
+        input.value = `${prefix}-2026-${String(app.id).padStart(5, '0')}`;
+      }
+
+      openModal('assignIdModal');
+    }
+
+    async function handleAssignIdSubmit(e) {
+      e.preventDefault();
+      const appId = document.getElementById('assignAppId').value;
+      const assigned_id = document.getElementById('assignIdInput').value.trim();
+
+      try {
+        const res = await fetch(`/api/admin/applications/${appId}/assign-id`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assigned_id })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Failed to assign ID.');
+
+        showToast(data.message || 'Roll ID successfully assigned!');
+        closeModal('assignIdModal');
+        loadApplications();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

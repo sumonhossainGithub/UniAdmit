@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/dashboard" class="active">Dashboard</a></li>
+      <li><a href="/universities">Universities</a></li>
+      <li><a href="/suggestions">Suggestions</a></li>
+      <li><a href="/my-applications">My Applications</a></li>
+      <li><a href="/merit-list">Merit Lists</a></li>
+      <li><a href="/profile">My Profile</a></li>
+    </ul>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div style="position: relative;">
+        <button id="notifBell" class="notification-bell" onclick="toggleNotifications()">
+          🔔 <span id="notifBadge" class="notification-count" style="display:none;">0</span>
+        </button>
+        <div id="notifDropdown" class="notif-dropdown">
+          <div style="padding: 10px 14px; border-bottom: 1px solid var(--border); font-weight: bold; font-size: 13px; display: flex; justify-content: space-between;">
+            <span>Notifications</span>
+            <button onclick="markAllNotificationsRead()" style="background:none; border:none; color:var(--primary); font-size:11px; cursor:pointer;">Mark all read</button>
+          </div>
+          <div id="notifList"></div>
+        </div>
+      </div>
+      <div class="user-badge" id="userNameBadge">Student</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" id="welcomeHeading">Welcome to UniAdmit</h1>
+        <p class="page-subtitle">Track your university applications, fee payments, and admission tests in real-time.</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="/suggestions" class="btn btn-primary">🎯 View Suggestions</a>
+        <a href="/universities" class="btn btn-outline">🏛️ Browse Universities</a>
+      </div>
+    </div>
+
+    <!-- Profile Incomplete Alert if applicable -->
+    <div id="profileAlert" class="card" style="display:none; background:#fffbeb; border-color:#fde68a; margin-bottom: 24px; border-left: 4px solid var(--warning);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h4 style="color:#b45309; font-size: 15px; margin-bottom: 4px;">⚠️ Profile Incomplete</h4>
+          <p style="color:#92400e; font-size: 13px;">Please complete your academic records (SSC & HSC GPA) to receive smart matching recommendations and enable admit card downloads.</p>
+        </div>
+        <a href="/profile" class="btn btn-primary btn-sm">Complete Profile Now →</a>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-4" style="margin-bottom: 24px;">
+      <div class="stat-card">
+        <div class="stat-icon blue">📝</div>
+        <div>
+          <div class="stat-value" id="statTotalApps">0</div>
+          <div class="stat-label">Applications Submitted</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div>
+          <div class="stat-value" id="statApprovedApps">0</div>
+          <div class="stat-label">Applications Approved</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">💳</div>
+        <div>
+          <div class="stat-value" id="statPaidFees">0 BDT</div>
+          <div class="stat-label">Application Fees Paid</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">🎓</div>
+        <div>
+          <div class="stat-value" id="statMeritCount">0</div>
+          <div class="stat-label">Merit Positions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Central Content Grid -->
+    <div class="grid grid-cols-2" style="margin-bottom: 24px;">
+      <!-- Recent Applications -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">My Recent Applications</h2>
+          <a href="/my-applications" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div id="recentAppsList">
+          <p style="color:var(--text-muted); font-size: 13px;">Loading applications...</p>
+        </div>
+      </div>
+
+      <!-- Admission Notices -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Admission Announcements & Circulars</h2>
+          <span class="badge badge-info">Latest</span>
+        </div>
+        <div id="noticesList">
+          <p style="color:var(--text-muted); font-size: 13px;">Loading announcements...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    async function loadDashboard() {
+      try {
+        // Fetch Current User
+        const userRes = await fetch('/api/auth/me');
+        if (!userRes.ok) {
+          window.location.href = '/';
+          return;
+        }
+        const userData = await userRes.json();
+        const user = userData.user;
+
+        document.getElementById('userNameBadge').innerText = user.full_name || user.email;
+        document.getElementById('welcomeHeading').innerText = `Welcome back, ${user.full_name || 'Student'}!`;
+
+        if (!user.profile_completed || !user.profile || !user.profile.ssc_gpa) {
+          document.getElementById('profileAlert').style.display = 'block';
+        }
+
+        // Fetch Applications
+        const appsRes = await fetch('/api/applications');
+        const appsData = await appsRes.json();
+        const apps = appsData.applications || [];
+
+        document.getElementById('statTotalApps').innerText = apps.length;
+        const approvedCount = apps.filter(a => a.status === 'approved').length;
+        document.getElementById('statApprovedApps').innerText = approvedCount;
+
+        const totalFees = apps
+          .filter(a => a.payment_status === 'paid' || a.payment_status === 'verified')
+          .reduce((sum, a) => sum + (a.payment_amount || 0), 0);
+        document.getElementById('statPaidFees').innerText = `${totalFees.toLocaleString()} BDT`;
+
+        // Render Recent Applications
+        const recentAppsContainer = document.getElementById('recentAppsList');
+        if (apps.length === 0) {
+          recentAppsContainer.innerHTML = `
+            <div style="text-align:center; padding: 30px 10px;">
+              <p style="color:var(--text-muted); font-size:14px; margin-bottom:12px;">You haven't submitted any applications yet.</p>
+              <a href="/universities" class="btn btn-primary btn-sm">Explore Universities</a>
+            </div>
+          `;
+        } else {
+          recentAppsContainer.innerHTML = `
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>University & Program</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${apps.slice(0, 5).map(app => `
+                    <tr>
+                      <td>
+                        <strong>${app.university_short_name}</strong> - ${app.program_name}
+                        <div style="font-size:11px; color:var(--text-muted);">Applied: ${app.application_date.split(' ')[0]}</div>
+                      </td>
+                      <td>
+                        <span class="badge ${getStatusBadge(app.status)}">${app.status.replace('_', ' ')}</span>
+                      </td>
+                      <td>
+                        <span class="badge ${getPaymentBadge(app.payment_status)}">${app.payment_status}</span>
+                      </td>
+                      <td>
+                        ${app.admit_card_generated ? `
+                          <a href="/api/applications/${app.id}/admit-card" target="_blank" class="btn btn-primary btn-sm" style="font-size:11px;">🖨️ Admit Card</a>
+                        ` : app.payment_status === 'unpaid' ? `
+                          <a href="/my-applications" class="btn btn-success btn-sm" style="font-size:11px;">Pay Fee</a>
+                        ` : `
+                          <span style="font-size:11px; color:var(--text-muted);">In Review</span>
+                        `}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+
+        // Fetch Notices
+        const noticesRes = await fetch('/api/admin/notices');
+        const noticesData = await noticesRes.json();
+        const notices = noticesData.notices || [];
+
+        const noticesContainer = document.getElementById('noticesList');
+        if (notices.length === 0) {
+          noticesContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No active notices at this time.</p>';
+        } else {
+          noticesContainer.innerHTML = notices.slice(0, 4).map(n => `
+            <div style="padding: 12px; border-bottom: 1px solid var(--border);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+                <strong style="font-size:14px; color:var(--dark);">${n.title}</strong>
+                <span style="font-size:11px; color:var(--text-muted);">${n.created_at ? n.created_at.split(' ')[0] : ''}</span>
+              </div>
+              <p style="font-size:13px; color:var(--text-main); margin-bottom:6px;">${n.content}</p>
+              ${n.university_short_name ? `<span class="badge badge-secondary">${n.university_short_name}</span>` : '<span class="badge badge-info">All Universities</span>'}
+            </div>
+          `).join('');
+        }
+
+        // Fetch Merit List
+        const meritRes = await fetch('/api/merit-lists');
+        const meritData = await meritRes.json();
+        const merits = meritData.merit_list || [];
+        const studentMerits = merits.filter(m => m.student_name === user.full_name);
+        document.getElementById('statMeritCount').innerText = studentMerits.length;
+
+        // Fetch Notifications
+        loadNotifications();
+      } catch (err) {
+        console.error('Error loading student dashboard:', err);
+      }
+    }
+
+    async function loadNotifications() {
+      try {
+        const res = await fetch('/api/notifications');
+        const data = await res.json();
+        const list = data.notifications || [];
+        const count = data.unread_count || 0;
+
+        const badge = document.getElementById('notifBadge');
+        if (count > 0) {
+          badge.innerText = count;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+
+        const notifContainer = document.getElementById('notifList');
+        if (list.length === 0) {
+          notifContainer.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">No notifications yet.</div>';
+        } else {
+          notifContainer.innerHTML = list.slice(0, 8).map(n => `
+            <div class="notif-item ${!n.is_read ? 'unread' : ''}">
+              <div style="font-weight:600; color:var(--dark); margin-bottom:2px;">${n.title}</div>
+              <div style="font-size:12px; color:var(--text-main);">${n.message}</div>
+              <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">${n.created_at || ''}</div>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Failed to load notifications:', err);
+      }
+    }
+
+    function toggleNotifications() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    async function markAllNotificationsRead() {
+      await fetch('/api/notifications/read', { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: '{}' });
+      loadNotifications();
+    }
+
+    function getStatusBadge(status) {
+      switch(status) {
+        case 'approved': return 'badge-success';
+        case 'under_review': return 'badge-info';
+        case 'rejected': return 'badge-danger';
+        case 'waitlisted': return 'badge-warning';
+        default: return 'badge-secondary';
+      }
+    }
+
+    function getPaymentBadge(status) {
+      switch(status) {
+        case 'verified': return 'badge-success';
+        case 'paid': return 'badge-info';
+        default: return 'badge-warning';
+      }
+    }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    window.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('notifDropdown');
+      const bell = document.getElementById('notifBell');
+      if (dropdown && bell && !dropdown.contains(e.target) && !bell.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    loadDashboard();
+  </script>
+</body>
+</html>

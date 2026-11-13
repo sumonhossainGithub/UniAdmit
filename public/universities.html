@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universities Directory - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .uni-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    .uni-header {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .uni-logo {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #f8fafc;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+    .uni-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .tag-public { background: #e0f2fe; color: #0284c7; }
+    .tag-private { background: #fef3c7; color: #d97706; }
+    .criteria-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      margin: 12px 0;
+      font-size: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/universities" class="active">Universities</a></li>
+      <li><a href="/suggestions">Suggestions</a></li>
+      <li><a href="/my-applications">My Applications</a></li>
+      <li><a href="/merit-list">Merit Lists</a></li>
+      <li><a href="/profile">My Profile</a></li>
+    </ul>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="user-badge" id="userNameBadge">Student</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Explore Universities & Programs</h1>
+        <p class="page-subtitle">Find accredited universities across Bangladesh and submit your admission application.</p>
+      </div>
+      <a href="/suggestions" class="btn btn-primary">🎯 Personalized Suggestions</a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div style="flex: 2; min-width: 250px;">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by university name, short name, or district..." oninput="filterUniversities()">
+      </div>
+      <div style="flex: 1; min-width: 150px;">
+        <select id="typeFilter" class="form-control" onchange="filterUniversities()">
+          <option value="all">All Types (Public & Private)</option>
+          <option value="public">Public Universities</option>
+          <option value="private">Private Universities</option>
+        </select>
+      </div>
+      <div style="flex: 1; min-width: 150px;">
+        <select id="gpaFilter" class="form-control" onchange="filterUniversities()">
+          <option value="">Any Minimum GPA</option>
+          <option value="3.0">Min GPA 3.00</option>
+          <option value="3.5">Min GPA 3.50</option>
+          <option value="4.0">Min GPA 4.00</option>
+          <option value="4.5">Min GPA 4.50</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- University Grid -->
+    <div id="uniGrid" class="grid grid-cols-3">
+      <p style="color:var(--text-muted); padding:20px;">Loading universities...</p>
+    </div>
+  </div>
+
+  <!-- University Details & Apply Modal -->
+  <div id="uniModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+        <div style="display:flex; gap:16px; align-items:center;">
+          <img id="modalUniLogo" src="/Logo.png" class="uni-logo" alt="Logo">
+          <div>
+            <h2 id="modalUniName" style="font-size:20px; font-weight:800; color:var(--dark);">University Name</h2>
+            <p id="modalUniLocation" style="font-size:13px; color:var(--text-muted);"></p>
+          </div>
+        </div>
+        <button onclick="closeModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+
+      <p id="modalUniDesc" style="font-size:13px; color:var(--text-main); margin-bottom:16px; line-height:1.6;"></p>
+
+      <div class="criteria-box" style="margin-bottom:20px;">
+        <div><strong>Min SSC GPA:</strong> <span id="modalSscGpa"></span></div>
+        <div><strong>Min HSC GPA:</strong> <span id="modalHscGpa"></span></div>
+        <div><strong>Application Fee:</strong> <span id="modalFee"></span> BDT</div>
+        <div><strong>Deadline:</strong> <span id="modalDeadline"></span></div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <h4 style="font-size:14px; font-weight:700; color:var(--dark); margin-bottom:10px;">Available Programs & Seat Capacity</h4>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Program Name</th>
+                <th>Department</th>
+                <th>Stream</th>
+                <th>Seats</th>
+                <th>Select</th>
+              </tr>
+            </thead>
+            <tbody id="modalProgramsList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="modalNoticeBox" style="font-size:12px; color:#475569; background:#f1f5f9; padding:10px; border-radius:6px; margin-bottom:16px; display:none;">
+        <strong>Circular Note:</strong> <span id="modalCircularText"></span>
+      </div>
+
+      <div id="applyMsg" style="display:none; padding:10px; border-radius:6px; font-size:13px; margin-bottom:16px;"></div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <a id="modalUniWebsite" href="#" target="_blank" style="font-size:13px; color:var(--primary); text-decoration:none; font-weight:600;">Visit Official Website ↗</a>
+        <div style="display:flex; gap:10px;">
+          <button onclick="closeModal()" class="btn btn-outline">Close</button>
+          <button id="applyBtn" onclick="submitApplication()" class="btn btn-primary">Apply Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let universitiesData = [];
+    let selectedUni = null;
+    let selectedProgramId = null;
+
+    async function init() {
+      try {
+        const userRes = await fetch('/api/auth/me');
+        if (userRes.ok) {
+          const u = await userRes.json();
+          document.getElementById('userNameBadge').innerText = u.user.full_name || 'Student';
+        }
+        await loadUniversities();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadUniversities() {
+      try {
+        const res = await fetch('/api/universities');
+        const data = await res.json();
+        universitiesData = data.universities || [];
+        renderUniversities(universitiesData);
+      } catch (err) {
+        console.error('Failed to load universities:', err);
+      }
+    }
+
+    function renderUniversities(list) {
+      const grid = document.getElementById('uniGrid');
+      if (list.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No universities found matching your search criteria.</div>';
+        return;
+      }
+
+      grid.innerHTML = list.map(uni => `
+        <div class="card uni-card">
+          <div>
+            <div class="uni-header">
+              <img src="${uni.logo_url || '/Logo.png'}" onerror="this.src='/Logo.png'" class="uni-logo" alt="${uni.short_name}">
+              <div>
+                <span class="uni-tag ${uni.type === 'public' ? 'tag-public' : 'tag-private'}">${uni.type}</span>
+                <h3 style="font-size:16px; font-weight:700; color:var(--dark); margin-top:4px;">${uni.name}</h3>
+                <span style="font-size:12px; color:var(--text-muted);">📍 ${uni.location}</span>
+              </div>
+            </div>
+
+            <p style="font-size:12.5px; color:var(--text-main); margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
+              ${uni.description || ''}
+            </p>
+
+            <div class="criteria-box">
+              <div><strong>Min SSC:</strong> ${uni.min_gpa_ssc.toFixed(2)}</div>
+              <div><strong>Min HSC:</strong> ${uni.min_gpa_hsc.toFixed(2)}</div>
+              <div><strong>Fee:</strong> ${uni.application_fee} BDT</div>
+              <div><strong>Programs:</strong> ${uni.programs ? uni.programs.length : uni.program_count} Offered</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px; display:flex; gap:8px;">
+            <button onclick="openUniModal(${uni.id})" class="btn btn-primary btn-block btn-sm">View & Apply</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterUniversities() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const type = document.getElementById('typeFilter').value;
+      const minGpa = parseFloat(document.getElementById('gpaFilter').value);
+
+      const filtered = universitiesData.filter(u => {
+        const matchSearch = !search ||
+          u.name.toLowerCase().includes(search) ||
+          u.short_name.toLowerCase().includes(search) ||
+          u.location.toLowerCase().includes(search);
+
+        const matchType = type === 'all' || u.type.toLowerCase() === type;
+        const matchGpa = isNaN(minGpa) || (u.min_gpa_ssc <= minGpa && u.min_gpa_hsc <= minGpa);
+
+        return matchSearch && matchType && matchGpa;
+      });
+
+      renderUniversities(filtered);
+    }
+
+    function openUniModal(uniId) {
+      selectedUni = universitiesData.find(u => u.id === uniId);
+      if (!selectedUni) return;
+
+      selectedProgramId = null;
+      document.getElementById('modalUniName').innerText = `${selectedUni.name} (${selectedUni.short_name})`;
+      document.getElementById('modalUniLocation').innerText = `📍 ${selectedUni.location} • ${selectedUni.type.toUpperCase()}`;
+      document.getElementById('modalUniLogo').src = selectedUni.logo_url || '/Logo.png';
+      document.getElementById('modalUniDesc').innerText = selectedUni.description || '';
+      document.getElementById('modalSscGpa').innerText = selectedUni.min_gpa_ssc.toFixed(2);
+      document.getElementById('modalHscGpa').innerText = selectedUni.min_gpa_hsc.toFixed(2);
+      document.getElementById('modalFee').innerText = selectedUni.application_fee;
+      document.getElementById('modalDeadline').innerText = selectedUni.admission_end || 'Open';
+      document.getElementById('modalUniWebsite').href = selectedUni.website || '#';
+
+      if (selectedUni.circular_text) {
+        document.getElementById('modalNoticeBox').style.display = 'block';
+        document.getElementById('modalCircularText').innerText = selectedUni.circular_text;
+      } else {
+        document.getElementById('modalNoticeBox').style.display = 'none';
+      }
+
+      const tbody = document.getElementById('modalProgramsList');
+      tbody.innerHTML = (selectedUni.programs || []).map(p => `
+        <tr>
+          <td><strong>${p.name}</strong></td>
+          <td>${p.department}</td>
+          <td><span class="badge badge-secondary">${p.required_group || 'Any'}</span></td>
+          <td>${p.seats}</td>
+          <td>
+            <input type="radio" name="selected_program" value="${p.id}" onchange="selectProgram(${p.id})">
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('applyMsg').style.display = 'none';
+      document.getElementById('applyBtn').disabled = false;
+      document.getElementById('applyBtn').innerText = 'Apply Now';
+      document.getElementById('uniModal').classList.add('show');
+    }
+
+    function selectProgram(progId) {
+      selectedProgramId = progId;
+    }
+
+    function closeModal() {
+      document.getElementById('uniModal').classList.remove('show');
+    }
+
+    async function submitApplication() {
+      if (!selectedProgramId || !selectedUni) {
+        alert('Please select a program to apply.');
+        return;
+      }
+
+      const applyBtn = document.getElementById('applyBtn');
+      const msgBox = document.getElementById('applyMsg');
+      applyBtn.disabled = true;
+      applyBtn.innerText = 'Submitting...';
+
+      try {
+        const res = await fetch('/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            university_id: selectedUni.id,
+            program_id: selectedProgramId
+          })
+        });
+
+        const data = await res.json();
+        msgBox.style.display = 'block';
+
+        if (data.success) {
+          msgBox.style.background = '#dcfce7';
+          msgBox.style.color = '#15803d';
+          msgBox.innerHTML = `<strong>Success!</strong> Application registered. Redirecting to payment section...`;
+          applyBtn.innerText = 'Redirecting...';
+          setTimeout(() => {
+            window.location.href = '/student/payments.html?pay=' + data.application_id;
+          }, 1200);
+        } else {
+          if (data.redirect) {
+            alert(data.message);
+            window.location.href = data.redirect;
+            return;
+          }
+          msgBox.style.background = '#fee2e2';
+          msgBox.style.color = '#b91c1c';
+          msgBox.innerText = data.message || 'Application failed.';
+          applyBtn.disabled = false;
+          applyBtn.innerText = 'Apply Now';
+        }
+      } catch (err) {
+        msgBox.style.display = 'block';
+        msgBox.style.background = '#fee2e2';
+        msgBox.style.color = '#b91c1c';
+        msgBox.innerText = 'Network error. Could not submit application.';
+        applyBtn.disabled = false;
+        applyBtn.innerText = 'Apply Now';
+      }
+    }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    window.onclick = function(e) {
+      const modal = document.getElementById('uniModal');
+      if (e.target === modal) closeModal();
+    }
+
+    init();
+  </script>
+</body>
+</html>

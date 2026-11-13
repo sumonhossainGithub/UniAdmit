@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart University Suggestions - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .tier-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tier-high { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .tier-competitive { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .tier-eligible { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+    .prog-pill {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/universities">Universities</a></li>
+      <li><a href="/suggestions" class="active">Suggestions</a></li>
+      <li><a href="/my-applications">My Applications</a></li>
+      <li><a href="/merit-list">Merit Lists</a></li>
+      <li><a href="/profile">My Profile</a></li>
+    </ul>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="user-badge" id="userNameBadge">Student</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">🎯 Smart University Suggestions</h1>
+        <p class="page-subtitle">Personalized algorithm matching your SSC/HSC GPA and academic background to university requirements.</p>
+      </div>
+      <a href="/profile" class="btn btn-outline">✏️ Update Qualifications</a>
+    </div>
+
+    <!-- Student Qualification Banner -->
+    <div class="card" style="margin-bottom: 24px; background: linear-gradient(to right, #ffffff, #eff6ff);">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="font-size:16px; font-weight:700; color:var(--dark); margin-bottom:4px;">Your Academic Profile</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Criteria used for admission matching:</p>
+        </div>
+        <div style="display:flex; gap:20px; flex-wrap:wrap;" id="qualificationsSummary">
+          <div><span style="font-size:12px; color:var(--text-muted);">SSC GPA:</span> <strong id="valSscGpa">-</strong> (<span id="valSscGroup">-</span>)</div>
+          <div><span style="font-size:12px; color:var(--text-muted);">HSC GPA:</span> <strong id="valHscGpa">-</strong> (<span id="valHscGroup">-</span>)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert for incomplete profile -->
+    <div id="incompleteProfileBox" class="card" style="display:none; background:#fffbeb; border-color:#fde68a; border-left:4px solid var(--warning); margin-bottom:24px;">
+      <h3 style="color:#b45309; font-size:16px; margin-bottom:6px;">⚠️ Academic Results Required</h3>
+      <p style="color:#92400e; font-size:13px; margin-bottom:12px;">Please set your SSC and HSC GPA in your profile so we can calculate eligible institutions and programs for you.</p>
+      <a href="/profile" class="btn btn-primary btn-sm">Go to Profile →</a>
+    </div>
+
+    <!-- Suggestions List -->
+    <div id="suggestionsList" class="grid grid-cols-2">
+      <p style="color:var(--text-muted); padding:20px;">Calculating matching universities...</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    async function loadSuggestions() {
+      try {
+        const userRes = await fetch('/api/auth/me');
+        if (userRes.ok) {
+          const u = await userRes.json();
+          document.getElementById('userNameBadge').innerText = u.user.full_name || 'Student';
+        }
+
+        const res = await fetch('/api/universities/suggestions');
+        const data = await res.json();
+
+        if (data.incomplete_profile) {
+          document.getElementById('incompleteProfileBox').style.display = 'block';
+          document.getElementById('suggestionsList').innerHTML = '';
+          return;
+        }
+
+        const q = data.student_qualifications || {};
+        document.getElementById('valSscGpa').innerText = q.ssc_gpa ? q.ssc_gpa.toFixed(2) : 'N/A';
+        document.getElementById('valSscGroup').innerText = q.ssc_group || 'General';
+        document.getElementById('valHscGpa').innerText = q.hsc_gpa ? q.hsc_gpa.toFixed(2) : 'N/A';
+        document.getElementById('valHscGroup').innerText = q.hsc_group || 'General';
+
+        const list = data.suggestions || [];
+        const container = document.getElementById('suggestionsList');
+
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="card" style="grid-column: 1/-1; text-align:center; padding:40px;">
+              <h3 style="font-size:16px; color:var(--dark); margin-bottom:8px;">No direct matches found</h3>
+              <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Try browsing the full directory of universities to see open admission circulars.</p>
+              <a href="/universities" class="btn btn-primary btn-sm">Explore All Universities</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(item => {
+          const uni = item.university;
+          let tierClass = 'tier-eligible';
+          let tierIcon = '⭐';
+          if (item.match_tier === 'High Chance') {
+            tierClass = 'tier-high';
+            tierIcon = '🔥';
+          } else if (item.match_tier === 'Competitive Match') {
+            tierClass = 'tier-competitive';
+            tierIcon = '🎯';
+          }
+
+          return `
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <img src="${uni.logo_url || '/Logo.png'}" onerror="this.src='/Logo.png'" style="width:48px; height:48px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid var(--border); padding:2px;">
+                    <div>
+                      <h3 style="font-size:16px; font-weight:700; color:var(--dark);">${uni.name}</h3>
+                      <span style="font-size:12px; color:var(--text-muted);">📍 ${uni.location} • ${uni.type.toUpperCase()}</span>
+                    </div>
+                  </div>
+                  <span class="tier-badge ${tierClass}">${tierIcon} ${item.match_tier}</span>
+                </div>
+
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; display:flex; gap:14px;">
+                  <span>Min SSC: <strong>${uni.min_gpa_ssc.toFixed(2)}</strong></span>
+                  <span>Min HSC: <strong>${uni.min_gpa_hsc.toFixed(2)}</strong></span>
+                  <span>Fee: <strong>${uni.application_fee} BDT</strong></span>
+                </div>
+
+                <h4 style="font-size:13px; font-weight:700; color:var(--dark); margin-bottom:8px;">
+                  Eligible Programs (${item.eligible_programs_count}):
+                </h4>
+                <div style="max-height:180px; overflow-y:auto; margin-bottom:12px;">
+                  ${item.eligible_programs.map(prog => `
+                    <div class="prog-pill">
+                      <div>
+                        <strong>${prog.name}</strong>
+                        <div style="font-size:11px; color:var(--text-muted);">${prog.department} • Min GPA: ${prog.min_gpa.toFixed(2)}</div>
+                      </div>
+                      <button onclick="applyDirect(${uni.id}, ${prog.id}, '${prog.name.replace(/'/g, "\\'")}', '${uni.short_name}')" class="btn btn-primary btn-sm" style="font-size:11px; padding:4px 8px;">Apply</button>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div style="border-top:1px solid var(--border); padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:11px; color:var(--text-muted);">Deadline: ${uni.admission_end || 'Open'}</span>
+                <a href="${uni.website || '#'}" target="_blank" style="font-size:12px; color:var(--primary); text-decoration:none; font-weight:600;">Website ↗</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Error loading suggestions:', err);
+      }
+    }
+
+    async function applyDirect(uniId, progId, progName, uniShortName) {
+      if (!confirm(`Confirm application to ${progName} at ${uniShortName}?\n\nYou will be taken to the payment section to settle the application fee.`)) return;
+
+      try {
+        const res = await fetch('/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ university_id: uniId, program_id: progId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('Application registered! Taking you to the payment section...');
+          window.location.href = '/student/payments.html?pay=' + data.application_id;
+        } else {
+          if (data.redirect) {
+            alert(data.message);
+            window.location.href = data.redirect;
+            return;
+          }
+          alert(data.message || 'Could not submit application.');
+        }
+      } catch (err) {
+        alert('Network error submitting application.');
+      }
+    }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    loadSuggestions();
+  </script>
+</body>
+</html>

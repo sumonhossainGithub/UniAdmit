@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit - Payments & Fee Receipts</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    .receipt-container {
+      background: #ffffff;
+      border: 1px dashed var(--color-border-hover);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      position: relative;
+    }
+    .receipt-header {
+      text-align: center;
+      border-bottom: 2px dashed var(--color-border);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .receipt-row:last-child {
+      border-bottom: none;
+    }
+    .receipt-row strong {
+      color: var(--color-primary-dark);
+    }
+  </style>
+</head>
+<body class="app-layout">
+
+  <!-- =========================================================================
+       SIDEBAR NAVIGATION
+       ========================================================================= -->
+  <aside class="sidebar" aria-label="Student Navigation">
+    <div class="sidebar-header">
+      <a href="/student/dashboard.html" class="sidebar-brand">
+        <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+        <div class="brand-text">
+          <span class="brand-name">Uni<span>Admit</span></span>
+          <span class="brand-role-badge badge-student">Student</span>
+        </div>
+      </a>
+      <button type="button" class="sidebar-toggle-btn mobile-menu-close" id="sidebarCloseBtn" aria-label="Close sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main Menu</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <a href="/student/dashboard.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            <span class="sidebar-menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/profile.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="sidebar-menu-text">My Profile</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/universities.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 10h1v2H9z"/><path d="M9 14h1v2H9z"/><path d="M14 10h1v2H14z"/><path d="M14 14h1v2H14z"/></svg>
+            <span class="sidebar-menu-text">Browse Universities</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/applications.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span class="sidebar-menu-text">My Applications</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/payments.html" class="sidebar-menu-link active">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span class="sidebar-menu-text">Payments</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/merit-list.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+            <span class="sidebar-menu-text">Merit Lists</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/notifications.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="sidebar-menu-text">Notifications</span>
+            <span class="sidebar-badge" id="sidebarNotifBadge" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section" style="margin-top:20px;">Session</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <button type="button" class="sidebar-menu-link" onclick="handleLogout()" style="width:100%; border:none; text-align:left; background:transparent; cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span class="sidebar-menu-text">Logout</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar">
+          <span id="sidebarUserInitials">S</span>
+        </div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name" id="sidebarUserName">Student</span>
+          <span class="sidebar-user-role" id="sidebarUserEmail">student@uniadmit.com</span>
+        </div>
+      </div>
+      <button class="sidebar-logout-btn" onclick="handleLogout()" title="Logout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       MAIN WRAPPER & TOPBAR
+       ========================================================================= -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="breadcrumbs">
+          <span class="breadcrumb-item"><a href="/student/dashboard.html">Portal</a></span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item active">Payments</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div style="position:relative;">
+          <a href="/student/notifications.html" class="topbar-action-btn" title="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="topbar-badge" id="topbarNotifBadge" style="display:none;">0</span>
+          </a>
+        </div>
+
+        <div style="position:relative;">
+          <div class="topbar-user" id="topbarUserBtn" tabindex="0">
+            <div class="topbar-avatar" id="topbarAvatar">
+              <span id="topbarInitials">S</span>
+            </div>
+            <div class="topbar-user-meta">
+              <span class="topbar-user-name" id="topbarUserName">Student</span>
+              <span class="topbar-user-role">Student Candidate</span>
+            </div>
+            <svg class="topbar-user-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="notifications-dropdown" id="userDropdown" style="width: 220px; right: 0;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-border); background: var(--color-surface-muted);">
+              <div style="font-weight: 700; color: var(--color-primary-dark); font-size: 14px;" id="dropdownUserName">Student</div>
+              <div style="font-size: 12px; color: var(--color-text-secondary);" id="dropdownUserEmail">student@uniadmit.com</div>
+            </div>
+            <div style="padding: 8px 0;">
+              <a href="/student/profile.html" style="display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-text-primary); text-decoration:none; font-size:13px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+              </a>
+              <button onclick="handleLogout()" style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-danger); font-size:13px; background:none; border:none; text-align:left; cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =========================================================================
+         MAIN CONTENT: PAYMENTS & INVOICES
+         ========================================================================= -->
+    <main class="main-content">
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Payment History & Fee Settlements</h1>
+          <p class="page-subtitle">Inspect transaction records, settle pending application fees, and download official receipts.</p>
+        </div>
+      </div>
+
+      <!-- Payment Summary Cards Row -->
+      <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr);" aria-label="Payments Metrics">
+        <div class="stat-card stat-success">
+          <div class="stat-card-header">
+            <div class="stat-icon stat-icon-success">💰</div>
+            <span class="stat-trend trend-up">Confirmed</span>
+          </div>
+          <div class="stat-value" id="summaryTotalPaid">BDT 0</div>
+          <div class="stat-label">Total Fee Amount Paid</div>
+          <div class="stat-footer">
+            <span id="summaryPaidCount">0 transactions completed</span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-gold">
+          <div class="stat-card-header">
+            <div class="stat-icon stat-icon-gold">⏳</div>
+            <span class="stat-trend trend-neutral">Awaiting Action</span>
+          </div>
+          <div class="stat-value" id="summaryTotalPending">BDT 0</div>
+          <div class="stat-label">Pending Processing Fees</div>
+          <div class="stat-footer">
+            <span id="summaryPendingCount" style="color:var(--color-warning-hover); font-weight:600;">0 unpaid submissions</span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-teal">
+          <div class="stat-card-header">
+            <div class="stat-icon stat-icon-teal">🧾</div>
+            <span class="stat-trend trend-neutral">Total</span>
+          </div>
+          <div class="stat-value" id="summaryInvoicesCount">0</div>
+          <div class="stat-label">Total Invoices / Applications</div>
+          <div class="stat-footer">
+            <span>Centralized Fee Ledger</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Payments Table -->
+      <section class="table-card">
+        <div class="table-card-header">
+          <h2 class="content-card-title">Fee Transaction Records</h2>
+          <div style="font-size:12px; color:var(--color-text-secondary);" id="paymentsCountText">
+            0 payment records found
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>University Name</th>
+                <th>Program / Degree</th>
+                <th>Fee Amount</th>
+                <th>Date Settled</th>
+                <th>Transaction ID</th>
+                <th>Payment Status</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:36px; color:var(--color-text-muted);">
+                  <div class="spinner" style="margin-bottom:8px;"></div>
+                  <div>Loading payment records...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       PAYMENT MODAL (Simulated Checkout)
+       ========================================================================= -->
+  <div class="modal-overlay" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="checkoutModalTitle">
+          <span>💳</span> Application Fee Payment
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closeCheckoutModal()" aria-label="Close modal">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="checkoutAlert" class="alert alert-danger" style="display:none;"></div>
+
+        <div style="padding:14px; background:var(--color-surface-muted); border-radius:var(--radius-md); margin-bottom:16px;">
+          <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:2px;">Target Application:</div>
+          <div style="font-weight:700; color:var(--color-primary-dark); font-size:14px;" id="checkoutUniProgName">-</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px dashed var(--color-border);">
+            <span style="font-size:13px; font-weight:600;">Amount Payable:</span>
+            <span style="font-size:1.25rem; font-weight:800; color:var(--color-accent);" id="checkoutAmountText">BDT 0</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Select Mobile Banking / Gateway</label>
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+            <label style="border:1.5px solid var(--color-accent); border-radius:var(--radius-md); padding:10px; text-align:center; cursor:pointer; background:var(--color-accent-subtle);">
+              <input type="radio" name="checkoutMethod" value="bKash" checked style="accent-color:var(--color-accent);">
+              <div style="font-weight:700; font-size:13px; margin-top:4px; color:#e2136e;">bKash</div>
+            </label>
+            <label style="border:1.5px solid var(--color-border); border-radius:var(--radius-md); padding:10px; text-align:center; cursor:pointer;">
+              <input type="radio" name="checkoutMethod" value="Nagad" style="accent-color:var(--color-accent);">
+              <div style="font-weight:700; font-size:13px; margin-top:4px; color:#f7941d;">Nagad</div>
+            </label>
+            <label style="border:1.5px solid var(--color-border); border-radius:var(--radius-md); padding:10px; text-align:center; cursor:pointer;">
+              <input type="radio" name="checkoutMethod" value="Rocket" style="accent-color:var(--color-accent);">
+              <div style="font-weight:700; font-size:13px; margin-top:4px; color:#8c3494;">Rocket</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="checkoutTxnInput" class="form-label">Transaction ID (Optional)</label>
+          <input type="text" id="checkoutTxnInput" class="form-control" placeholder="e.g. TRX892348A (or auto-generate)">
+          <span style="font-size:11.5px; color:var(--color-text-muted); margin-top:4px; display:block;">
+            *Leave empty to generate a simulated live transaction verification token.
+          </span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeCheckoutModal()" style="background:var(--color-surface-muted); color:var(--color-primary-dark);">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmPayment" onclick="processFeePayment()">Confirm & Settle Fee</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       RECEIPT MODAL (BD Govt Automated Challan / A-Challan T.R. Form No. 6)
+       ========================================================================= -->
+  <div class="modal-overlay" id="receiptModal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
+    <div class="modal-dialog" style="max-width: 920px; width: 95%;">
+      <div class="modal-header" style="background:#006a4e; color:#ffffff; padding:12px 20px;">
+        <h3 class="modal-title" id="receiptModalTitle" style="color:#ffffff; display:flex; align-items:center; gap:10px; font-size:1.15rem;">
+          <img src="/Government_Seal_of_Bangladesh.svg" alt="BD Crest" style="width:28px; height:28px;">
+          <span>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার — স্বয়ংক্রিয় চালান ফরম (A-Challan / T.R. Form No. 6)</span>
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closeReceiptModal()" aria-label="Close modal" style="color:#ffffff; font-size:24px;">×</button>
+      </div>
+
+      <div class="modal-body" id="receiptPrintArea" style="padding:12px; background:#eef2f6;">
+        <div id="challanDynamicContainer">
+          <div class="spinner" style="margin:40px auto;"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background:#f8fafc; border-top:1px solid #cbd5e1;">
+        <button type="button" class="btn btn-secondary" onclick="closeReceiptModal()" style="background:var(--color-surface-muted); color:var(--color-primary-dark);">বন্ধ করুন (Close)</button>
+        <div style="display:flex; gap:10px;">
+          <a id="btnOpenFullChallan" href="#" target="_blank" class="btn" style="background:#0f766e; color:#ffffff; font-size:13px; text-decoration:none;">
+            ↗️ পূর্ণাঙ্গ পাতা (Full Screen Slip)
+          </a>
+          <button type="button" class="btn btn-primary" onclick="printReceipt()" style="background:#006a4e; color:#ffffff; font-size:13px;">
+            🖨️ ই-চালান প্রিন্ট (Print e-Challan)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/student.js"></script>
+  <script>
+    let studentUser = null;
+    let paymentRecords = [];
+    let activePayAppId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authData = await initStudentAuth('payments');
+      if (!authData) return;
+
+      studentUser = authData.user;
+      await loadPaymentHistory();
+
+      // If ?pay=<appId> is in URL, automatically open the checkout modal
+      const urlParams = new URLSearchParams(window.location.search);
+      const payAppId = urlParams.get('pay');
+      if (payAppId) {
+        const idNum = parseInt(payAppId, 10);
+        setTimeout(() => {
+          openCheckoutModal(idNum);
+        }, 200);
+      }
+    });
+
+    async function loadPaymentHistory() {
+      const tbody = document.getElementById('paymentsTableBody');
+      try {
+        // Attempt GET /api/student/payments, fallback to /api/applications
+        let res = await fetch('/api/student/payments');
+        if (!res.ok) {
+          res = await fetch('/api/applications');
+        }
+
+        const data = await res.json();
+        if (data.success) {
+          paymentRecords = data.payments || data.applications || [];
+          renderPayments(paymentRecords);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--color-danger); padding:24px;">Failed to load payments history.</td></tr>`;
+        }
+      } catch (err) {
+        console.error('Error loading payment history:', err);
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--color-danger); padding:24px;">Network error loading payment records.</td></tr>`;
+      }
+    }
+
+    function renderPayments(records) {
+      const tbody = document.getElementById('paymentsTableBody');
+      const countText = document.getElementById('paymentsCountText');
+
+      // Calculate Metrics
+      let totalPaid = 0;
+      let totalPending = 0;
+      let paidCount = 0;
+      let pendingCount = 0;
+
+      records.forEach(r => {
+        const amt = parseFloat(r.payment_amount) || 0;
+        const isPaid = (r.payment_status === 'paid' || r.payment_status === 'verified');
+        if (isPaid) {
+          totalPaid += amt;
+          paidCount++;
+        } else {
+          totalPending += amt;
+          pendingCount++;
+        }
+      });
+
+      document.getElementById('summaryTotalPaid').textContent = `BDT ${totalPaid.toLocaleString()}`;
+      document.getElementById('summaryPaidCount').textContent = `${paidCount} fee settlement${paidCount !== 1 ? 's' : ''}`;
+
+      document.getElementById('summaryTotalPending').textContent = `BDT ${totalPending.toLocaleString()}`;
+      document.getElementById('summaryPendingCount').textContent = `${pendingCount} unpaid submission${pendingCount !== 1 ? 's' : ''}`;
+
+      document.getElementById('summaryInvoicesCount').textContent = records.length;
+      if (countText) countText.textContent = `${records.length} fee entry recorded`;
+
+      if (records.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center; padding:44px 20px; color:var(--color-text-secondary);">
+              <div style="font-size:28px; margin-bottom:8px;">💳</div>
+              <h4 style="color:var(--color-primary-dark); margin-bottom:4px;">No Payment Invoices</h4>
+              <p style="font-size:13px; color:var(--color-text-muted); margin-bottom:14px;">
+                You have not initiated any university applications requiring fee settlement yet.
+              </p>
+              <a href="/student/universities.html" class="btn btn-primary" style="font-size:12.5px; padding:6px 14px;">
+                Explore Universities
+              </a>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = records.map(p => {
+        const appId = p.application_id || p.id;
+        const isPaid = (p.payment_status === 'paid' || p.payment_status === 'verified');
+        const amount = `BDT ${p.payment_amount || 0}`;
+        const dateText = p.payment_date
+          ? new Date(p.payment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          : (p.application_date ? new Date(p.application_date).toLocaleDateString() : '-');
+
+        let statusBadge = '<span class="badge badge-danger">Unpaid</span>';
+        if (p.payment_status === 'verified') statusBadge = '<span class="badge badge-success">Verified</span>';
+        else if (p.payment_status === 'paid') statusBadge = '<span class="badge badge-success">Paid</span>';
+
+        let actionBtn = '';
+        if (!isPaid) {
+          actionBtn = `<button type="button" class="btn btn-primary" style="padding:4px 10px; font-size:11px;" onclick="openCheckoutModal(${appId})">Pay Now</button>`;
+        } else {
+          actionBtn = `
+            <div style="display:inline-flex; gap:6px; align-items:center;">
+              <button type="button" class="btn" style="padding:4px 10px; font-size:11px; background:#006a4e; color:#ffffff; font-weight:600;" onclick="openReceiptModal(${appId})">
+                ই-চালান 🧾
+              </button>
+              <a href="/api/applications/${appId}/challan" target="_blank" class="btn btn-outline" style="padding:4px 8px; font-size:11px; border:1px solid #006a4e; color:#006a4e; text-decoration:none;" title="নতুন ট্যাবে ই-চালান খুলুন">
+                ↗️
+              </a>
+            </div>
+          `;
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:700; color:var(--color-primary-dark);">${p.university_name}</div>
+              <div style="font-size:11px; color:var(--color-text-secondary);">${p.university_short_name || ''}</div>
+            </td>
+            <td>
+              <div style="font-weight:600;">${p.program_name}</div>
+              <div style="font-size:11px; color:var(--color-text-muted);">${p.program_department || ''}</div>
+            </td>
+            <td style="font-weight:700; color:var(--color-primary-dark);">${amount}</td>
+            <td style="font-size:12.5px; color:var(--color-text-secondary);">${dateText}</td>
+            <td>
+              <span style="font-family:var(--font-family-mono); font-size:12px; color:var(--color-text-secondary);">
+                ${p.payment_transaction_id || '<span style="color:var(--color-text-muted);">-</span>'}
+              </span>
+            </td>
+            <td>${statusBadge}</td>
+            <td style="text-align:right;">
+              ${actionBtn}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Checkout Modal Logic
+    function openCheckoutModal(appId) {
+      activePayAppId = appId;
+      const rec = paymentRecords.find(r => (r.application_id || r.id) === appId);
+      if (!rec) return;
+
+      const modal = document.getElementById('checkoutModal');
+      document.getElementById('checkoutUniProgName').textContent = `${rec.university_name} - ${rec.program_name}`;
+      document.getElementById('checkoutAmountText').textContent = `BDT ${rec.payment_amount || 0}`;
+      document.getElementById('checkoutTxnInput').value = '';
+      document.getElementById('checkoutAlert').style.display = 'none';
+
+      modal.classList.add('active');
+    }
+
+    function closeCheckoutModal() {
+      const modal = document.getElementById('checkoutModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    async function processFeePayment() {
+      const alertBox = document.getElementById('checkoutAlert');
+      const submitBtn = document.getElementById('btnConfirmPayment');
+      const methodRadio = document.querySelector('input[name="checkoutMethod"]:checked');
+      const paymentMethod = methodRadio ? methodRadio.value : 'bKash';
+      const customTxn = document.getElementById('checkoutTxnInput').value.trim();
+
+      alertBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying Transaction...';
+
+      try {
+        const res = await fetch(`/api/applications/${activePayAppId}/pay`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            payment_method: paymentMethod,
+            transaction_id: customTxn || undefined
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          closeCheckoutModal();
+          showToast(`Fee settled! Transaction ID: ${data.transaction_id}. Your application is now PENDING REVIEW by Manager / Admin.`, 'success');
+          await loadPaymentHistory();
+        } else {
+          alertBox.textContent = data.message || 'Payment processing error.';
+          alertBox.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Payment error:', err);
+        alertBox.textContent = 'Network error while contacting payment processing gateway.';
+        alertBox.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirm & Settle Fee';
+      }
+    }
+
+    // BD Govt e-Challan (A-Challan) Modal Logic
+    let activeChallanAppId = null;
+
+    function openReceiptModal(appId) {
+      activeChallanAppId = appId;
+      const modal = document.getElementById('receiptModal');
+      const container = document.getElementById('challanDynamicContainer');
+      const fullBtn = document.getElementById('btnOpenFullChallan');
+
+      fullBtn.href = `/api/applications/${appId}/challan`;
+      container.innerHTML = `
+        <iframe id="challanIframe" src="/api/applications/${appId}/challan" style="width:100%; height:75vh; border:none; border-radius:4px; background:#ffffff;"></iframe>
+      `;
+
+      modal.classList.add('active');
+    }
+
+    function closeReceiptModal() {
+      const modal = document.getElementById('receiptModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function printReceipt() {
+      const iframe = document.getElementById('challanIframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      } else if (activeChallanAppId) {
+        window.open(`/api/applications/${activeChallanAppId}/challan`, '_blank');
+      } else {
+        window.print();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Admin - Manage Students</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    .doc-preview-card {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      background: #fafbfc;
+      text-align: center;
+    }
+    .doc-preview-img {
+      max-width: 100%;
+      height: 180px;
+      object-fit: contain;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .profile-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 768px) {
+      .profile-info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .info-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.05em;
+    }
+    .info-value {
+      font-size: 0.95rem;
+      color: var(--color-primary-dark);
+      font-weight: 600;
+    }
+    .section-divider {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 2px solid var(--color-border);
+      padding-bottom: 4px;
+      margin: 1.5rem 0 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout" id="appLayout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="/admin/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-admin">Admin</span>
+          </div>
+        </a>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/admin/dashboard.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html" class="sidebar-menu-link active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              <span class="sidebar-menu-text">Manage Students</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/managers.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="sidebar-menu-text">Manage Managers</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html?filter=unverified" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Verify Documents</span>
+              <span class="sidebar-badge" id="sidebarDocBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/notices.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Admission Notices</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Verify Applications</span>
+              <span class="sidebar-badge" id="sidebarAppBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html?filter=approved_no_id" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+              <span class="sidebar-menu-text">Assign IDs</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/records.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span class="sidebar-menu-text">Manage Records</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/payments.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Verify Payments</span>
+              <span class="sidebar-badge" id="sidebarPayBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem;">
+            <a href="#" class="sidebar-menu-link" id="logoutBtn" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="sidebarUserAvatar">AD</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">System Admin</div>
+            <div class="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn btn-sm" id="quickLogoutBtn" title="Logout" style="background:transparent; border:none; color:rgba(255,255,255,0.7); font-size:1.15rem; cursor:pointer;">
+          🚪
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/admin/dashboard.html">Admin</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Students</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="avatar avatar-md" id="topbarUserAvatar" style="background:var(--color-primary-dark); color:#fff; font-weight:700;">
+            AD
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-content">
+            <h1 class="page-title">
+              <span>👨‍🎓</span> Manage Students
+            </h1>
+            <p class="page-subtitle">Search, view profiles, verify student credentials, and manage admission records</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-sm btn-outline" onclick="loadStudents()">
+              🔄 Refresh List
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="content-card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1; min-width: 280px;">
+              <!-- Search Bar -->
+              <div style="position: relative; flex: 1; min-width: 220px;">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by name, email, or phone..." onkeyup="handleSearch(event)">
+                <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-secondary); pointer-events: none;">🔍</span>
+              </div>
+
+              <!-- Filter by verification status -->
+              <div style="min-width: 180px;">
+                <select id="verificationFilter" class="form-control" onchange="loadStudents()">
+                  <option value="">All Verification Statuses</option>
+                  <option value="1">✓ Documents Verified</option>
+                  <option value="0">⏳ Pending Verification</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="studentCountBadge" class="badge badge-teal" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+              Showing 0 students
+            </div>
+          </div>
+        </div>
+
+        <!-- Students Table Card -->
+        <div class="table-card">
+          <div id="loadingIndicator" style="text-align: center; padding: 3rem 0;">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; color: var(--color-text-secondary);">Loading student records...</p>
+          </div>
+
+          <div class="table-responsive" id="tableWrap" style="display: none;">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Student Name</th>
+                  <th>Contact Details</th>
+                  <th>SSC GPA</th>
+                  <th>HSC GPA</th>
+                  <th>Documents</th>
+                  <th>Apps</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL 1: View Profile Modal (Read-only full details) -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="profileModalTitle">Student Profile</h3>
+        <button class="modal-close-btn" onclick="closeModal('profileModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="profileModalBody">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('profileModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Verify Documents Modal -->
+  <div class="modal-overlay" id="verifyDocsModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Verify Student Documents</h3>
+        <button class="modal-close-btn" onclick="closeModal('verifyDocsModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="verifyDocsModalBody">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="modal-footer" id="verifyDocsModalFooter">
+        <!-- Buttons injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Assign ID Modal -->
+  <div class="modal-overlay" id="assignIdModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title">Assign Student Roll / Admission ID</h3>
+        <button class="modal-close-btn" onclick="closeModal('assignIdModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="assignIdModalBody">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('assignIdModal')">Cancel</button>
+        <button class="btn btn-primary" id="confirmAssignIdBtn">Save & Assign ID</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/admin/admin-common.js"></script>
+  <script>
+    let currentStudentsList = [];
+    let searchTimeout = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAdminAuth();
+      if (!user) return;
+
+      // Check URL query parameters (e.g. ?filter=unverified)
+      const urlParams = new URLSearchParams(window.location.search);
+      const filter = urlParams.get('filter');
+      if (filter === 'unverified' || filter === '0') {
+        document.getElementById('verificationFilter').value = '0';
+      } else if (filter === 'verified' || filter === '1') {
+        document.getElementById('verificationFilter').value = '1';
+      }
+
+      loadStudents();
+    });
+
+    function handleSearch(e) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadStudents();
+      }, 350);
+    }
+
+    async function loadStudents() {
+      const loading = document.getElementById('loadingIndicator');
+      const tableWrap = document.getElementById('tableWrap');
+      const tbody = document.getElementById('studentsTableBody');
+      const countBadge = document.getElementById('studentCountBadge');
+
+      loading.style.display = 'block';
+      tableWrap.style.display = 'none';
+
+      const search = document.getElementById('searchInput').value.trim();
+      const verified = document.getElementById('verificationFilter').value;
+
+      try {
+        let url = `/api/admin/students?search=${encodeURIComponent(search)}`;
+        if (verified !== '') {
+          url += `&verified=${verified}`;
+        }
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Failed to fetch students.');
+
+        const data = await res.json();
+        currentStudentsList = data.students || [];
+
+        countBadge.textContent = `Showing ${currentStudentsList.length} student${currentStudentsList.length === 1 ? '' : 's'}`;
+
+        tbody.innerHTML = '';
+        if (currentStudentsList.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary);">
+                <div style="font-size: 2rem; margin-bottom: 8px;">🔍</div>
+                <div style="font-weight: 600;">No students found</div>
+                <p style="font-size: 0.85rem; margin-top: 4px;">Try adjusting your search criteria or verification filter.</p>
+              </td>
+            </tr>
+          `;
+        } else {
+          currentStudentsList.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><strong>#${s.id}</strong></td>
+              <td>
+                <div class="table-user-cell">
+                  <div class="table-user-avatar">${escapeHtml((s.full_name || 'S').charAt(0).toUpperCase())}</div>
+                  <div class="table-user-details">
+                    <span class="table-user-name">${escapeHtml(s.full_name)}</span>
+                    <span class="table-user-email">Joined ${formatDate(s.created_at)}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div style="font-size: 0.85rem; color: var(--color-primary-dark);">${escapeHtml(s.email)}</div>
+                <div style="font-size: 0.75rem; color: var(--color-text-secondary);">${escapeHtml(s.phone || 'No phone')}</div>
+              </td>
+              <td>
+                <span style="font-weight: 600;">${s.ssc_gpa ? parseFloat(s.ssc_gpa).toFixed(2) : 'N/A'}</span>
+                ${s.ssc_group ? `<span style="font-size:0.75rem; color:var(--color-text-secondary); display:block;">${escapeHtml(s.ssc_group)}</span>` : ''}
+              </td>
+              <td>
+                <span style="font-weight: 600;">${s.hsc_gpa ? parseFloat(s.hsc_gpa).toFixed(2) : 'N/A'}</span>
+                ${s.hsc_group ? `<span style="font-size:0.75rem; color:var(--color-text-secondary); display:block;">${escapeHtml(s.hsc_group)}</span>` : ''}
+              </td>
+              <td>${getDocBadge(s.documents_verified)}</td>
+              <td>
+                <span class="badge badge-pill badge-primary">${s.total_applications || 0} Apps</span>
+              </td>
+              <td style="text-align: right;">
+                <div class="table-actions" style="justify-content: flex-end;">
+                  <button class="btn btn-sm btn-outline" title="View Full Profile" onclick="viewStudentProfile(${s.id})">
+                    👁️ View
+                  </button>
+                  <button class="btn btn-sm btn-outline" title="Verify Documents" onclick="openVerifyDocsModal(${s.id})">
+                    📄 Verify
+                  </button>
+                  <button class="btn btn-sm btn-primary" title="Assign Student ID" onclick="openAssignIdForStudent(${s.id})">
+                    🆔 ID
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        loading.style.display = 'none';
+        tableWrap.style.display = 'block';
+      } catch (err) {
+        console.error(err);
+        loading.innerHTML = `<div class="alert alert-danger" style="margin:2rem auto; max-width:450px;">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    /**
+     * View Profile Modal
+     */
+    async function viewStudentProfile(studentId) {
+      openModal('profileModal');
+      const body = document.getElementById('profileModalBody');
+      body.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="spinner"></div></div>';
+
+      try {
+        const res = await fetch(`/api/admin/students/${studentId}`);
+        if (!res.ok) throw new Error('Could not load student profile.');
+        const data = await res.json();
+
+        const s = data.student;
+        const p = data.profile || {};
+        const apps = data.applications || [];
+
+        document.getElementById('profileModalTitle').textContent = `Profile: ${s.full_name} (#${s.id})`;
+
+        body.innerHTML = `
+          <!-- Header Overview -->
+          <div style="display:flex; align-items:center; gap:1.25rem; background:#f8fafc; padding:1.25rem; border-radius:var(--radius-lg); border:1px solid var(--color-border); margin-bottom:1.5rem;">
+            <div style="width:70px; height:70px; border-radius:50%; background:var(--color-primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.75rem; font-weight:700; flex-shrink:0;">
+              ${escapeHtml(s.full_name.charAt(0).toUpperCase())}
+            </div>
+            <div style="flex:1;">
+              <h4 style="margin:0; font-size:1.2rem; color:var(--color-primary-dark); font-weight:700;">${escapeHtml(s.full_name)}</h4>
+              <div style="font-size:0.85rem; color:var(--color-text-secondary); margin-top:2px;">
+                ${escapeHtml(s.email)} • ${escapeHtml(s.phone || 'No phone recorded')}
+              </div>
+              <div style="margin-top:6px; display:flex; gap:8px;">
+                ${getDocBadge(p.documents_verified)}
+                <span class="badge badge-pill badge-teal">${apps.length} Applications</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 1: Personal & Contact Information -->
+          <div class="section-divider">👤 Personal & Contact Details</div>
+          <div class="profile-info-grid">
+            <div class="info-item">
+              <span class="info-label">Father's Name</span>
+              <span class="info-value">${escapeHtml(p.father_name || 'N/A')}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Mother's Name</span>
+              <span class="info-value">${escapeHtml(p.mother_name || 'N/A')}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Date of Birth</span>
+              <span class="info-value">${escapeHtml(p.date_of_birth || 'N/A')}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Gender</span>
+              <span class="info-value">${escapeHtml(p.gender || 'N/A')}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Nationality</span>
+              <span class="info-value">${escapeHtml(p.nationality || 'Bangladeshi')}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">NID / Birth Certificate No.</span>
+              <span class="info-value">${escapeHtml(p.nid_number || 'N/A')}</span>
+            </div>
+            <div class="info-item" style="grid-column: 1 / -1;">
+              <span class="info-label">Present Address</span>
+              <span class="info-value">${escapeHtml(p.present_address || 'N/A')}</span>
+            </div>
+            <div class="info-item" style="grid-column: 1 / -1;">
+              <span class="info-label">Permanent Address</span>
+              <span class="info-value">${escapeHtml(p.permanent_address || 'N/A')}</span>
+            </div>
+          </div>
+
+          <!-- Section 2: Academic Qualifications -->
+          <div class="section-divider">🎓 Academic Qualifications</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem;">
+            <!-- SSC -->
+            <div style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:1rem; background:#fafbfc;">
+              <h5 style="margin:0 0 0.75rem 0; color:var(--color-primary-dark); font-weight:700;">Secondary School Certificate (SSC)</h5>
+              <div class="profile-info-grid">
+                <div class="info-item">
+                  <span class="info-label">Board</span>
+                  <span class="info-value">${escapeHtml(p.ssc_board || 'N/A')}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">GPA</span>
+                  <span class="info-value" style="color:var(--color-accent); font-weight:700;">${p.ssc_gpa ? parseFloat(p.ssc_gpa).toFixed(2) : 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Roll Number</span>
+                  <span class="info-value">${escapeHtml(p.ssc_roll || 'N/A')}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Passing Year</span>
+                  <span class="info-value">${escapeHtml(p.ssc_year || 'N/A')}</span>
+                </div>
+                <div class="info-item" style="grid-column: 1 / -1;">
+                  <span class="info-label">Discipline / Group</span>
+                  <span class="info-value">${escapeHtml(p.ssc_group || 'N/A')}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- HSC -->
+            <div style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:1rem; background:#fafbfc;">
+              <h5 style="margin:0 0 0.75rem 0; color:var(--color-primary-dark); font-weight:700;">Higher Secondary Certificate (HSC)</h5>
+              <div class="profile-info-grid">
+                <div class="info-item">
+                  <span class="info-label">Board</span>
+                  <span class="info-value">${escapeHtml(p.hsc_board || 'N/A')}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">GPA</span>
+                  <span class="info-value" style="color:var(--color-accent); font-weight:700;">${p.hsc_gpa ? parseFloat(p.hsc_gpa).toFixed(2) : 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Roll Number</span>
+                  <span class="info-value">${escapeHtml(p.hsc_roll || 'N/A')}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Passing Year</span>
+                  <span class="info-value">${escapeHtml(p.hsc_year || 'N/A')}</span>
+                </div>
+                <div class="info-item" style="grid-column: 1 / -1;">
+                  <span class="info-label">Discipline / Group</span>
+                  <span class="info-value">${escapeHtml(p.hsc_group || 'N/A')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Applications Filed -->
+          <div class="section-divider">📑 Applications (${apps.length})</div>
+          ${apps.length === 0 ? '<p style="color:var(--color-text-secondary); font-size:0.9rem;">No university applications submitted yet.</p>' : `
+            <table class="table" style="font-size:0.85rem;">
+              <thead>
+                <tr>
+                  <th>App #</th>
+                  <th>University</th>
+                  <th>Program</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Assigned Roll ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${apps.map(a => `
+                  <tr>
+                    <td><strong>#${a.id}</strong></td>
+                    <td>${escapeHtml(a.university_short_name || a.university_name)}</td>
+                    <td>${escapeHtml(a.program_name)}</td>
+                    <td>${getStatusBadge(a.status)}</td>
+                    <td>${getPaymentBadge(a.payment_status)}</td>
+                    <td><strong>${escapeHtml(a.assigned_id || 'Not Assigned')}</strong></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `}
+        `;
+      } catch (err) {
+        body.innerHTML = `<div class="alert alert-danger">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    /**
+     * Verify Documents Modal
+     */
+    async function openVerifyDocsModal(studentId) {
+      openModal('verifyDocsModal');
+      const body = document.getElementById('verifyDocsModalBody');
+      const footer = document.getElementById('verifyDocsModalFooter');
+
+      body.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="spinner"></div></div>';
+      footer.innerHTML = '';
+
+      try {
+        const res = await fetch(`/api/admin/students/${studentId}`);
+        if (!res.ok) throw new Error('Failed to load student details.');
+        const data = await res.json();
+
+        const s = data.student;
+        const p = data.profile || {};
+
+        body.innerHTML = `
+          <div style="margin-bottom:1rem; padding:0.75rem 1rem; background:#f1f5f9; border-radius:var(--radius-md);">
+            <strong>Student:</strong> ${escapeHtml(s.full_name)} (${escapeHtml(s.email)}) &bull;
+            <strong>Status:</strong> ${getDocBadge(p.documents_verified)}
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem;">
+            <!-- Student Photo -->
+            <div class="doc-preview-card">
+              <div style="font-weight:700; font-size:0.85rem; margin-bottom:8px; color:var(--color-primary-dark);">Candidate Photo</div>
+              <img src="${p.photo_path || '/Logo.png'}" alt="Student Photo" class="doc-preview-img" onerror="this.src='/Logo.png'">
+              <div style="font-size:0.75rem; color:var(--color-text-secondary); word-break:break-all;">
+                ${p.photo_path ? escapeHtml(p.photo_path) : 'No photo uploaded'}
+              </div>
+            </div>
+
+            <!-- Candidate Signature -->
+            <div class="doc-preview-card">
+              <div style="font-weight:700; font-size:0.85rem; margin-bottom:8px; color:var(--color-primary-dark);">Candidate Signature</div>
+              <img src="${p.signature_path || '/Logo.png'}" alt="Student Signature" class="doc-preview-img" style="height:100px; margin-top:40px;" onerror="this.src='/Logo.png'">
+              <div style="font-size:0.75rem; color:var(--color-text-secondary); word-break:break-all;">
+                ${p.signature_path ? escapeHtml(p.signature_path) : 'No signature uploaded'}
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem; background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:1rem;">
+            <h5 style="margin:0 0 0.5rem 0; color:var(--color-primary-dark);">Academic Record Overview</h5>
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0.5rem; font-size:0.85rem;">
+              <div><strong>SSC Board:</strong> ${escapeHtml(p.ssc_board || 'N/A')}</div>
+              <div><strong>SSC Roll:</strong> ${escapeHtml(p.ssc_roll || 'N/A')}</div>
+              <div><strong>SSC GPA:</strong> ${p.ssc_gpa || 'N/A'}</div>
+              <div><strong>SSC Year:</strong> ${escapeHtml(p.ssc_year || 'N/A')}</div>
+              <div><strong>HSC Board:</strong> ${escapeHtml(p.hsc_board || 'N/A')}</div>
+              <div><strong>HSC Roll:</strong> ${escapeHtml(p.hsc_roll || 'N/A')}</div>
+              <div><strong>HSC GPA:</strong> ${p.hsc_gpa || 'N/A'}</div>
+              <div><strong>HSC Year:</strong> ${escapeHtml(p.hsc_year || 'N/A')}</div>
+            </div>
+          </div>
+        `;
+
+        footer.innerHTML = `
+          <button class="btn btn-outline" onclick="closeModal('verifyDocsModal')">Cancel</button>
+          <button class="btn btn-danger" onclick="submitDocVerification(${studentId}, 0)">
+            ❌ Reject / Mark Unverified
+          </button>
+          <button class="btn btn-success" onclick="submitDocVerification(${studentId}, 1)">
+            ✓ Approve & Verify Documents
+          </button>
+        `;
+      } catch (err) {
+        body.innerHTML = `<div class="alert alert-danger">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    async function submitDocVerification(studentId, verified) {
+      try {
+        const res = await fetch(`/api/admin/students/${studentId}/verify-documents`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ verified })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Verification update failed.');
+
+        showToast(data.message || 'Verification status updated.');
+        closeModal('verifyDocsModal');
+        loadStudents();
+        loadSidebarBadgeCounts();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    /**
+     * Assign ID Modal for Student
+     */
+    async function openAssignIdForStudent(studentId) {
+      openModal('assignIdModal');
+      const body = document.getElementById('assignIdModalBody');
+      const confirmBtn = document.getElementById('confirmAssignIdBtn');
+      body.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="spinner"></div></div>';
+      confirmBtn.style.display = 'none';
+
+      try {
+        const res = await fetch(`/api/admin/students/${studentId}`);
+        if (!res.ok) throw new Error('Failed to load student applications.');
+        const data = await res.json();
+
+        const s = data.student;
+        const apps = data.applications || [];
+
+        if (apps.length === 0) {
+          body.innerHTML = `
+            <p><strong>${escapeHtml(s.full_name)}</strong> has no active university applications to assign an ID to.</p>
+          `;
+          return;
+        }
+
+        body.innerHTML = `
+          <div style="margin-bottom:1rem; font-size:0.9rem;">
+            Select an application for <strong>${escapeHtml(s.full_name)}</strong> to assign or update the admission Roll ID:
+          </div>
+
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Select Application</label>
+            <select id="assignAppSelect" class="form-control" onchange="updateAssignIdDefault()">
+              ${apps.map(a => `
+                <option value="${a.id}" data-short="${escapeHtml(a.university_short_name || 'UNI')}" data-assigned="${escapeHtml(a.assigned_id || '')}">
+                  App #${a.id} - ${escapeHtml(a.university_short_name || a.university_name)} (${escapeHtml(a.program_name)}) [${a.status.toUpperCase()}]
+                </option>
+              `).join('')}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Student Roll / Admission ID</label>
+            <input type="text" id="assignedIdInput" class="form-control" placeholder="e.g. DU-2026-00042">
+            <small style="color:var(--color-text-secondary); margin-top:4px; display:block;">
+              Leave blank to automatically generate standard roll format.
+            </small>
+          </div>
+        `;
+
+        confirmBtn.style.display = 'inline-flex';
+        confirmBtn.onclick = submitAssignId;
+        updateAssignIdDefault();
+      } catch (err) {
+        body.innerHTML = `<div class="alert alert-danger">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    function updateAssignIdDefault() {
+      const select = document.getElementById('assignAppSelect');
+      const input = document.getElementById('assignedIdInput');
+      if (!select || !input) return;
+
+      const opt = select.options[select.selectedIndex];
+      const existing = opt.getAttribute('data-assigned');
+      const shortName = opt.getAttribute('data-short') || 'UNI';
+      const appId = opt.value;
+
+      if (existing) {
+        input.value = existing;
+      } else {
+        input.value = `${shortName}-2026-${String(appId).padStart(5, '0')}`;
+      }
+    }
+
+    async function submitAssignId() {
+      const select = document.getElementById('assignAppSelect');
+      const input = document.getElementById('assignedIdInput');
+      if (!select || !input) return;
+
+      const appId = select.value;
+      const assigned_id = input.value.trim();
+
+      try {
+        const res = await fetch(`/api/admin/applications/${appId}/assign-id`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assigned_id })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Failed to assign ID.');
+
+        showToast(data.message || 'ID successfully assigned!');
+        closeModal('assignIdModal');
+        loadStudents();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

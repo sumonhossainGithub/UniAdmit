@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Admin - Dashboard</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    /* Admin specific fine-tunes */
+    .chart-container {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    .chart-bars-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.5rem;
+      height: 190px;
+      padding-top: 1.5rem;
+      border-bottom: 2px solid var(--color-border);
+    }
+    .chart-bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .chart-bar-fill {
+      width: 100%;
+      max-width: 44px;
+      border-radius: 6px 6px 0 0;
+      transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .chart-bar-fill:hover::after {
+      content: attr(data-count);
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0a2647;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .chart-label {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+    .pending-task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--color-border-subtle);
+      gap: 1rem;
+    }
+    .pending-task-item:last-child {
+      border-bottom: none;
+    }
+    .pending-task-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+    .pending-task-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout" id="appLayout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="/admin/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-admin">Admin</span>
+          </div>
+        </a>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/admin/dashboard.html" class="sidebar-menu-link active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              <span class="sidebar-menu-text">Manage Students</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/managers.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="sidebar-menu-text">Manage Managers</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html?filter=unverified" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Verify Documents</span>
+              <span class="sidebar-badge" id="sidebarDocBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/notices.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Admission Notices</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Verify Applications</span>
+              <span class="sidebar-badge" id="sidebarAppBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html?filter=approved_no_id" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+              <span class="sidebar-menu-text">Assign IDs</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/records.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span class="sidebar-menu-text">Manage Records</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/payments.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Verify Payments</span>
+              <span class="sidebar-badge" id="sidebarPayBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem;">
+            <a href="#" class="sidebar-menu-link" id="logoutBtn" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- User info at bottom -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="sidebarUserAvatar">AD</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">System Admin</div>
+            <div class="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn btn-sm" id="quickLogoutBtn" title="Logout" style="background:transparent; border:none; color:rgba(255,255,255,0.7); font-size:1.15rem; cursor:pointer;">
+          🚪
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+            ☰
+          </button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/admin/dashboard.html">Admin</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="badge badge-pill badge-primary">
+              <span class="badge-dot" style="background:var(--color-success);"></span>
+              Live System
+            </div>
+            <div class="avatar avatar-md" id="topbarUserAvatar" style="background:var(--color-primary-dark); color:#fff; font-weight:700;">
+              AD
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-content">
+            <h1 class="page-title">
+              <span>📊</span> System Dashboard
+            </h1>
+            <p class="page-subtitle">Real-time overview of university admissions, verifications, and student records</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-sm btn-outline" id="refreshStatsBtn" onclick="loadDashboardData()">
+              🔄 Refresh Data
+            </button>
+            <a href="/admin/applications.html" class="btn btn-sm btn-primary">
+              ✅ Verify Applications
+            </a>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingIndicator" style="text-align:center; padding: 3rem 0;">
+          <div class="spinner"></div>
+          <p style="margin-top: 1rem; color: var(--color-text-secondary); font-size: 0.95rem;">Loading dashboard metrics...</p>
+        </div>
+
+        <!-- Dashboard Content Grid -->
+        <div id="dashboardContent" style="display: none;">
+          <!-- Stats Cards Grid (6 cards required) -->
+          <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 1.5rem;">
+            <!-- 1. Total Students -->
+            <div class="stat-card stat-navy">
+              <div class="stat-card-header">
+                <span class="stat-label" style="margin:0;">Total Students</span>
+                <div class="stat-icon stat-icon-navy">👨‍🎓</div>
+              </div>
+              <div class="stat-value" id="statTotalStudents">0</div>
+              <div class="stat-footer">
+                <span>Registered candidates</span>
+                <a href="/admin/students.html" class="stat-link">View all &rarr;</a>
+              </div>
+            </div>
+
+            <!-- 2. New Registrations (this month) -->
+            <div class="stat-card stat-teal">
+              <div class="stat-card-header">
+                <span class="stat-label" style="margin:0;">New This Month</span>
+                <div class="stat-icon stat-icon-teal">📅</div>
+              </div>
+              <div class="stat-value" id="statNewRegistrations">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend trend-up">Current cycle</span>
+                <a href="/admin/students.html" class="stat-link">Browse &rarr;</a>
+              </div>
+            </div>
+
+            <!-- 3. Pending Verifications -->
+            <div class="stat-card stat-gold">
+              <div class="stat-card-header">
+                <span class="stat-label" style="margin:0;">Pending Verifications</span>
+                <div class="stat-icon stat-icon-gold">📄</div>
+              </div>
+              <div class="stat-value" id="statPendingVerifications" style="color:var(--color-warning);">0</div>
+              <div class="stat-footer">
+                <span>Academic documents</span>
+                <a href="/admin/students.html?filter=unverified" class="stat-link">Verify &rarr;</a>
+              </div>
+            </div>
+
+            <!-- 4. Total Applications -->
+            <div class="stat-card stat-info">
+              <div class="stat-card-header">
+                <span class="stat-label" style="margin:0;">Total Applications</span>
+                <div class="stat-icon stat-icon-info">📝</div>
+              </div>
+              <div class="stat-value" id="statTotalApplications">0</div>
+              <div class="stat-footer">
+                <span>Across all programs</span>
+                <a href="/admin/applications.html" class="stat-link">Review &rarr;</a>
+              </div>
+            </div>
+
+            <!-- 5. Verified Payments -->
+            <div class="stat-card stat-success">
+              <div class="stat-card-header">
+                <span class="stat-label" style="margin:0;">Verified Payments</span>
+                <div class="stat-icon stat-icon-success">💰</div>
+              </div>
+              <div class="stat-value" id="statVerifiedPayments" style="color:var(--color-success);">৳ 0</div>
+              <div class="stat-footer">
+                <span id="statVerifiedCount">0 transactions</span>
+                <a href="/admin/payments.html" class="stat-link">Payments &rarr;</a>
+              </div>
+            </div>
+
+            <!-- 6. Active Universities -->
+            <div class="stat-card stat-navy">
+              <div class="stat-card-header">
+                <span class="stat-label" style="margin:0;">Active Universities</span>
+                <div class="stat-icon stat-icon-navy">🏛️</div>
+              </div>
+              <div class="stat-value" id="statActiveUniversities">0</div>
+              <div class="stat-footer">
+                <span>Public & Private</span>
+                <a href="/universities" target="_blank" class="stat-link">Directory &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle Row: Chart Area + Pending Tasks Grid -->
+          <div style="display: grid; grid-template-columns: 3fr 2fr; gap: var(--space-6); margin-bottom: var(--space-6);">
+            <!-- Recent Activity Chart Area -->
+            <div class="chart-container">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-primary-dark); margin:0;">
+                    📈 Application Status Distribution
+                  </h3>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 2px;">
+                    Real-time status breakdown across admission pool
+                  </p>
+                </div>
+                <div class="badge badge-teal">Live Metrics</div>
+              </div>
+
+              <!-- Interactive CSS Bar Chart -->
+              <div class="chart-bars-wrap" id="chartBarsWrap">
+                <!-- Injected via JavaScript -->
+              </div>
+
+              <div style="display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
+                  <span style="width: 12px; height: 12px; border-radius: 2px; background: #27ae60;"></span> Approved
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
+                  <span style="width: 12px; height: 12px; border-radius: 2px; background: #3498db;"></span> Under Review
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
+                  <span style="width: 12px; height: 12px; border-radius: 2px; background: #f39c12;"></span> Pending
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
+                  <span style="width: 12px; height: 12px; border-radius: 2px; background: #e74c3c;"></span> Rejected
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
+                  <span style="width: 12px; height: 12px; border-radius: 2px; background: #8b5cf6;"></span> Waitlisted
+                </div>
+              </div>
+            </div>
+
+            <!-- Pending Tasks List -->
+            <div class="content-card" style="margin-bottom:0;">
+              <div class="content-card-header">
+                <div>
+                  <h3 class="content-card-title">⚡ Pending Admin Tasks</h3>
+                  <p class="content-card-subtitle">Urgent items requiring verification or review</p>
+                </div>
+              </div>
+              <div id="pendingTasksList">
+                <!-- Injected via JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Recent Applications Table (Latest 10) -->
+          <div class="table-card">
+            <div class="table-card-header">
+              <div>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-primary-dark); margin:0;">
+                  📋 Recent Applications (Latest 10)
+                </h3>
+                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 2px;">
+                  Real-time admissions queue
+                </p>
+              </div>
+              <a href="/admin/applications.html" class="btn btn-sm btn-outline">
+                View Full Table &rarr;
+              </a>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>App ID</th>
+                    <th>Student Name</th>
+                    <th>University & Program</th>
+                    <th>Date</th>
+                    <th>App Status</th>
+                    <th>Payment</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recentApplicationsBody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Shared Admin Common Scripts -->
+  <script src="/admin/admin-common.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAdminAuth();
+      if (user) {
+        loadDashboardData();
+      }
+    });
+
+    async function loadDashboardData() {
+      const indicator = document.getElementById('loadingIndicator');
+      const content = document.getElementById('dashboardContent');
+
+      try {
+        indicator.style.display = 'block';
+        content.style.display = 'none';
+
+        const [statsRes, mgrStatsRes] = await Promise.all([
+          fetch('/api/admin/stats'),
+          fetch('/api/manager/statistics')
+        ]);
+
+        if (!statsRes.ok) throw new Error('Failed to load stats');
+
+        const statsData = await statsRes.json();
+        let mgrStats = null;
+        if (mgrStatsRes.ok) {
+          const mgrJson = await mgrStatsRes.json();
+          mgrStats = mgrJson.statistics;
+        }
+
+        renderDashboard(statsData, mgrStats);
+        indicator.style.display = 'none';
+        content.style.display = 'block';
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+        indicator.innerHTML = `
+          <div class="alert alert-danger" style="display:inline-flex; max-width:500px; text-align:left;">
+            <span>⚠️</span>
+            <div>
+              <strong>Error loading dashboard:</strong> ${escapeHtml(err.message)}
+              <div style="margin-top:8px;">
+                <button class="btn btn-sm btn-outline" onclick="loadDashboardData()">Try Again</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function renderDashboard(data, mgrStats) {
+      const stats = data.stats || {};
+
+      // Stat Cards
+      document.getElementById('statTotalStudents').textContent = (stats.totalStudents || 0).toLocaleString();
+      document.getElementById('statNewRegistrations').textContent = (stats.newRegistrations || 0).toLocaleString();
+      document.getElementById('statPendingVerifications').textContent = (stats.pendingVerifications || 0).toLocaleString();
+      document.getElementById('statTotalApplications').textContent = (stats.totalApplications || 0).toLocaleString();
+      document.getElementById('statVerifiedPayments').textContent = formatCurrency(stats.verifiedPaymentsAmount || 0);
+      document.getElementById('statVerifiedCount').textContent = `${stats.verifiedPaymentsCount || 0} verified`;
+      document.getElementById('statActiveUniversities').textContent = (stats.activeUniversities || 0).toLocaleString();
+
+      // Render Chart
+      renderStatusChart(mgrStats, stats);
+
+      // Render Pending Tasks
+      renderPendingTasks(data.pendingTasks || {}, stats);
+
+      // Render Recent Applications Table
+      renderRecentApplications(data.recentApplications || []);
+    }
+
+    function renderStatusChart(mgrStats, adminStats) {
+      const wrap = document.getElementById('chartBarsWrap');
+      wrap.innerHTML = '';
+
+      const approved = mgrStats ? mgrStats.approved_applications : 0;
+      const underReview = mgrStats ? mgrStats.under_review_applications : 0;
+      const pending = mgrStats ? mgrStats.pending_applications : (adminStats.pendingApplications || 0);
+      const rejected = mgrStats ? mgrStats.rejected_applications : 0;
+      const waitlisted = mgrStats ? mgrStats.waitlisted_applications : 0;
+
+      const items = [
+        { label: 'Approved', count: approved, color: '#27ae60' },
+        { label: 'Reviewing', count: underReview, color: '#3498db' },
+        { label: 'Pending', count: pending, color: '#f39c12' },
+        { label: 'Rejected', count: rejected, color: '#e74c3c' },
+        { label: 'Waitlisted', count: waitlisted, color: '#8b5cf6' }
+      ];
+
+      const max = Math.max(...items.map(i => i.count), 1);
+
+      items.forEach(item => {
+        const heightPct = Math.max(Math.round((item.count / max) * 100), 8);
+        const col = document.createElement('div');
+        col.className = 'chart-bar-col';
+        col.innerHTML = `
+          <div class="chart-bar-fill" data-count="${item.count}" style="height:${heightPct}%; background:${item.color};"></div>
+          <div class="chart-label">${item.label} (${item.count})</div>
+        `;
+        wrap.appendChild(col);
+      });
+    }
+
+    function renderPendingTasks(tasks, stats) {
+      const container = document.getElementById('pendingTasksList');
+      container.innerHTML = '';
+
+      const items = [];
+
+      // Unverified Docs
+      if (tasks.unverified_documents && tasks.unverified_documents.length > 0) {
+        items.push({
+          type: 'doc',
+          icon: '📄',
+          bg: 'var(--color-warning-subtle)',
+          title: `${stats.pendingVerifications || tasks.unverified_documents.length} Students Awaiting Document Verification`,
+          subtitle: `Latest: ${tasks.unverified_documents[0].full_name} (${tasks.unverified_documents[0].email})`,
+          link: '/admin/students.html?filter=unverified',
+          btnText: 'Verify Docs'
+        });
+      }
+
+      // Unverified Payments
+      if (tasks.unverified_payments && tasks.unverified_payments.length > 0) {
+        items.push({
+          type: 'pay',
+          icon: '💰',
+          bg: 'var(--color-accent-subtle)',
+          title: `${stats.pendingPaymentsCount || tasks.unverified_payments.length} Payments Awaiting Verification`,
+          subtitle: `Latest: ${formatCurrency(tasks.unverified_payments[0].payment_amount)} for ${tasks.unverified_payments[0].university_short_name}`,
+          link: '/admin/payments.html',
+          btnText: 'Verify Payments'
+        });
+      }
+
+      // Pending Applications
+      if (tasks.pending_applications && tasks.pending_applications.length > 0) {
+        items.push({
+          type: 'app',
+          icon: '✅',
+          bg: 'var(--color-info-subtle)',
+          title: `${stats.pendingApplications || tasks.pending_applications.length} Applications Under Review`,
+          subtitle: `Latest: ${tasks.pending_applications[0].student_name} → ${tasks.pending_applications[0].program_name}`,
+          link: '/admin/applications.html',
+          btnText: 'Review Queue'
+        });
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 2.5rem 1rem; color:var(--color-text-secondary);">
+            <div style="font-size:2rem; margin-bottom:8px;">🎉</div>
+            <div style="font-weight:600; color:var(--color-success);">All Caught Up!</div>
+            <p style="font-size:0.85rem; margin-top:4px;">There are no urgent pending verification tasks at this time.</p>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(task => {
+        const div = document.createElement('div');
+        div.className = 'pending-task-item';
+        div.innerHTML = `
+          <div class="pending-task-info">
+            <div class="pending-task-icon" style="background:${task.bg};">
+              ${task.icon}
+            </div>
+            <div style="min-width:0;">
+              <div style="font-size:0.9rem; font-weight:600; color:var(--color-primary-dark); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                ${escapeHtml(task.title)}
+              </div>
+              <div style="font-size:0.75rem; color:var(--color-text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                ${escapeHtml(task.subtitle)}
+              </div>
+            </div>
+          </div>
+          <a href="${task.link}" class="btn btn-sm btn-outline" style="white-space:nowrap;">
+            ${task.btnText} &rarr;
+          </a>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderRecentApplications(apps) {
+      const tbody = document.getElementById('recentApplicationsBody');
+      tbody.innerHTML = '';
+
+      if (!apps || apps.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center; padding: 2.5rem; color:var(--color-text-secondary);">
+              No application records found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      apps.forEach(app => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#${app.id}</strong></td>
+          <td>
+            <div style="font-weight:600; color:var(--color-primary-dark);">${escapeHtml(app.student_name)}</div>
+            <div style="font-size:0.75rem; color:var(--color-text-secondary);">${escapeHtml(app.student_email)}</div>
+          </td>
+          <td>
+            <div style="font-weight:600;">${escapeHtml(app.university_short_name || app.university_name)}</div>
+            <div style="font-size:0.75rem; color:var(--color-text-secondary);">${escapeHtml(app.program_name)}</div>
+          </td>
+          <td style="font-size:0.85rem; color:var(--color-text-secondary);">${formatDate(app.application_date)}</td>
+          <td>${getStatusBadge(app.status)}</td>
+          <td>${getPaymentBadge(app.payment_status)}</td>
+          <td style="text-align: right;">
+            <a href="/admin/applications.html?id=${app.id}" class="btn btn-sm btn-outline">
+              Review
+            </a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>

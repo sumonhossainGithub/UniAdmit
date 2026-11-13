@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit - My Applications</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    .status-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4, 16px);
+      margin-bottom: var(--space-6, 24px);
+    }
+    .summary-box {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4) var(--space-5);
+      cursor: pointer;
+      transition: all var(--transition-fast, 0.2s);
+      position: relative;
+    }
+    .summary-box:hover, .summary-box.active {
+      transform: translateY(-2px);
+      border-color: var(--color-accent);
+      box-shadow: var(--shadow-sm);
+    }
+    .summary-box.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 15%;
+      width: 70%;
+      height: 3px;
+      background: var(--color-accent);
+      border-radius: var(--radius-full);
+    }
+    .summary-number {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--color-primary-dark);
+      line-height: 1.1;
+    }
+    .summary-label {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body class="app-layout">
+
+  <!-- =========================================================================
+       SIDEBAR NAVIGATION
+       ========================================================================= -->
+  <aside class="sidebar" aria-label="Student Navigation">
+    <div class="sidebar-header">
+      <a href="/student/dashboard.html" class="sidebar-brand">
+        <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+        <div class="brand-text">
+          <span class="brand-name">Uni<span>Admit</span></span>
+          <span class="brand-role-badge badge-student">Student</span>
+        </div>
+      </a>
+      <button type="button" class="sidebar-toggle-btn mobile-menu-close" id="sidebarCloseBtn" aria-label="Close sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main Menu</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <a href="/student/dashboard.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            <span class="sidebar-menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/profile.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="sidebar-menu-text">My Profile</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/universities.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 10h1v2H9z"/><path d="M9 14h1v2H9z"/><path d="M14 10h1v2H14z"/><path d="M14 14h1v2H14z"/></svg>
+            <span class="sidebar-menu-text">Browse Universities</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/applications.html" class="sidebar-menu-link active">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span class="sidebar-menu-text">My Applications</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/payments.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span class="sidebar-menu-text">Payments</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/merit-list.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+            <span class="sidebar-menu-text">Merit Lists</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/notifications.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="sidebar-menu-text">Notifications</span>
+            <span class="sidebar-badge" id="sidebarNotifBadge" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section" style="margin-top:20px;">Session</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <button type="button" class="sidebar-menu-link" onclick="handleLogout()" style="width:100%; border:none; text-align:left; background:transparent; cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span class="sidebar-menu-text">Logout</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar">
+          <span id="sidebarUserInitials">S</span>
+        </div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name" id="sidebarUserName">Student</span>
+          <span class="sidebar-user-role" id="sidebarUserEmail">student@uniadmit.com</span>
+        </div>
+      </div>
+      <button class="sidebar-logout-btn" onclick="handleLogout()" title="Logout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       MAIN WRAPPER & TOPBAR
+       ========================================================================= -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="breadcrumbs">
+          <span class="breadcrumb-item"><a href="/student/dashboard.html">Portal</a></span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item active">My Applications</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div style="position:relative;">
+          <a href="/student/notifications.html" class="topbar-action-btn" title="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="topbar-badge" id="topbarNotifBadge" style="display:none;">0</span>
+          </a>
+        </div>
+
+        <div style="position:relative;">
+          <div class="topbar-user" id="topbarUserBtn" tabindex="0">
+            <div class="topbar-avatar" id="topbarAvatar">
+              <span id="topbarInitials">S</span>
+            </div>
+            <div class="topbar-user-meta">
+              <span class="topbar-user-name" id="topbarUserName">Student</span>
+              <span class="topbar-user-role">Student Candidate</span>
+            </div>
+            <svg class="topbar-user-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="notifications-dropdown" id="userDropdown" style="width: 220px; right: 0;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-border); background: var(--color-surface-muted);">
+              <div style="font-weight: 700; color: var(--color-primary-dark); font-size: 14px;" id="dropdownUserName">Student</div>
+              <div style="font-size: 12px; color: var(--color-text-secondary);" id="dropdownUserEmail">student@uniadmit.com</div>
+            </div>
+            <div style="padding: 8px 0;">
+              <a href="/student/profile.html" style="display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-text-primary); text-decoration:none; font-size:13px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+              </a>
+              <button onclick="handleLogout()" style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-danger); font-size:13px; background:none; border:none; text-align:left; cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =========================================================================
+         MAIN CONTENT: APPLICATIONS MANAGEMENT
+         ========================================================================= -->
+    <main class="main-content">
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">My Admission Applications</h1>
+          <p class="page-subtitle">Track stage progression, fee settlements, and download official hall tickets & admit cards.</p>
+        </div>
+        <div class="page-actions">
+          <button type="button" class="btn btn-primary" onclick="openNewApplicationModal()">
+            <span>+</span> Apply to University
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary Metric Cards (Total, Pending, Approved, Rejected) -->
+      <section class="status-summary-grid">
+        <div class="summary-box active" onclick="filterByStatus('all', this)">
+          <div class="summary-number" id="sumTotal">0</div>
+          <div class="summary-label">Total Applications</div>
+        </div>
+        <div class="summary-box" onclick="filterByStatus('pending', this)">
+          <div class="summary-number" style="color:var(--color-warning-hover);" id="sumPending">0</div>
+          <div class="summary-label">Pending / In Review</div>
+        </div>
+        <div class="summary-box" onclick="filterByStatus('approved', this)">
+          <div class="summary-number" style="color:var(--color-success);" id="sumApproved">0</div>
+          <div class="summary-label">Approved & Selected</div>
+        </div>
+        <div class="summary-box" onclick="filterByStatus('rejected', this)">
+          <div class="summary-number" style="color:var(--color-danger);" id="sumRejected">0</div>
+          <div class="summary-label">Rejected / Ineligible</div>
+        </div>
+      </section>
+
+      <!-- Applications Table Card -->
+      <section class="table-card">
+        <div class="table-card-header">
+          <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+            <h2 class="content-card-title" style="font-size:1.1rem;">Submitted Applications</h2>
+            <select id="statusFilterSelect" class="form-select" style="height:36px; width:180px; font-size:12.5px;" onchange="handleSelectFilter(this.value)">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="under_review">Under Review</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div style="font-size:12px; color:var(--color-text-secondary);" id="tableCountLabel">
+            0 applications recorded
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>University Name</th>
+                <th>Program & Dept</th>
+                <th>Applied Date</th>
+                <th>Application Status</th>
+                <th>Payment Status</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsTableBody">
+              <tr>
+                <td colspan="6" style="text-align:center; padding:36px; color:var(--color-text-muted);">
+                  <div class="spinner" style="margin-bottom:8px;"></div>
+                  <div>Loading your applications...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       APPLICATION DETAIL & STATUS TIMELINE MODAL
+       ========================================================================= -->
+  <div class="modal-overlay" id="appDetailModal" role="dialog" aria-modal="true" aria-labelledby="appDetailTitle">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="appDetailTitle">
+          <span>📋</span> Application Details & Timeline
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closeAppDetailModal()" aria-label="Close modal">×</button>
+      </div>
+
+      <div class="modal-body" style="padding: 24px;">
+        <!-- Header summary in modal -->
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; padding:16px; background:var(--color-surface-muted); border-radius:var(--radius-md); margin-bottom:20px; flex-wrap:wrap; gap:14px;">
+          <div>
+            <div style="font-size:1.1rem; font-weight:700; color:var(--color-primary-dark);" id="modalAppName">University Name</div>
+            <div style="font-size:13.5px; color:var(--color-accent); font-weight:600;" id="modalAppProg">Program Name</div>
+            <div style="font-size:11.5px; color:var(--color-text-secondary); margin-top:3px;" id="modalAppId">App ID: #000</div>
+          </div>
+          <div style="text-align:right;">
+            <div id="modalAppStatusBadge"><span class="badge badge-warning">Pending</span></div>
+            <div style="font-size:11.5px; color:var(--color-text-muted); margin-top:4px;" id="modalAppDate">Applied: -</div>
+          </div>
+        </div>
+
+        <!-- Vertical Timeline Progression -->
+        <h4 style="font-size:0.95rem; font-weight:700; color:var(--color-primary-dark); margin-bottom:12px;">
+          Application Stage Progression
+        </h4>
+        <div class="timeline" id="appTimelineContainer">
+          <!-- Populated dynamically: Step 1 (Submitted), Step 2 (Paid), Step 3 (Review), Step 4 (Decision/Admit) -->
+        </div>
+
+        <!-- Payment Details Card -->
+        <div class="academic-box" style="margin-top:16px;">
+          <div class="academic-title">💳 Application Fee & Transaction Details</div>
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; font-size:12.5px;">
+            <div>
+              <span style="color:var(--color-text-secondary); display:block;">Amount:</span>
+              <strong id="modalPayAmount" style="font-size:14px; color:var(--color-primary-dark);">BDT 0</strong>
+            </div>
+            <div>
+              <span style="color:var(--color-text-secondary); display:block;">Payment Status:</span>
+              <span id="modalPayStatus" class="badge badge-warning">Unpaid</span>
+            </div>
+            <div>
+              <span style="color:var(--color-text-secondary); display:block;">Transaction ID:</span>
+              <span id="modalPayTxn" style="font-family:var(--font-family-mono); font-weight:600;">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remarks Section -->
+        <div id="modalRemarksSection" style="margin-top:16px; display:none; padding:14px; background:var(--color-warning-subtle); border-radius:var(--radius-md); border-left:4px solid var(--color-warning);">
+          <div style="font-weight:700; font-size:12.5px; color:var(--color-warning-hover); margin-bottom:3px;">
+            Admissions Officer Remarks:
+          </div>
+          <div style="font-size:12.5px; color:var(--color-text-primary);" id="modalRemarksText"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer" id="modalActionFooter">
+        <!-- Dynamic actions (Pay Fee, Download Admit Card, Close) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       PAY APPLICATION FEE MODAL (Simulated Payment)
+       ========================================================================= -->
+  <div class="modal-overlay" id="payModal" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="payModalTitle">
+          <span>💳</span> Pay Admission Processing Fee
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closePayModal()" aria-label="Close modal">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="payAlert" class="alert alert-danger" style="display:none;"></div>
+
+        <div style="padding:14px; background:var(--color-surface-muted); border-radius:var(--radius-md); margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:13px; color:var(--color-text-secondary);">University & Program:</span>
+            <strong style="font-size:13px; color:var(--color-primary-dark);" id="payUniProgName">-</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-size:13px; color:var(--color-text-secondary);">Payable Fee:</span>
+            <strong style="font-size:1.15rem; color:var(--color-accent);" id="payFeeAmount">BDT 0</strong>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Select Payment Gateway</label>
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+            <label style="border:1.5px solid var(--color-accent); border-radius:var(--radius-md); padding:10px; text-align:center; cursor:pointer; background:var(--color-accent-subtle);">
+              <input type="radio" name="payMethod" value="bKash" checked style="accent-color:var(--color-accent);">
+              <div style="font-weight:700; font-size:13px; margin-top:4px; color:#e2136e;">bKash</div>
+            </label>
+            <label style="border:1.5px solid var(--color-border); border-radius:var(--radius-md); padding:10px; text-align:center; cursor:pointer;">
+              <input type="radio" name="payMethod" value="Nagad" style="accent-color:var(--color-accent);">
+              <div style="font-weight:700; font-size:13px; margin-top:4px; color:#f7941d;">Nagad</div>
+            </label>
+            <label style="border:1.5px solid var(--color-border); border-radius:var(--radius-md); padding:10px; text-align:center; cursor:pointer;">
+              <input type="radio" name="payMethod" value="Rocket" style="accent-color:var(--color-accent);">
+              <div style="font-weight:700; font-size:13px; margin-top:4px; color:#8c3494;">Rocket</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="payTransactionId" class="form-label required">Transaction ID / Reference</label>
+          <input type="text" id="payTransactionId" class="form-control" placeholder="e.g. 9J47AB81KL or leave blank to auto-generate">
+          <span style="font-size:11.5px; color:var(--color-text-muted); margin-top:4px; display:block;">
+            *Simulated payment environment: Enter any transaction string or leave blank.
+          </span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closePayModal()" style="background:var(--color-surface-muted); color:var(--color-primary-dark);">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnSubmitPayment" onclick="submitFeePayment()">Confirm & Complete Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       NEW APPLICATION MODAL
+       ========================================================================= -->
+  <div class="modal-overlay" id="newAppModal" role="dialog" aria-modal="true" aria-labelledby="newAppTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="newAppTitle">
+          <span>🎓</span> New University Application
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closeNewAppModal()" aria-label="Close modal">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="newAppAlert" class="alert alert-danger" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="newAppUniSelect" class="form-label required">Target University</label>
+          <select id="newAppUniSelect" class="form-select" onchange="onUniversitySelected(this.value)">
+            <option value="">-- Choose University --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="newAppProgSelect" class="form-label required">Select Program / Department</label>
+          <select id="newAppProgSelect" class="form-select" onchange="onProgramSelected(this.value)" disabled>
+            <option value="">-- Select University First --</option>
+          </select>
+        </div>
+
+        <!-- Eligibility check preview -->
+        <div id="eligibilityCheckAlert" style="display:none; padding:12px; border-radius:var(--radius-md); font-size:12.5px; margin-bottom:14px;"></div>
+
+        <div style="padding:12px 16px; background:var(--color-surface-muted); border-radius:var(--radius-md); font-size:13px; display:flex; justify-content:space-between; align-items:center;">
+          <span>Application Processing Fee:</span>
+          <strong id="newAppFeeLabel">BDT 0</strong>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeNewAppModal()" style="background:var(--color-surface-muted); color:var(--color-primary-dark);">Cancel</button>
+        <button type="button" class="btn btn-primary" id="newAppSubmitBtn" onclick="submitNewApplication()">Submit Application</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/student.js"></script>
+  <script>
+    let myApplications = [];
+    let cachedUniversities = [];
+    let activeFilter = 'all';
+    let currentPayingAppId = null;
+    let studentUser = null;
+    let studentProfile = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authData = await initStudentAuth('applications');
+      if (!authData) return;
+
+      studentUser = authData.user;
+      studentProfile = authData.profile;
+
+      await Promise.all([
+        loadApplications(),
+        loadUniversitiesList()
+      ]);
+
+      // Check query parameter to trigger payment modal (e.g. ?pay=12)
+      const urlParams = new URLSearchParams(window.location.search);
+      const payId = urlParams.get('pay');
+      if (payId) {
+        openPaymentModal(parseInt(payId, 10));
+      }
+    });
+
+    // Load Applications from API
+    async function loadApplications() {
+      const tbody = document.getElementById('applicationsTableBody');
+      try {
+        const res = await fetch('/api/applications');
+        const data = await res.json();
+
+        if (data.success) {
+          myApplications = data.applications || [];
+          updateSummaryMetrics(myApplications);
+          renderApplicationsTable(myApplications);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--color-danger); padding:24px;">Failed to load applications.</td></tr>`;
+        }
+      } catch (err) {
+        console.error('Error fetching applications:', err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--color-danger); padding:24px;">Network error while fetching applications.</td></tr>`;
+      }
+    }
+
+    // Load list of universities for the Apply modal
+    async function loadUniversitiesList() {
+      try {
+        const res = await fetch('/api/universities');
+        const data = await res.json();
+        if (data.success) {
+          cachedUniversities = data.universities || [];
+          const uniSelect = document.getElementById('newAppUniSelect');
+          uniSelect.innerHTML = '<option value="">-- Choose University --</option>' +
+            cachedUniversities.map(u => `<option value="${u.id}">${u.name} (${u.short_name || u.type})</option>`).join('');
+        }
+      } catch (e) {
+        console.error('Error fetching universities list:', e);
+      }
+    }
+
+    // Metric Badges Calculation
+    function updateSummaryMetrics(apps) {
+      const total = apps.length;
+      const pending = apps.filter(a => a.status === 'pending' || a.status === 'under_review').length;
+      const approved = apps.filter(a => a.status === 'approved').length;
+      const rejected = apps.filter(a => a.status === 'rejected').length;
+
+      document.getElementById('sumTotal').textContent = total;
+      document.getElementById('sumPending').textContent = pending;
+      document.getElementById('sumApproved').textContent = approved;
+      document.getElementById('sumRejected').textContent = rejected;
+    }
+
+    // Filter Buttons
+    function filterByStatus(status, boxElem) {
+      activeFilter = status;
+      document.querySelectorAll('.summary-box').forEach(b => b.classList.remove('active'));
+      if (boxElem) boxElem.classList.add('active');
+
+      const select = document.getElementById('statusFilterSelect');
+      if (select) select.value = status;
+
+      applyCurrentFilter();
+    }
+
+    function handleSelectFilter(val) {
+      activeFilter = val;
+      applyCurrentFilter();
+    }
+
+    function applyCurrentFilter() {
+      if (activeFilter === 'all') {
+        renderApplicationsTable(myApplications);
+      } else if (activeFilter === 'pending') {
+        const filtered = myApplications.filter(a => a.status === 'pending' || a.status === 'under_review');
+        renderApplicationsTable(filtered);
+      } else {
+        const filtered = myApplications.filter(a => a.status === activeFilter);
+        renderApplicationsTable(filtered);
+      }
+    }
+
+    // Render Applications Table
+    function renderApplicationsTable(apps) {
+      const tbody = document.getElementById('applicationsTableBody');
+      const countLabel = document.getElementById('tableCountLabel');
+
+      if (countLabel) {
+        countLabel.textContent = `Showing ${apps.length} of ${myApplications.length} application${myApplications.length !== 1 ? 's' : ''}`;
+      }
+
+      if (apps.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; padding:44px 20px; color:var(--color-text-secondary);">
+              <div style="font-size:28px; margin-bottom:8px;">📝</div>
+              <h4 style="color:var(--color-primary-dark); margin-bottom:4px;">No Applications Found</h4>
+              <p style="font-size:13px; color:var(--color-text-muted); margin-bottom:14px;">No admission entries match the selected status.</p>
+              <button type="button" class="btn btn-primary" onclick="openNewApplicationModal()" style="font-size:12.5px; padding:6px 14px;">
+                + Apply to a Program
+              </button>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = apps.map(a => {
+        const appliedDate = new Date(a.application_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        // Status badge
+        let statusBadge = '<span class="badge badge-warning">Pending</span>';
+        if (a.payment_status === 'unpaid') {
+          statusBadge = '<span class="badge badge-warning" style="background:#fef3c7; color:#92400e;">Payment Pending</span>';
+        } else if (a.status === 'pending') {
+          statusBadge = '<span class="badge badge-info" style="background:#e0f2fe; color:#0369a1;">Pending Review (Manager/Admin)</span>';
+        } else if (a.status === 'under_review') {
+          statusBadge = '<span class="badge badge-info">Under Review</span>';
+        } else if (a.status === 'approved') {
+          statusBadge = '<span class="badge badge-success">Approved (Verified)</span>';
+        } else if (a.status === 'rejected') {
+          statusBadge = '<span class="badge badge-danger">Rejected</span>';
+        } else if (a.status === 'waitlisted') {
+          statusBadge = '<span class="badge badge-secondary">Waitlisted</span>';
+        }
+
+        // Payment badge
+        let payBadge = '<span class="badge badge-danger">Unpaid</span>';
+        if (a.payment_status === 'paid' || a.payment_status === 'verified') {
+          payBadge = '<span class="badge badge-success">Paid</span>';
+        }
+
+        // Action buttons
+        const isPaid = (a.payment_status === 'paid' || a.payment_status === 'verified');
+        const isApproved = a.status === 'approved';
+
+        let payBtn = '';
+        if (!isPaid) {
+          payBtn = `<button type="button" class="btn btn-primary" style="padding:4px 10px; font-size:11px;" onclick="openPaymentModal(${a.id})">Pay Fee</button>`;
+        }
+
+        let challanBtn = '';
+        if (isPaid) {
+          challanBtn = `<a href="/api/applications/${a.id}/challan" target="_blank" class="btn" style="padding:4px 10px; font-size:11px; background:#006a4e; color:white; text-decoration:none;" title="বাংলাদেশ সরকার স্বয়ংক্রিয় চালান ফরম (টি. আর. ফরম নং ৬)">ই-চালান 🧾</a>`;
+        }
+
+        let admitBtn = '';
+        if (isApproved && isPaid) {
+          admitBtn = `<a href="/api/applications/${a.id}/admit-card" target="_blank" class="btn" style="padding:4px 10px; font-size:11px; background:var(--color-accent); color:white; text-decoration:none;">Admit Card</a>`;
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:700; color:var(--color-primary-dark);">${a.university_name}</div>
+              <div style="font-size:11.5px; color:var(--color-text-secondary);">${a.university_location || ''}</div>
+            </td>
+            <td>
+              <div style="font-weight:600;">${a.program_name}</div>
+              <div style="font-size:11px; color:var(--color-text-muted);">${a.program_department || ''}</div>
+            </td>
+            <td style="font-size:12.5px; color:var(--color-text-secondary);">${appliedDate}</td>
+            <td>${statusBadge}</td>
+            <td>${payBadge}</td>
+            <td style="text-align:right;">
+              <div style="display:inline-flex; gap:6px; align-items:center;">
+                <button type="button" class="btn" style="padding:4px 10px; font-size:11px; background:var(--color-surface-muted); color:var(--color-primary-dark);" onclick="openApplicationDetailModal(${a.id})">
+                  Details
+                </button>
+                ${payBtn}
+                ${challanBtn}
+                ${admitBtn}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Open Application Detail Modal with Timeline
+    function openApplicationDetailModal(appId) {
+      const a = myApplications.find(item => item.id === appId);
+      if (!a) return;
+
+      const modal = document.getElementById('appDetailModal');
+      document.getElementById('modalAppName').textContent = a.university_name;
+      document.getElementById('modalAppProg').textContent = `${a.program_name} (${a.program_department})`;
+      document.getElementById('modalAppId').textContent = `Application ID: #${a.id} • Assigned: ${a.assigned_id || 'Pending Roll'}`;
+
+      const appliedDate = new Date(a.application_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      document.getElementById('modalAppDate').textContent = `Applied: ${appliedDate}`;
+
+      // Status badge
+      const statusBadgeContainer = document.getElementById('modalAppStatusBadge');
+      if (a.status === 'approved') statusBadgeContainer.innerHTML = '<span class="badge badge-success">Approved</span>';
+      else if (a.status === 'rejected') statusBadgeContainer.innerHTML = '<span class="badge badge-danger">Rejected</span>';
+      else if (a.status === 'under_review') statusBadgeContainer.innerHTML = '<span class="badge badge-info">Under Review</span>';
+      else statusBadgeContainer.innerHTML = '<span class="badge badge-warning">Pending</span>';
+
+      // Payment info
+      document.getElementById('modalPayAmount').textContent = `BDT ${a.payment_amount || 0}`;
+      const isPaid = (a.payment_status === 'paid' || a.payment_status === 'verified');
+      document.getElementById('modalPayStatus').innerHTML = isPaid ? '<span class="badge badge-success">Paid</span>' : '<span class="badge badge-danger">Unpaid</span>';
+      document.getElementById('modalPayTxn').textContent = a.payment_transaction_id || 'Not Yet Paid';
+
+      // Remarks
+      const remarksSection = document.getElementById('modalRemarksSection');
+      if (a.remarks && a.remarks.trim()) {
+        document.getElementById('modalRemarksText').textContent = a.remarks;
+        remarksSection.style.display = 'block';
+      } else {
+        remarksSection.style.display = 'none';
+      }
+
+      // Build Timeline
+      const timeline = document.getElementById('appTimelineContainer');
+      const isReview = a.status === 'under_review' || isPaid || a.status === 'approved';
+      const isDecision = a.status === 'approved' || a.status === 'rejected';
+
+      timeline.innerHTML = `
+        <div class="timeline-step completed">
+          <div class="timeline-node">1</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Application Submitted</div>
+            <div class="timeline-meta">${appliedDate}</div>
+            <p class="timeline-desc">Initial academic record and form submission received by admissions registry.</p>
+          </div>
+        </div>
+
+        <div class="timeline-step ${isPaid ? 'completed' : 'active'}">
+          <div class="timeline-node">2</div>
+          <div class="timeline-content">
+            <div class="timeline-title">${isPaid ? 'Application Fee Settled' : 'Payment Awaiting Settlement'}</div>
+            <div class="timeline-meta">${a.payment_date ? new Date(a.payment_date).toLocaleDateString() : 'Pending'}</div>
+            <p class="timeline-desc">${isPaid ? `Payment of BDT ${a.payment_amount} confirmed (${a.payment_transaction_id || 'Success'}).` : 'Please pay the fee to initiate document verification.'}</p>
+          </div>
+        </div>
+
+        <div class="timeline-step ${isDecision ? 'completed' : (isReview ? 'active' : 'pending')}">
+          <div class="timeline-node">3</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Credential Verification & Screening</div>
+            <div class="timeline-meta">${isReview ? 'Active Processing' : 'Pending Fee'}</div>
+            <p class="timeline-desc">Academic transcript GPAs and group criteria verified by faculty board.</p>
+          </div>
+        </div>
+
+        <div class="timeline-step ${a.status === 'approved' ? 'completed' : (a.status === 'rejected' ? 'rejected' : 'pending')}">
+          <div class="timeline-node">4</div>
+          <div class="timeline-content">
+            <div class="timeline-title">${a.status === 'approved' ? 'Admit Card Issued & Approved' : (a.status === 'rejected' ? 'Application Declined' : 'Final Selection Decision')}</div>
+            <div class="timeline-meta">${isDecision ? 'Completed' : 'Upcoming'}</div>
+            <p class="timeline-desc">${a.status === 'approved' ? 'Candidate approved for admission test. Official admit card ready for download.' : (a.status === 'rejected' ? 'Requirements were not met for this discipline.' : 'Final eligibility decision awaits committee publication.')}</p>
+          </div>
+        </div>
+      `;
+
+      // Actions footer
+      const footer = document.getElementById('modalActionFooter');
+      let footerBtns = `<button type="button" class="btn btn-secondary" onclick="closeAppDetailModal()" style="background:var(--color-surface-muted); color:var(--color-primary-dark);">Close</button>`;
+
+      if (!isPaid) {
+        footerBtns += `<button type="button" class="btn btn-primary" onclick="closeAppDetailModal(); openPaymentModal(${a.id});">Pay Fee Now (BDT ${a.payment_amount})</button>`;
+      } else {
+        footerBtns += `<a href="/api/applications/${a.id}/challan" target="_blank" class="btn" style="background:#006a4e; color:white; text-decoration:none;">সরকারি ই-চালান রসিদ (A-Challan) 🧾</a>`;
+        if (a.status === 'approved') {
+          footerBtns += `<a href="/api/applications/${a.id}/admit-card" target="_blank" class="btn btn-primary" style="background:var(--color-accent); text-decoration:none;">Download Admit Card 🖨️</a>`;
+        }
+      }
+
+      footer.innerHTML = footerBtns;
+      modal.classList.add('active');
+    }
+
+    function closeAppDetailModal() {
+      const modal = document.getElementById('appDetailModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Payment Modal Logic
+    function openPaymentModal(appId) {
+      currentPayingAppId = appId;
+      const app = myApplications.find(a => a.id === appId);
+      if (!app) return;
+
+      const modal = document.getElementById('payModal');
+      document.getElementById('payUniProgName').textContent = `${app.university_name} - ${app.program_name}`;
+      document.getElementById('payFeeAmount').textContent = `BDT ${app.payment_amount || 500}`;
+      document.getElementById('payTransactionId').value = '';
+      document.getElementById('payAlert').style.display = 'none';
+
+      modal.classList.add('active');
+    }
+
+    function closePayModal() {
+      const modal = document.getElementById('payModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    async function submitFeePayment() {
+      const modal = document.getElementById('payModal');
+      const alertBox = document.getElementById('payAlert');
+      const submitBtn = document.getElementById('btnSubmitPayment');
+
+      const methodRadio = document.querySelector('input[name="payMethod"]:checked');
+      const paymentMethod = methodRadio ? methodRadio.value : 'bKash';
+      const customTxn = document.getElementById('payTransactionId').value.trim();
+
+      alertBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing Payment...';
+
+      try {
+        const res = await fetch(`/api/applications/${currentPayingAppId}/pay`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            payment_method: paymentMethod,
+            transaction_id: customTxn || undefined
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          closePayModal();
+          showToast(`Fee settled! Transaction ID: ${data.transaction_id}. Your application is now PENDING REVIEW by Manager / Admin.`, 'success');
+          await loadApplications();
+        } else {
+          alertBox.textContent = data.message || 'Payment processing failed.';
+          alertBox.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Payment error:', err);
+        alertBox.textContent = 'Network error while contacting payment gateway.';
+        alertBox.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirm & Complete Payment';
+      }
+    }
+
+    // New Application Modal Logic
+    function openNewApplicationModal() {
+      // ── Profile completion check ──
+      if (!studentUser || !studentUser.profile_completed) {
+        const goToProfile = confirm(
+          '⚠️ You must complete your profile before applying to any university.\n\n' +
+          'Your personal, address, and academic information are required to proceed.\n\n' +
+          'Click OK to complete your profile now.'
+        );
+        if (goToProfile) {
+          window.location.href = '/student/profile.html';
+        }
+        return;
+      }
+
+      const modal = document.getElementById('newAppModal');
+      document.getElementById('newAppAlert').style.display = 'none';
+      document.getElementById('eligibilityCheckAlert').style.display = 'none';
+      modal.classList.add('active');
+    }
+
+    function closeNewAppModal() {
+      const modal = document.getElementById('newAppModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function onUniversitySelected(uniId) {
+      const progSelect = document.getElementById('newAppProgSelect');
+      const feeLabel = document.getElementById('newAppFeeLabel');
+      const eligAlert = document.getElementById('eligibilityCheckAlert');
+      eligAlert.style.display = 'none';
+
+      if (!uniId) {
+        progSelect.innerHTML = '<option value="">-- Select University First --</option>';
+        progSelect.disabled = true;
+        feeLabel.textContent = 'BDT 0';
+        return;
+      }
+
+      const u = cachedUniversities.find(item => item.id === parseInt(uniId, 10));
+      if (!u) return;
+
+      feeLabel.textContent = `BDT ${u.application_fee || 500}`;
+
+      const progs = u.programs || [];
+      if (progs.length === 0) {
+        progSelect.innerHTML = '<option value="">No programs available</option>';
+        progSelect.disabled = true;
+      } else {
+        progSelect.innerHTML = '<option value="">-- Choose Program --</option>' + progs.map(p => {
+          const req = p.required_group ? `[${p.required_group}]` : '[Any Stream]';
+          return `<option value="${p.id}" data-min-gpa="${p.min_gpa}" data-group="${p.required_group || ''}">${p.name} (${req})</option>`;
+        }).join('');
+        progSelect.disabled = false;
+      }
+    }
+
+    function onProgramSelected(progId) {
+      const eligAlert = document.getElementById('eligibilityCheckAlert');
+      if (!progId || !studentProfile) {
+        eligAlert.style.display = 'none';
+        return;
+      }
+
+      const progSelect = document.getElementById('newAppProgSelect');
+      const selectedOption = progSelect.selectedOptions[0];
+      const minGpa = parseFloat(selectedOption.getAttribute('data-min-gpa')) || 0;
+      const reqGroup = selectedOption.getAttribute('data-group');
+
+      const sscGpa = parseFloat(studentProfile.ssc_gpa) || 0;
+      const hscGpa = parseFloat(studentProfile.hsc_gpa) || 0;
+      const hscGroup = studentProfile.hsc_group || '';
+
+      const qualifies = (hscGpa >= minGpa) && (!reqGroup || reqGroup.toLowerCase() === hscGroup.toLowerCase() || hscGroup.toLowerCase() === 'science');
+
+      if (qualifies) {
+        eligAlert.style.display = 'block';
+        eligAlert.style.background = 'var(--color-success-subtle)';
+        eligAlert.style.color = 'var(--color-success)';
+        eligAlert.style.border = '1px solid var(--color-success-border)';
+        eligAlert.innerHTML = `✓ <strong>Eligibility Verified:</strong> Your HSC GPA (${hscGpa.toFixed(2)}) qualifies for this program's criteria (Min GPA: ${minGpa.toFixed(2)}).`;
+      } else {
+        eligAlert.style.display = 'block';
+        eligAlert.style.background = 'var(--color-warning-subtle)';
+        eligAlert.style.color = 'var(--color-warning-hover)';
+        eligAlert.style.border = '1px solid var(--color-warning-border)';
+        eligAlert.innerHTML = `⚠️ <strong>Notice:</strong> Program minimum requirement is GPA ${minGpa.toFixed(2)} (${reqGroup || 'Any'}). Your recorded HSC is ${hscGpa.toFixed(2)} (${hscGroup}).`;
+      }
+    }
+
+    async function submitNewApplication() {
+      // ── Profile completion check ──
+      if (!studentUser || !studentUser.profile_completed) {
+        alert('You must complete your profile before applying. Redirecting to profile page...');
+        window.location.href = '/student/profile.html';
+        return;
+      }
+
+      const uniId = document.getElementById('newAppUniSelect').value;
+      const progId = document.getElementById('newAppProgSelect').value;
+      const alertBox = document.getElementById('newAppAlert');
+      const submitBtn = document.getElementById('newAppSubmitBtn');
+
+      if (!uniId || !progId) {
+        alertBox.textContent = 'Please select both an institution and an academic program.';
+        alertBox.style.display = 'block';
+        return;
+      }
+
+      alertBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        const res = await fetch('/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            university_id: parseInt(uniId, 10),
+            program_id: parseInt(progId, 10)
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          closeNewAppModal();
+          showToast('Application submitted! Taking you to the payment section...', 'success');
+          setTimeout(() => {
+            window.location.href = '/student/payments.html?pay=' + data.application_id;
+          }, 1200);
+        } else {
+          if (data.redirect) {
+            alert(data.message);
+            window.location.href = data.redirect;
+            return;
+          }
+          alertBox.textContent = data.message || 'Failed to submit application.';
+          alertBox.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Error creating application:', err);
+        alertBox.textContent = 'Network error while submitting application.';
+        alertBox.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Application';
+      }
+    }
+  </script>
+</body>
+</html>

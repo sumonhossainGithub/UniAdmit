@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .badge-mgr { background: #ede9fe; color: #6d28d9; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/manager/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit <span class="badge badge-mgr" style="font-size:11px; margin-left:6px;">MANAGER</span></span>
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="user-badge" id="managerBadge">Admission Manager</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Admission Management & Analytics Console</h1>
+        <p class="page-subtitle">Review applications, publish automated merit lists, send student broadcasts, and track financial performance.</p>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-4" style="margin-bottom: 24px;">
+      <div class="stat-card">
+        <div class="stat-icon blue">📝</div>
+        <div>
+          <div class="stat-value" id="statApps">0</div>
+          <div class="stat-label">Total Applications</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">⏳</div>
+        <div>
+          <div class="stat-value" id="statPending">0</div>
+          <div class="stat-label">Pending / Under Review</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">🎯</div>
+        <div>
+          <div class="stat-value" id="statAcceptRate">0%</div>
+          <div class="stat-label">Acceptance Rate</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">💵</div>
+        <div>
+          <div class="stat-value" id="statRevenue">0 BDT</div>
+          <div class="stat-label">Total Revenue Collected</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this, 'reviewTab')">🔍 Application Reviews</button>
+      <button class="tab-btn" onclick="switchTab(this, 'meritTab')">🏆 Merit List Generator</button>
+      <button class="tab-btn" onclick="switchTab(this, 'broadcastTab')">📢 Broadcast Notification</button>
+      <button class="tab-btn" onclick="switchTab(this, 'financeTab')">📊 Financial Summary</button>
+      <button class="tab-btn" onclick="switchTab(this, 'statsTab')">📈 Admission Statistics</button>
+      <button class="tab-btn" onclick="switchTab(this, 'auditTab')">📜 Activity Audit Log</button>
+    </div>
+
+    <!-- Tab 1: Application Reviews -->
+    <div id="reviewTab" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Admission Application Screening</h2>
+          <div style="display:flex; gap:10px;">
+            <select id="reviewStatusFilter" class="form-control" style="width:160px;" onchange="loadReviewApps()">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="under_review">Under Review</option>
+              <option value="approved">Approved</option>
+              <option value="waitlisted">Waitlisted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <input type="text" id="reviewSearch" class="form-control" style="width:200px;" placeholder="Search candidate..." oninput="loadReviewApps()">
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>App #</th>
+                <th>Candidate</th>
+                <th>University & Program</th>
+                <th>Academic Scores</th>
+                <th>Decision Status</th>
+                <th>Remarks</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="reviewTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Merit List Generator -->
+    <div id="meritTab" class="tab-content">
+      <div class="grid grid-cols-2">
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Automated Merit Ranking Engine</h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+            The automated merit engine ranks applicants based on combined SSC + HSC GPA, allocates seats for <strong>SELECTED</strong> candidates up to capacity, and designates remaining eligible candidates as <strong>WAITLISTED</strong>.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="meritUniSelect">Select University</label>
+            <select id="meritUniSelect" class="form-control" onchange="onMeritUniChange()">
+              <option value="">Select University</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="meritProgSelect">Select Program</label>
+            <select id="meritProgSelect" class="form-control">
+              <option value="">Select University First</option>
+            </select>
+          </div>
+
+          <button onclick="generateMeritList()" id="genMeritBtn" class="btn btn-primary btn-block">
+            ⚡ Run Auto-Ranking & Publish Merit List
+          </button>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Merit Publication Status</h3>
+          <div id="meritStatusBox" style="font-size:13px; color:var(--text-muted); padding:20px; text-align:center;">
+            Select a program to generate or view merit rankings.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Broadcast Notification -->
+    <div id="broadcastTab" class="tab-content">
+      <div class="card" style="max-width:650px;">
+        <h3 class="card-title" style="margin-bottom:16px;">Send Student Notification / Broadcast</h3>
+        <form id="notifyForm">
+          <div class="form-group">
+            <label class="form-label" for="notifRecipient">Recipient</label>
+            <select id="notifRecipient" class="form-control">
+              <option value="all">📢 Broadcast to All Registered Students</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="notifType">Notification Type</label>
+            <select id="notifType" class="form-control">
+              <option value="info">Info</option>
+              <option value="success">Success</option>
+              <option value="warning">Warning / Urgent</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="notifTitle">Title</label>
+            <input type="text" id="notifTitle" class="form-control" placeholder="e.g. Admit Card Release Notification" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="notifMessage">Message</label>
+            <textarea id="notifMessage" class="form-control" rows="4" placeholder="Important announcement details..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Dispatch Notification</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab 4: Financial Summary -->
+    <div id="financeTab" class="tab-content">
+      <div class="grid grid-cols-2">
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Revenue Breakdown by University</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>University</th>
+                  <th>Applications</th>
+                  <th>Paid Count</th>
+                  <th>Total Revenue</th>
+                </tr>
+              </thead>
+              <tbody id="financeTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Recent Transactions</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Txn ID</th>
+                  <th>Student</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="txnTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Admission Statistics -->
+    <div id="statsTab" class="tab-content">
+      <div class="grid grid-cols-2">
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Applications by Department</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Department</th>
+                  <th>Total Seats</th>
+                  <th>Applications</th>
+                </tr>
+              </thead>
+              <tbody id="deptStatsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Applicant Demographics</h3>
+          <div style="margin-bottom:20px;">
+            <h4 style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">Gender Distribution</h4>
+            <div id="genderStatsBox" style="display:flex; gap:12px;"></div>
+          </div>
+          <div>
+            <h4 style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">Top Education Boards</h4>
+            <div id="boardStatsBox"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 6: Activity Audit Log -->
+    <div id="auditTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">System Activity Audit Log</h2>
+          <button onclick="loadAuditLogs()" class="btn btn-outline btn-sm">🔄 Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width:160px;">Timestamp</th>
+                <th>Action</th>
+                <th>User / Agent</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="auditTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let universitiesList = [];
+
+    async function init() {
+      try {
+        const userRes = await fetch('/api/auth/me');
+        if (!userRes.ok) { window.location.href = '/'; return; }
+        const u = await userRes.json();
+        if (u.user.role !== 'manager' && u.user.role !== 'admin') {
+          window.location.href = '/dashboard';
+          return;
+        }
+        document.getElementById('managerBadge').innerText = u.user.full_name || 'Manager';
+
+        // Load Universities for dropdowns
+        const uniRes = await fetch('/api/universities');
+        const uniData = await uniRes.json();
+        universitiesList = uniData.universities || [];
+
+        const meritUni = document.getElementById('meritUniSelect');
+        universitiesList.forEach(uni => {
+          const opt = document.createElement('option');
+          opt.value = uni.id;
+          opt.innerText = `${uni.name} (${uni.short_name})`;
+          meritUni.appendChild(opt);
+        });
+
+        loadOverviewStats();
+        loadReviewApps();
+        loadFinancialSummary();
+        loadAdmissionStats();
+        loadAuditLogs();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // Overview Stats
+    async function loadOverviewStats() {
+      const res = await fetch('/api/manager/statistics');
+      const data = await res.json();
+      const s = data.statistics || {};
+
+      document.getElementById('statApps').innerText = s.total_applications || 0;
+      document.getElementById('statPending').innerText = (s.pending_applications || 0) + (s.under_review_applications || 0);
+      document.getElementById('statRevenue').innerText = `${(s.total_revenue_collected || 0).toLocaleString()} BDT`;
+
+      const reportsRes = await fetch('/api/manager/reports');
+      const reportsData = await reportsRes.json();
+      document.getElementById('statAcceptRate').innerText = reportsData.report?.acceptance_rate || '0%';
+    }
+
+    // Application Reviews
+    async function loadReviewApps() {
+      const status = document.getElementById('reviewStatusFilter')?.value || 'all';
+      const search = document.getElementById('reviewSearch')?.value || '';
+      const res = await fetch(`/api/manager/applications?status=${status}&search=${encodeURIComponent(search)}`);
+      const data = await res.json();
+      const apps = data.applications || [];
+
+      const tbody = document.getElementById('reviewTbody');
+      tbody.innerHTML = apps.map(a => `
+        <tr>
+          <td><strong>#${a.id}</strong></td>
+          <td>
+            <strong>${a.student_name}</strong><br>
+            <span style="font-size:11px; color:#64748b;">${a.student_email}</span>
+          </td>
+          <td>
+            <strong>${a.university_short_name}</strong><br>
+            <span style="font-size:12px; color:#64748b;">${a.program_name}</span>
+          </td>
+          <td>
+            <span style="font-size:12px;">SSC: <strong>${a.ssc_gpa || '-'}</strong> (${a.ssc_group || '-'})</span><br>
+            <span style="font-size:12px;">HSC: <strong>${a.hsc_gpa || '-'}</strong> (${a.hsc_group || '-'})</span>
+          </td>
+          <td>
+            <select id="statusSelect_${a.id}" class="form-control" style="font-size:11px; padding:3px 6px; width:120px;">
+              <option value="under_review" ${a.status === 'under_review' ? 'selected' : ''}>Under Review</option>
+              <option value="approved" ${a.status === 'approved' ? 'selected' : ''}>Approve</option>
+              <option value="waitlisted" ${a.status === 'waitlisted' ? 'selected' : ''}>Waitlist</option>
+              <option value="rejected" ${a.status === 'rejected' ? 'selected' : ''}>Reject</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" id="remarks_${a.id}" class="form-control" style="font-size:11px; padding:3px 6px; width:140px;" placeholder="Remarks..." value="${a.remarks || ''}">
+          </td>
+          <td>
+            <button onclick="submitReview(${a.id})" class="btn btn-primary btn-sm">Save</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function submitReview(appId) {
+      const status = document.getElementById(`statusSelect_${appId}`).value;
+      const remarks = document.getElementById(`remarks_${appId}`).value.trim();
+
+      const res = await fetch(`/api/manager/applications/${appId}/review`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, remarks })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Review saved successfully!');
+        loadOverviewStats();
+        loadReviewApps();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    // Merit List
+    function onMeritUniChange() {
+      const uniId = parseInt(document.getElementById('meritUniSelect').value, 10);
+      const progSelect = document.getElementById('meritProgSelect');
+      progSelect.innerHTML = '<option value="">Select Program</option>';
+
+      if (uniId) {
+        const uni = universitiesList.find(u => u.id === uniId);
+        if (uni && uni.programs) {
+          uni.programs.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.innerText = `${p.name} (Seats: ${p.seats})`;
+            progSelect.appendChild(opt);
+          });
+        }
+      }
+    }
+
+    async function generateMeritList() {
+      const uniId = parseInt(document.getElementById('meritUniSelect').value, 10);
+      const progId = parseInt(document.getElementById('meritProgSelect').value, 10);
+
+      if (!uniId || !progId) {
+        alert('Please select both University and Program.');
+        return;
+      }
+
+      const btn = document.getElementById('genMeritBtn');
+      btn.disabled = true;
+      btn.innerText = 'Calculating rankings...';
+
+      try {
+        const res = await fetch('/api/manager/merit-list', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ university_id: uniId, program_id: progId, auto_generate: true })
+        });
+        const data = await res.json();
+
+        const box = document.getElementById('meritStatusBox');
+        if (data.success) {
+          box.innerHTML = `
+            <div style="background:#dcfce7; color:#15803d; padding:14px; border-radius:6px;">
+              <strong>Success!</strong> ${data.message}<br>
+              <span style="font-size:12px;">Total applicants ranked: <strong>${data.ranked_count}</strong></span><br>
+              <a href="/merit-list" target="_blank" class="btn btn-primary btn-sm" style="margin-top:10px;">View Public Merit List ↗</a>
+            </div>
+          `;
+        } else {
+          box.innerHTML = `<div style="background:#fee2e2; color:#b91c1c; padding:14px; border-radius:6px;">${data.message}</div>`;
+        }
+      } catch (err) {
+        alert('Error generating merit list.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Run Auto-Ranking & Publish Merit List';
+      }
+    }
+
+    // Broadcast Notification
+    document.getElementById('notifyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user_id = document.getElementById('notifRecipient').value;
+      const type = document.getElementById('notifType').value;
+      const title = document.getElementById('notifTitle').value.trim();
+      const message = document.getElementById('notifMessage').value.trim();
+
+      const res = await fetch('/api/manager/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, type, title, message })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+        document.getElementById('notifTitle').value = '';
+        document.getElementById('notifMessage').value = '';
+      } else {
+        alert(data.message);
+      }
+    });
+
+    // Financial Summary
+    async function loadFinancialSummary() {
+      const res = await fetch('/api/manager/financial-summary');
+      const data = await res.json();
+      const fs = data.financial_summary || {};
+
+      const financeTbody = document.getElementById('financeTbody');
+      financeTbody.innerHTML = (fs.by_university || []).map(u => `
+        <tr>
+          <td><strong>${u.university_short_name}</strong></td>
+          <td>${u.total_applications}</td>
+          <td>${u.paid_count}</td>
+          <td><strong>${u.total_fee_collected.toLocaleString()} BDT</strong></td>
+        </tr>
+      `).join('');
+
+      const txnTbody = document.getElementById('txnTbody');
+      txnTbody.innerHTML = (fs.recent_transactions || []).map(t => `
+        <tr>
+          <td><code>${t.payment_transaction_id || '-'}</code></td>
+          <td>${t.student_name} (${t.university_short_name})</td>
+          <td><strong>${t.payment_amount} BDT</strong></td>
+          <td><span class="badge ${t.payment_status === 'verified' ? 'badge-success' : 'badge-info'}">${t.payment_status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Admission Stats
+    async function loadAdmissionStats() {
+      const res = await fetch('/api/manager/admission-stats');
+      const data = await res.json();
+      const st = data.admission_stats || {};
+
+      const deptTbody = document.getElementById('deptStatsTbody');
+      deptTbody.innerHTML = (st.by_department || []).map(d => `
+        <tr>
+          <td><strong>${d.department}</strong></td>
+          <td>${d.total_seats || 0}</td>
+          <td><span class="badge badge-info">${d.applications_count}</span></td>
+        </tr>
+      `).join('');
+
+      const genderBox = document.getElementById('genderStatsBox');
+      genderBox.innerHTML = (st.by_gender || []).map(g => `
+        <div style="background:#f1f5f9; padding:8px 14px; border-radius:6px; font-size:13px;">
+          <strong>${g.gender}:</strong> ${g.count}
+        </div>
+      `).join('');
+
+      const boardBox = document.getElementById('boardStatsBox');
+      boardBox.innerHTML = (st.by_board || []).slice(0, 5).map(b => `
+        <div style="font-size:12px; margin-bottom:4px; display:flex; justify-content:space-between;">
+          <span>${b.board} Board:</span>
+          <strong>${b.count} applicants</strong>
+        </div>
+      `).join('');
+    }
+
+    // Activity Log
+    async function loadAuditLogs() {
+      const res = await fetch('/api/manager/activity-log');
+      const data = await res.json();
+      const logs = data.logs || [];
+
+      const tbody = document.getElementById('auditTbody');
+      tbody.innerHTML = logs.map(l => `
+        <tr>
+          <td style="font-size:11px; color:#64748b;">${l.created_at}</td>
+          <td><span class="badge badge-secondary">${l.action}</span></td>
+          <td>${l.user_name || 'System'}<br><span style="font-size:11px; color:#888;">${l.user_email || ''}</span></td>
+          <td style="font-size:12px;">${l.details}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    init();
+  </script>
+</body>
+</html>

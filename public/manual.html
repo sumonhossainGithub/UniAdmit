@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit - Student Admission Management System User Manual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #e2e8f0;
+      color: #0f172a;
+      line-height: 1.25;
+      font-size: 7.8px;
+    }
+
+    .sheet-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    /* Exact A4 Landscape Sheet: 297mm x 210mm */
+    .a4-page {
+      width: 297mm;
+      height: 210mm;
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 74.25mm);
+      grid-template-rows: repeat(2, 105mm);
+      overflow: hidden;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    /* Dashed Fold Lines for 8-Panel Sheet */
+    .fold-h {
+      position: absolute;
+      top: 105mm;
+      left: 0;
+      right: 0;
+      height: 1px;
+      border-top: 1.2px dashed #94a3b8;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .fold-v1 {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 74.25mm;
+      width: 1px;
+      border-left: 1.2px dashed #94a3b8;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .fold-v2 {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 148.5mm;
+      width: 1px;
+      border-left: 1.2px dashed #0a2647;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .fold-v3 {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 222.75mm;
+      width: 1px;
+      border-left: 1.2px dashed #94a3b8;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .fold-marker-center {
+      position: absolute;
+      top: 103mm;
+      left: 148.5mm;
+      transform: translate(-50%, -50%);
+      background: #0a2647;
+      color: #ffffff;
+      font-size: 6.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 6px;
+      z-index: 50;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Each Panel Box: 74.25mm x 105mm */
+    .panel {
+      width: 74.25mm;
+      height: 105mm;
+      padding: 4mm 4.5mm 3.5mm 4.5mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      border-right: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      background: #ffffff;
+    }
+
+    /* Panel Headers */
+    .p-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1.5px solid #0a2647;
+      padding-bottom: 2.5px;
+      margin-bottom: 3.5px;
+    }
+
+    .p-header-title {
+      font-size: 8.5px;
+      font-weight: 800;
+      color: #0a2647;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .p-header-badge {
+      font-size: 7px;
+      font-weight: 700;
+      background: #0a2647;
+      color: #ffffff;
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+
+    .p-header-badge.teal {
+      background: #2ca4a0;
+    }
+
+    .p-header-badge.accent {
+      background: #2563eb;
+    }
+
+    /* Section Cards */
+    .box {
+      border: 1px solid #e2e8f0;
+      border-radius: 3px;
+      padding: 3px 4px;
+      margin-bottom: 3px;
+      background: #ffffff;
+    }
+
+    .box-title {
+      font-size: 7.8px;
+      font-weight: 700;
+      color: #0a2647;
+      margin-bottom: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .box-desc {
+      font-size: 7.2px;
+      color: #334155;
+      line-height: 1.25;
+    }
+
+    /* Highlighted Table */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 6.8px;
+      margin: 2px 0;
+    }
+
+    .spec-table th {
+      background: #0a2647;
+      color: #ffffff;
+      padding: 2px 3px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .spec-table td {
+      padding: 1.8px 3px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .spec-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .spec-table .bold {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Callout & Alerts */
+    .callout {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-left: 2.5px solid #f59e0b;
+      padding: 2.5px 3.5px;
+      border-radius: 2.5px;
+      font-size: 6.8px;
+      color: #92400e;
+      margin-top: 2.5px;
+      display: flex;
+      gap: 3px;
+    }
+
+    .callout.info {
+      background: #eff6ff;
+      border-color: #dbeafe;
+      border-left-color: #3b82f6;
+      color: #1e40af;
+    }
+
+    .callout.success {
+      background: #f0fdf4;
+      border-color: #dcfce7;
+      border-left-color: #22c55e;
+      color: #166534;
+    }
+
+    /* Numbered Step Badges */
+    .step-pill {
+      display: inline-block;
+      background: #0a2647;
+      color: #ffffff;
+      font-size: 6.5px;
+      font-weight: 700;
+      padding: 0.5px 3px;
+      border-radius: 2px;
+      margin-right: 2px;
+    }
+
+    .step-pill.teal {
+      background: #2ca4a0;
+    }
+
+    /* Mini Grid inside panel */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      margin-top: 2px;
+    }
+
+    .grid-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 2.5px;
+      padding: 2.5px 3px;
+    }
+
+    .grid-item-title {
+      font-size: 7px;
+      font-weight: 700;
+      color: #0a2647;
+    }
+
+    .grid-item-sub {
+      font-size: 6.5px;
+      color: #64748b;
+    }
+
+    /* Footer for each panel */
+    .p-footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5px;
+      margin-top: 2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 6.5px;
+      color: #64748b;
+    }
+
+    .p-num {
+      font-weight: 800;
+      color: #0a2647;
+      background: #f1f5f9;
+      padding: 0.5px 4px;
+      border-radius: 2px;
+    }
+
+    /* Front Cover Panel Specifics */
+    .cover-panel {
+      background: linear-gradient(145deg, #0a2647 0%, #1e3a5f 100%);
+      color: #ffffff;
+      justify-content: space-between;
+    }
+
+    .cover-panel .p-header-title {
+      color: #38bdf8;
+    }
+
+    .cover-logo-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .cover-logo {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      background: #ffffff;
+      border-radius: 3px;
+      padding: 1.5px;
+    }
+
+    .cover-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+      letter-spacing: -0.3px;
+    }
+
+    .cover-sub {
+      font-size: 7px;
+      color: #38bdf8;
+      font-weight: 600;
+      margin-top: 1.5px;
+    }
+
+    .cover-desc {
+      font-size: 7px;
+      color: #cbd5e1;
+      line-height: 1.25;
+      margin: 4px 0;
+    }
+
+    .cover-bullets {
+      list-style: none;
+      font-size: 6.8px;
+      color: #e2e8f0;
+    }
+
+    .cover-bullets li {
+      margin-bottom: 2px;
+      display: flex;
+      gap: 3px;
+    }
+
+    .cover-bullets .dot {
+      color: #2ca4a0;
+      font-weight: 800;
+    }
+
+    .cover-bottom {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 2.5px;
+      font-size: 6.5px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Print settings */
+    @media print {
+      body {
+        background: none;
+      }
+      .sheet-wrapper {
+        padding: 0;
+      }
+      .a4-page {
+        box-shadow: none;
+        width: 297mm;
+        height: 210mm;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Helper -->
+  <div class="no-print" style="background:#0a2647; color:#fff; text-align:center; padding:7px; font-size:12px; font-weight:600;">
+    📘 UniAdmit - Student Admission Management System User Manual (Single A4 Folding Sheet • 8-Panel English Edition) &nbsp;|&nbsp; 
+    <button onclick="window.print()" style="background:#2ca4a0; color:#fff; border:none; padding:3px 10px; border-radius:3px; cursor:pointer; font-weight:700;">Print / Save as PDF</button>
+  </div>
+
+  <div class="sheet-wrapper">
+
+    <!-- SINGLE A4 LANDSCAPE SHEET (4 COLUMNS X 2 ROWS = 8 PANELS) -->
+    <div class="a4-page">
+      
+      <!-- Fold guidelines -->
+      <div class="fold-h"></div>
+      <div class="fold-v1"></div>
+      <div class="fold-v2"></div>
+      <div class="fold-v3"></div>
+      <div class="fold-marker-center">✂ Fold Center</div>
+
+      <!-- =========================================================================
+           TOP ROW: PANELS 1, 2, 3, 4
+           ========================================================================= -->
+
+      <!-- PANEL 1: PREFACE / SYSTEM SPECIFICATIONS -->
+      <section class="panel">
+        <div>
+          <div class="p-header">
+            <span class="p-header-title">PREFACE & SYSTEM INFO</span>
+            <span class="p-header-badge">OVERVIEW</span>
+          </div>
+          <div class="box-desc" style="margin-bottom:3px;">
+            <strong>UniAdmit</strong> is an integrated centralized admission management portal engineered to eliminate redundant university application workflows. Students can apply across multiple institutions simultaneously with AI-driven qualification matching.
+          </div>
+          
+          <table class="spec-table">
+            <tr>
+              <th colspan="2">TECHNICAL SPECIFICATIONS</th>
+            </tr>
+            <tr>
+              <td class="bold">Portal URL</td>
+              <td><code>http://localhost:3000</code></td>
+            </tr>
+            <tr>
+              <td class="bold">Architecture</td>
+              <td>Node.js, Express, SQLite3 Engine</td>
+            </tr>
+            <tr>
+              <td class="bold">Supported Roles</td>
+              <td>Student, University Manager, Admin</td>
+            </tr>
+            <tr>
+              <td class="bold">Security</td>
+              <td>Bcrypt hash, Role session guard</td>
+            </tr>
+            <tr>
+              <td class="bold">Compatibility</td>
+              <td>Chrome, Edge, Firefox, Mobile Safari</td>
+            </tr>
+          </table>
+
+          <div class="callout info">
+            <span>ℹ️</span>
+            <div><strong>Notice:</strong> This user manual is exclusively designed for prospective university applicants (Student role).</div>
+          </div>
+        </div>
+
+        <div class="p-footer">
+          <span>UniAdmit Central Portal</span>
+          <span class="p-num">PAGE 1</span>
+        </div>
+      </section>
+
+      <!-- PANEL 2: STEP 1 - ACCOUNT REGISTRATION & LOGIN -->
+      <section class="panel">
+        <div>
+          <div class="p-header">
+            <span class="p-header-title">STEP 1: REGISTRATION & LOGIN</span>
+            <span class="p-header-badge teal">ACCOUNT</span>
+          </div>
+
+          <div class="box">
+            <div class="box-title"><span class="step-pill teal">1.1</span> Account Registration</div>
+            <div class="box-desc">
+              Navigate to the login portal and click <strong>"Register as a Student"</strong>. Provide your full legal name, active email, mobile number, and a strong password.
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-title"><span class="step-pill">1.2</span> Role Selection & Security</div>
+            <div class="box-desc">
+              Ensure you select <strong>Student</strong> on the login switch. The system verifies role credentials; manager accounts cannot access the applicant portal.
+            </div>
+          </div>
+
+          <table class="spec-table">
+            <tr>
+              <th>Applicant Input</th>
+              <th>Validation Rule</th>
+            </tr>
+            <tr>
+              <td>Full Name</td>
+              <td>Must match SSC/HSC certificate</td>
+            </tr>
+            <tr>
+              <td>Email Address</td>
+              <td>Used for verification & admit delivery</td>
+            </tr>
+            <tr>
+              <td>Phone (MFS)</td>
+              <td>11-digit SMS alert contact</td>
+            </tr>
+          </table>
+
+          <div class="callout">
+            <span>⚠️</span>
+            <div><strong>Important:</strong> Never share your password or credential tokens with third parties.</div>
+          </div>
+        </div>
+
+        <div class="p-footer">
+          <span>Authentication Module</span>
+          <span class="p-num">PAGE 2</span>
+        </div>
+      </section>
+
+      <!-- PANEL 3: STEP 2 - 4-STEP MANDATORY PROFILE WIZARD -->
+      <section class="panel">
+        <div>
+          <div class="p-header">
+            <span class="p-header-title">STEP 2: PROFILE WIZARD</span>
+            <span class="p-header-badge accent">MANDATORY</span>
+          </div>
+
+          <div class="box-desc" style="margin-bottom:3px;">
+            <strong>System Rule:</strong> Students <em>cannot apply</em> to any university until profile completion reaches <strong>100%</strong>.
+          </div>
+
+          <div class="grid-2">
+            <div class="grid-item">
+              <div class="grid-item-title">Step 2.1: Personal</div>
+              <div class="grid-item-sub">Parents' names, DOB, nationality, and permanent address.</div>
+            </div>
+            <div class="grid-item">
+              <div class="grid-item-title">Step 2.2: SSC Exam</div>
+              <div class="grid-item-sub">Roll, reg. number, board, passing year & GPA (scale 5.0).</div>
+            </div>
+            <div class="grid-item">
+              <div class="grid-item-title">Step 2.3: HSC Exam</div>
+              <div class="grid-item-sub">Stream (Sci/Arts/Com), roll, board & achieved GPA.</div>
+            </div>
+            <div class="grid-item">
+              <div class="grid-item-title">Step 2.4: Uploads</div>
+              <div class="grid-item-sub">Passport photo, signature scan, and quota declaration.</div>
+            </div>
+          </div>
+
+          <div class="callout success" style="margin-top:3.5px;">
+            <span>✓</span>
+            <div>Once saved, your dashboard unlocks: <strong>"Profile Complete (100%)"</strong> in active green state.</div>
+          </div>
+        </div>
+
+        <div class="p-footer">
+          <span>Student Profile Module</span>
+          <span class="p-num">PAGE 3</span>
+        </div>
+      </section>
+
+      <!-- PANEL 4: STEP 3 - SMART AI ELIGIBILITY MATCHING -->
+      <section class="panel">
+        <div>
+          <div class="p-header">
+            <span class="p-header-title">STEP 3: SMART MATCHING</span>
+            <span class="p-header-badge teal">AI ENGINE</span>
+          </div>
+
+          <div class="box">
+            <div class="box-title"><span class="step-pill teal">3.1</span> Automated Qualification Match</div>
+            <div class="box-desc">
+              Click <strong>"Smart Suggestions"</strong>. The algorithmic filter reads your SSC GPA, HSC GPA, and study stream to display matching universities.
+            </div>
+          </div>
+
+          <table class="spec-table">
+            <tr>
+              <th>Evaluation Metric</th>
+              <th>Evaluation Logic</th>
+            </tr>
+            <tr>
+              <td>Minimum SSC GPA</td>
+              <td>Checks threshold (e.g. min 3.50)</td>
+            </tr>
+            <tr>
+              <td>Minimum HSC GPA</td>
+              <td>Checks threshold (e.g. min 3.50)</td>
+            </tr>
+            <tr>
+              <td>Combined GPA</td>
+              <td>SSC GPA + HSC GPA &ge; Required</td>
+            </tr>
+            <tr>
+              <td>Discipline Stream</td>
+              <td>Science, Arts/Hum, Commerce</td>
+            </tr>
+          </table>
+
+          <div class="callout info">
+            <span>💡</span>
+            <div><strong>Tip:</strong> Ineligible institutions are tagged with requirement breakdowns so you can plan backup applications.</div>
+          </div>
+        </div>
+
+        <div class="p-footer">
+          <span>Recommendation Engine</span>
+          <span class="p-num">PAGE 4</span>
+        </div>
+      </section>
+
+      <!-- =========================================================================
+           BOTTOM ROW: PANELS 5, 6, 7, 8
+           ========================================================================= -->
+
+      <!-- PANEL 5: STEP 4 & 5 - MULTI-APPLY & MFS PAYMENT -->
+      <section class="panel">
+        <div>
+          <div class="p-header">
+            <span class="p-header-title">STEP 4 & 5: APPLY & PAYMENT</span>
+            <span class="p-header-badge">CHECKOUT</span>
+          </div>
+
+          <div class="box">
+            <div class="box-title"><span class="step-pill">4.1</span> Multi-University Selection</div>
+            <div class="box-desc">
+              Tick multiple university checkboxes. The system aggregates all departmental application fees dynamically without retyping profile data.
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-title"><span class="step-pill teal">5.1</span> MFS Payment Gateway</div>
+            <div class="box-desc">
+              Click <strong>"Proceed to Payment"</strong>. Select bKash, Nagad, or Rocket. Send the required fee to the displayed merchant account.
+            </div>
+          </div>
+
+          <table class="spec-table">
+            <tr>
+              <th>MFS Channel</th>
+              <th>Merchant Type</th>
+              <th>Required Input</th>
+            </tr>
+            <tr>
+              <td>bKash</td>
+              <td>Send Money / Payment</td>
+              <td>10-digit TrxID</td>
+            </tr>
+            <tr>
+              <td>Nagad</td>
+              <td>Merchant Pay</td>
+              <td>8-10 char TrxID</td>
+            </tr>
+            <tr>
+              <td>Rocket</td>
+              <td>12-digit Bill Pay</td>
+              <td>Txn Reference</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="p-footer">
+          <span>Payment Module</span>
+          <span class="p-num">PAGE 5</span>
+        </div>
+      </section>
+
+      <!-- PANEL 6: STEP 6 - APPLICATION REVIEW & ADMIT CARD -->
+      <section class="panel">
+        <div>
+          <div class="p-header">
+            <span class="p-header-title">STEP 6: STATUS & ADMIT CARD</span>
+            <span class="p-header-badge accent">VERIFICATION</span>
+          </div>
+
+          <div class="box-desc" style="margin-bottom:3px;">
+            Track your submission status in real-time under <strong>"My Applications"</strong>:
+          </div>
+
+          <div class="box" style="border-left: 2.5px solid #f59e0b;">
+            <div class="box-title" style="color:#b45309;">1. Pending Review</div>
+            <div class="box-desc">University administration is verifying your academic credentials and transaction payment ID.</div>
+          </div>
+
+          <div class="box" style="border-left: 2.5px solid #10b981;">
+            <div class="box-title" style="color:#047857;">2. Approved & Admit Card</div>
+            <div class="box-desc">
+              Application validated. Click <strong>"Download Admit Card"</strong> to obtain your examination slip featuring roll, venue, and QR token.
+            </div>
+          </div>
+
+          <div class="box" style="border-left: 2.5px solid #ef4444;">
+            <div class="box-title" style="color:#b91c1c;">3. Rejected / Incomplete</div>
+            <div class="box-desc">Triggered if TrxID is invalid. Contact the university helpdesk immediately to update receipt details.</div>
+          </div>
+        </div>
+
+        <div class="p-footer">
+          <span>Admit Card Slip Module</span>
+          <span class="p-num">PAGE 6</span>
+        </div>
+      </section>
+
+      <!-- PANEL 7: TROUBLESHOOTING & FREQUENTLY ASKED QUESTIONS -->
+      <section class="panel">
+        <div>
+          <div class="p-header">
+            <span class="p-header-title">FAQS & TROUBLESHOOTING</span>
+            <span class="p-header-badge">HELPDESK</span>
+          </div>
+
+          <div class="box">
+            <div class="box-title">Q: Can I apply to universities from different streams?</div>
+            <div class="box-desc"><strong>A:</strong> Yes, if the university offers unit migration (e.g. Science students applying to BBA / Arts units).</div>
+          </div>
+
+          <div class="box">
+            <div class="box-title">Q: Why is my application still 'Pending Review'?</div>
+            <div class="box-desc"><strong>A:</strong> Verification typically takes 12-24 business hours. Contact helpdesk if pending over 48 hours.</div>
+          </div>
+
+          <div class="box">
+            <div class="box-title">Q: What if I entered the wrong TrxID?</div>
+            <div class="box-desc"><strong>A:</strong> Submit a support ticket immediately with your MFS SMS screenshot for manual ledger matching.</div>
+          </div>
+
+          <div class="callout info">
+            <span>📞</span>
+            <div><strong>Toll-Free Helpline:</strong> +880 1800-UNIMNG (09:00 AM - 05:00 PM)</div>
+          </div>
+        </div>
+
+        <div class="p-footer">
+          <span>Resolution Guide</span>
+          <span class="p-num">PAGE 7</span>
+        </div>
+      </section>
+
+      <!-- PANEL 8: FRONT COVER & BRAND PASSPORT (When folded, this is the outer front cover) -->
+      <section class="panel cover-panel">
+        <div>
+          <div class="cover-logo-box">
+            <img src="/Logo.png" alt="Logo" class="cover-logo" onerror="this.src='Logo.png'">
+            <div>
+              <div class="cover-title">UniAdmit</div>
+              <div class="cover-sub">CENTRAL ADMISSION SYSTEM</div>
+            </div>
+          </div>
+
+          <div style="margin: 5px 0 2px 0;">
+            <div style="font-size:8.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:#38bdf8;">
+              STUDENT USER MANUAL
+            </div>
+            <div style="font-size:7px; color:#cbd5e1; margin-top:1px;">
+              Comprehensive Step-by-Step Operating Guide
+            </div>
+          </div>
+
+          <ul class="cover-bullets" style="margin-top:4px;">
+            <li><span class="dot">&#9670;</span> One Profile for All Universities</li>
+            <li><span class="dot">&#9670;</span> Smart AI GPA Eligibility Check</li>
+            <li><span class="dot">&#9670;</span> Multi-University One-Click Apply</li>
+            <li><span class="dot">&#9670;</span> Instant bKash / Nagad / Rocket Pay</li>
+            <li><span class="dot">&#9670;</span> Live Status & Instant Admit Card</li>
+          </ul>
+
+          <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:3px; padding:3px 4px; margin-top:5px; font-size:6.8px;">
+            <div style="color:#38bdf8; font-weight:700;">24/7 APPLICANT SUPPORT</div>
+            <div style="color:#e2e8f0; margin-top:1px;">Email: <strong>support@uniadmit.edu.bd</strong></div>
+            <div style="color:#cbd5e1;">Portal: <strong>http://localhost:3000</strong></div>
+          </div>
+        </div>
+
+        <div class="cover-bottom">
+          <span>Academic Session 2026-2027</span>
+          <span style="background:#2ca4a0; color:#fff; padding:1px 4px; border-radius:2px; font-weight:700;">A4 FOLDABLE</span>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

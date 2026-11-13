@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Manager - Review Applications</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/manager/manager.css?v=3">
+</head>
+<body>
+  <div class="manager-layout">
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Manager Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/manager/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-manager">Manager</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/manager/dashboard.html" class="sidebar-menu-link" data-nav="dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/applications.html" class="sidebar-menu-link active" data-nav="applications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Review Applications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/statistics.html" class="sidebar-menu-link" data-nav="statistics">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span class="sidebar-menu-text">Statistics</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/merit-list.html" class="sidebar-menu-link" data-nav="merit-list">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+              <span class="sidebar-menu-text">Merit Lists</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/notifications.html" class="sidebar-menu-link" data-nav="notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Send Notifications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/financial.html" class="sidebar-menu-link" data-nav="financial">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Financial Summary</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/reports.html" class="sidebar-menu-link" data-nav="reports">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Reports</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/admission-stats.html" class="sidebar-menu-link" data-nav="admission-stats">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span class="sidebar-menu-text">Admission Stats</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/activity.html" class="sidebar-menu-link" data-nav="activity">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span class="sidebar-menu-text">System Activity</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.5rem;">
+            <a href="javascript:void(0)" onclick="ManagerApp.logout()" class="sidebar-menu-link" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar manager-avatar-initial">M</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name manager-full-name">Admission Manager</div>
+            <div class="sidebar-user-role manager-email">manager@uniadmit.com</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Toggle navigation">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/manager/dashboard.html">Manager</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Review Applications</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="live-clock-badge">
+            <span>🕒</span>
+            <span id="liveClock">Loading...</span>
+          </div>
+          <div class="topbar-user-pill">
+            <span class="manager-avatar-initial" style="width:24px; height:24px; border-radius:50%; background:#2ca4a0; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;">M</span>
+            <span class="manager-full-name" style="font-size:0.85rem; font-weight:600;">Manager</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Review Student Applications</h1>
+            <p class="page-subtitle">Verify qualifications, assess eligibility criteria, and evaluate admission decisions.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="loadApplications()">
+              <span>🔄</span> Refresh Table
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label class="filter-label" for="filterUniversity">University</label>
+            <select id="filterUniversity" class="filter-select" onchange="onUniversityFilterChange()">
+              <option value="all">All Universities</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filterProgram">Program</label>
+            <select id="filterProgram" class="filter-select" onchange="loadApplications()">
+              <option value="all">All Programs</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filterStatus">Status</label>
+            <select id="filterStatus" class="filter-select" onchange="loadApplications()">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="under_review">Under Review</option>
+              <option value="approved">Approved</option>
+              <option value="waitlisted">Waitlisted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filterDate">Date</label>
+            <input type="date" id="filterDate" class="filter-input" onchange="loadApplications()">
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filterSearch">Search</label>
+            <input type="text" id="filterSearch" class="filter-input" placeholder="Name, Email, or Roll..." oninput="debounceSearch()">
+          </div>
+
+          <div style="align-self: flex-end;">
+            <button class="btn btn-outline btn-sm" onclick="resetFilters()">Reset Filters</button>
+          </div>
+        </div>
+
+        <!-- Bulk Review Floating Toolbar -->
+        <div class="bulk-toolbar" id="bulkToolbar">
+          <div style="display:flex; align-items:center; gap: 10px;">
+            <span style="font-weight:700;">📦 <span id="selectedCount">0</span> Applications Selected</span>
+          </div>
+          <div style="display:flex; gap: 8px;">
+            <button class="btn btn-sm btn-success" onclick="openBulkModal('approved')">✓ Approve Selected</button>
+            <button class="btn btn-sm btn-warning" onclick="openBulkModal('waitlisted')">⏳ Waitlist Selected</button>
+            <button class="btn btn-sm btn-danger" onclick="openBulkModal('rejected')">✕ Reject Selected</button>
+            <button class="btn btn-sm btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.3);" onclick="clearSelection()">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Applications Table Card -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h2 class="content-card-title">
+              <span>📋</span> Applications List (<span id="tableAppCount">0</span>)
+            </h2>
+            <div id="selectionStatusText" style="font-size:0.85rem; color:#64748b;">Showing all matching applications</div>
+          </div>
+          <div class="content-card-body" style="padding:0;">
+            <div class="table-responsive">
+              <table class="data-table" id="applicationsTable">
+                <thead>
+                  <tr>
+                    <th style="width: 40px; text-align: center;">
+                      <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)">
+                    </th>
+                    <th>App ID</th>
+                    <th>Student Details</th>
+                    <th>University & Program</th>
+                    <th>GPA (SSC / HSC)</th>
+                    <th>Application Date</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th style="text-align: right;">Reviewer Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="applicationsTableBody">
+                  <tr>
+                    <td colspan="9">
+                      <div class="loading-box"><div class="spinner"></div><span>Loading applications...</span></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Detailed Review Modal -->
+  <div class="modal-overlay" id="reviewModal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="modalAppTitle">Application Review</h3>
+          <span style="font-size:0.8rem; color:#64748b;" id="modalAppSubtitle">App ID: #000</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeReviewModal()">✕</button>
+      </div>
+
+      <div class="modal-body" id="modalReviewContent">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeReviewModal()">Close</button>
+        <button type="button" class="btn btn-primary" id="btnSubmitDecision" onclick="submitSingleReview()">
+          💾 Submit Review Decision
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Review Confirmation Modal -->
+  <div class="modal-overlay" id="bulkConfirmModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm Bulk Action</h3>
+        <button class="modal-close-btn" onclick="closeBulkModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>You are about to set status to <strong id="bulkTargetStatusBadge" style="text-transform:uppercase;">APPROVED</strong> for <strong id="bulkSelectedTotal">0</strong> applications.</p>
+        <div style="margin-top: 1rem;">
+          <label class="filter-label" for="bulkRemarks">Decision Remarks (Optional):</label>
+          <textarea id="bulkRemarks" class="filter-input" rows="3" style="width:100%;" placeholder="Enter reason or notes for all selected applications..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeBulkModal()">Cancel</button>
+        <button class="btn btn-primary" id="btnConfirmBulk" onclick="executeBulkReview()">Confirm & Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/manager-common.js"></script>
+  <script>
+    let allApplications = [];
+    let universitiesList = [];
+    let selectedAppIds = new Set();
+    let currentReviewingApp = null;
+    let searchTimeout = null;
+    let bulkActionStatus = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      ManagerApp.initSession('applications', 'Review Applications', () => {
+        initPage();
+      });
+    });
+
+    async function initPage() {
+      await loadUniversities();
+      await loadApplications();
+    }
+
+    async function loadUniversities() {
+      try {
+        const res = await fetch('/api/universities');
+        if (res.ok) {
+          const data = await res.json();
+          universitiesList = data.universities || [];
+          const select = document.getElementById('filterUniversity');
+          universitiesList.forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u.id;
+            opt.textContent = `${u.short_name} - ${u.name}`;
+            select.appendChild(opt);
+          });
+        }
+      } catch (e) {
+        console.error('Error loading universities:', e);
+      }
+    }
+
+    async function onUniversityFilterChange() {
+      const uniId = document.getElementById('filterUniversity').value;
+      const progSelect = document.getElementById('filterProgram');
+      progSelect.innerHTML = '<option value="all">All Programs</option>';
+
+      if (uniId !== 'all') {
+        const uni = universitiesList.find(u => u.id == uniId);
+        if (uni && uni.programs) {
+          uni.programs.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name;
+            progSelect.appendChild(opt);
+          });
+        } else {
+          // Fetch university details
+          try {
+            const r = await fetch(`/api/universities/${uniId}`);
+            if (r.ok) {
+              const d = await r.json();
+              if (d.university && d.university.programs) {
+                d.university.programs.forEach(p => {
+                  const opt = document.createElement('option');
+                  opt.value = p.id;
+                  opt.textContent = p.name;
+                  progSelect.appendChild(opt);
+                });
+              }
+            }
+          } catch(e) {}
+        }
+      }
+
+      loadApplications();
+    }
+
+    function debounceSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(loadApplications, 300);
+    }
+
+    function resetFilters() {
+      document.getElementById('filterUniversity').value = 'all';
+      document.getElementById('filterProgram').innerHTML = '<option value="all">All Programs</option>';
+      document.getElementById('filterStatus').value = 'all';
+      document.getElementById('filterDate').value = '';
+      document.getElementById('filterSearch').value = '';
+      loadApplications();
+    }
+
+    async function loadApplications() {
+      const tbody = document.getElementById('applicationsTableBody');
+      tbody.innerHTML = '<tr><td colspan="9"><div class="loading-box"><div class="spinner"></div><span>Filtering applications...</span></div></td></tr>';
+
+      const uni = document.getElementById('filterUniversity').value;
+      const prog = document.getElementById('filterProgram').value;
+      const status = document.getElementById('filterStatus').value;
+      const date = document.getElementById('filterDate').value;
+      const search = document.getElementById('filterSearch').value.trim();
+
+      const params = new URLSearchParams();
+      if (uni !== 'all') params.append('university_id', uni);
+      if (status !== 'all') params.append('status', status);
+      if (search) params.append('search', search);
+
+      try {
+        const res = await fetch(`/api/manager/applications?${params.toString()}`);
+        if (!res.ok) throw new Error('Failed to fetch applications');
+        const data = await res.json();
+        
+        let apps = data.applications || [];
+
+        // Client-side additional filters if program or date is selected
+        if (prog !== 'all') {
+          apps = apps.filter(a => a.program_id == prog);
+        }
+        if (date) {
+          apps = apps.filter(a => a.application_date && a.application_date.startsWith(date));
+        }
+
+        allApplications = apps;
+        document.getElementById('tableAppCount').textContent = apps.length;
+
+        renderApplicationsTable(apps);
+      } catch (err) {
+        console.error('Error fetching applications:', err);
+        tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Failed to Load Applications</div><div class="empty-desc">${err.message}</div></div></td></tr>`;
+      }
+    }
+
+    function renderApplicationsTable(apps) {
+      const tbody = document.getElementById('applicationsTableBody');
+      if (!apps || !apps.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9">
+              <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">No Applications Found</div>
+                <div class="empty-desc">No applications match your active filter criteria. Try clearing filters.</div>
+              </div>
+            </td>
+          </tr>
+        `;
+        clearSelection();
+        return;
+      }
+
+      tbody.innerHTML = apps.map(app => {
+        const isChecked = selectedAppIds.has(app.id);
+        const sscGpa = Number(app.ssc_gpa || 0).toFixed(2);
+        const hscGpa = Number(app.hsc_gpa || 0).toFixed(2);
+        const initial = (app.student_name || 'S').charAt(0).toUpperCase();
+
+        return `
+          <tr data-id="${app.id}">
+            <td style="text-align: center;">
+              <input type="checkbox" class="app-row-checkbox" value="${app.id}" ${isChecked ? 'checked' : ''} onchange="onRowCheckboxChange(${app.id}, this.checked)">
+            </td>
+            <td>
+              <strong style="color:#0a2647;">#${app.id}</strong>
+              ${app.assigned_id ? `<br><span style="font-size:0.75rem; color:#2ca4a0; font-weight:600;">${escapeHtml(app.assigned_id)}</span>` : ''}
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap: 8px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:#e2e8f0; color:#1e293b; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem;">
+                  ${initial}
+                </div>
+                <div>
+                  <div style="font-weight:600; color:#0f172a;">${escapeHtml(app.student_name || 'Unknown')}</div>
+                  <div style="font-size:0.75rem; color:#64748b;">${escapeHtml(app.student_email || '')}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="font-weight:600; color:#1a5276;">${escapeHtml(app.university_short_name || app.university_name)}</div>
+              <div style="font-size:0.78rem; color:#475569;">${escapeHtml(app.program_name)}</div>
+            </td>
+            <td>
+              <div style="display:flex; flex-direction:column; gap:2px;">
+                <span>SSC: <strong>${sscGpa}</strong> <small style="color:#64748b;">(${escapeHtml(app.ssc_group || 'Gen')})</small></span>
+                <span>HSC: <strong>${hscGpa}</strong> <small style="color:#64748b;">(${escapeHtml(app.hsc_group || 'Gen')})</small></span>
+              </div>
+            </td>
+            <td>
+              <span style="font-size:0.8rem; color:#475569;">${ManagerApp.formatDate(app.application_date)}</span>
+            </td>
+            <td>
+              ${ManagerApp.getStatusBadge(app.status)}
+            </td>
+            <td>
+              ${ManagerApp.getPaymentBadge(app.payment_status)}
+            </td>
+            <td style="text-align: right;">
+              <button class="btn btn-sm btn-primary" onclick="openReviewModal(${app.id})">
+                <span>📝</span> Review
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Checkbox Selection & Bulk Operations
+    function onRowCheckboxChange(id, isChecked) {
+      if (isChecked) {
+        selectedAppIds.add(id);
+      } else {
+        selectedAppIds.delete(id);
+      }
+      updateBulkToolbar();
+    }
+
+    function toggleSelectAll(checked) {
+      const boxes = document.querySelectorAll('.app-row-checkbox');
+      boxes.forEach(b => {
+        b.checked = checked;
+        const id = parseInt(b.value, 10);
+        if (checked) selectedAppIds.add(id);
+        else selectedAppIds.delete(id);
+      });
+      updateBulkToolbar();
+    }
+
+    function clearSelection() {
+      selectedAppIds.clear();
+      const allBox = document.getElementById('selectAllCheckbox');
+      if (allBox) allBox.checked = false;
+      const boxes = document.querySelectorAll('.app-row-checkbox');
+      boxes.forEach(b => b.checked = false);
+      updateBulkToolbar();
+    }
+
+    function updateBulkToolbar() {
+      const count = selectedAppIds.size;
+      const bar = document.getElementById('bulkToolbar');
+      const countEl = document.getElementById('selectedCount');
+      if (countEl) countEl.textContent = count;
+      if (bar) {
+        if (count > 0) bar.classList.add('active');
+        else bar.classList.remove('active');
+      }
+    }
+
+    function openBulkModal(targetStatus) {
+      bulkActionStatus = targetStatus;
+      document.getElementById('bulkTargetStatusBadge').textContent = targetStatus;
+      document.getElementById('bulkSelectedTotal').textContent = selectedAppIds.size;
+      document.getElementById('bulkRemarks').value = '';
+      document.getElementById('bulkConfirmModal').classList.add('active');
+    }
+
+    function closeBulkModal() {
+      document.getElementById('bulkConfirmModal').classList.remove('active');
+    }
+
+    async function executeBulkReview() {
+      const btn = document.getElementById('btnConfirmBulk');
+      btn.disabled = true;
+      btn.textContent = 'Processing Bulk Decisions...';
+
+      const ids = Array.from(selectedAppIds);
+      const remarks = document.getElementById('bulkRemarks').value.trim();
+
+      let successCount = 0;
+      for (const id of ids) {
+        try {
+          const res = await fetch(`/api/manager/applications/${id}/review`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              status: bulkActionStatus,
+              remarks: remarks || `Bulk decision: marked as ${bulkActionStatus}`
+            })
+          });
+          if (res.ok) successCount++;
+        } catch (e) {
+          console.error(`Bulk review failed for app #${id}:`, e);
+        }
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Confirm & Apply';
+      closeBulkModal();
+      clearSelection();
+
+      ManagerApp.showToast('Bulk Action Completed', `Successfully updated ${successCount} application(s) to ${bulkActionStatus}.`, 'success');
+      loadApplications();
+    }
+
+    // Detailed Application Review Modal
+    function openReviewModal(appId) {
+      const app = allApplications.find(a => a.id == appId);
+      if (!app) return;
+      currentReviewingApp = app;
+
+      document.getElementById('modalAppTitle').textContent = `Review Application #${app.id} - ${app.student_name}`;
+      document.getElementById('modalAppSubtitle').textContent = `${app.university_name} (${app.program_name})`;
+
+      const sscGpa = Number(app.ssc_gpa || 0);
+      const hscGpa = Number(app.hsc_gpa || 0);
+      const minSsc = 3.0;
+      const minHsc = 3.0;
+
+      const isSscEligible = sscGpa >= minSsc;
+      const isHscEligible = hscGpa >= minHsc;
+      const isEligible = isSscEligible && isHscEligible;
+
+      const content = document.getElementById('modalReviewContent');
+      content.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+          <!-- Left Column: Student Profile & Academic Background -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem;">
+            <div style="display:flex; align-items:center; gap: 1rem; margin-bottom: 1rem;">
+              <div style="width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #1a5276, #2ca4a0); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:700;">
+                ${(app.student_name || 'S').charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h4 style="margin:0; font-size:1.1rem; color:#0f172a;">${escapeHtml(app.student_name)}</h4>
+                <div style="font-size:0.85rem; color:#64748b;">${escapeHtml(app.student_email)}</div>
+                <div style="font-size:0.8rem; color:#475569;">📞 ${escapeHtml(app.student_phone || 'N/A')}</div>
+              </div>
+            </div>
+
+            <h5 style="font-size:0.85rem; text-transform:uppercase; color:#475569; letter-spacing:0.5px; border-bottom:1px solid #e2e8f0; padding-bottom:4px; margin-bottom:10px;">
+              Academic Profile
+            </h5>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size:0.85rem;">
+              <div>
+                <strong>SSC GPA:</strong> ${sscGpa.toFixed(2)}<br>
+                <small style="color:#64748b;">Board: ${escapeHtml(app.ssc_board || 'N/A')}</small><br>
+                <small style="color:#64748b;">Group: ${escapeHtml(app.ssc_group || 'General')}</small>
+              </div>
+              <div>
+                <strong>HSC GPA:</strong> ${hscGpa.toFixed(2)}<br>
+                <small style="color:#64748b;">Board: ${escapeHtml(app.hsc_board || 'N/A')}</small><br>
+                <small style="color:#64748b;">Group: ${escapeHtml(app.hsc_group || 'General')}</small>
+              </div>
+            </div>
+
+            <h5 style="font-size:0.85rem; text-transform:uppercase; color:#475569; letter-spacing:0.5px; border-bottom:1px solid #e2e8f0; padding-bottom:4px; margin-top:14px; margin-bottom:10px;">
+              Document Verification Status
+            </h5>
+            <div style="font-size:0.85rem;">
+              ${app.documents_verified ? 
+                '<span class="badge badge-success">✓ Candidate Documents Verified by Admin</span>' : 
+                '<span class="badge badge-warning">⏳ Documents Pending Admin Verification</span>'
+              }
+            </div>
+          </div>
+
+          <!-- Right Column: Application Details & Match Assessment -->
+          <div>
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.25rem;">
+              <h5 style="margin-top:0; color:#0f172a; font-size:0.95rem;">Qualification Match Assessment</h5>
+              <div style="display:flex; flex-direction:column; gap: 8px; margin-top: 10px; font-size: 0.875rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>SSC Criteria (Min ${minSsc}):</span>
+                  <strong>${isSscEligible ? '<span style="color:#10b981;">✓ Eligible (' + sscGpa.toFixed(2) + ')</span>' : '<span style="color:#ef4444;">✕ Below Min GPA</span>'}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>HSC Criteria (Min ${minHsc}):</span>
+                  <strong>${isHscEligible ? '<span style="color:#10b981;">✓ Eligible (' + hscGpa.toFixed(2) + ')</span>' : '<span style="color:#ef4444;">✕ Below Min GPA</span>'}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>Fee Payment Status:</span>
+                  <strong>${ManagerApp.getPaymentBadge(app.payment_status)}</strong>
+                </div>
+                <div style="margin-top:8px; padding:8px 12px; border-radius:6px; background:${isEligible ? '#ecfdf5' : '#fef2f2'}; border:1px solid ${isEligible ? '#a7f3d0' : '#fecaca'}; color:${isEligible ? '#065f46' : '#991b1b'}; font-weight:600; font-size:0.85rem;">
+                  ${isEligible ? '🎯 Qualification Match: 100% Eligible for Program Admission' : '⚠️ Qualification Notice: Candidate falls short of minimum academic thresholds.'}
+                </div>
+              </div>
+            </div>
+
+            <!-- Review Decision Form -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem;">
+              <h5 style="margin-top:0; color:#0f172a; font-size:0.95rem;">Review Decision & Remarks</h5>
+              
+              <div style="margin-bottom: 1rem;">
+                <label class="filter-label" for="reviewStatusSelect">Decision Status *</label>
+                <select id="reviewStatusSelect" class="filter-select" style="width:100%;">
+                  <option value="under_review" ${app.status === 'under_review' ? 'selected' : ''}>Under Review</option>
+                  <option value="approved" ${app.status === 'approved' ? 'selected' : ''}>Approve Application</option>
+                  <option value="waitlisted" ${app.status === 'waitlisted' ? 'selected' : ''}>Place on Waitlist</option>
+                  <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Reject Application</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="filter-label" for="reviewRemarksText">Decision Remarks & Feedback</label>
+                <textarea id="reviewRemarksText" class="filter-input" rows="3" style="width:100%;" placeholder="Provide notes or justification for this decision...">${escapeHtml(app.remarks || '')}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('reviewModal').classList.add('active');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('reviewModal').classList.remove('active');
+      currentReviewingApp = null;
+    }
+
+    async function submitSingleReview() {
+      if (!currentReviewingApp) return;
+
+      const status = document.getElementById('reviewStatusSelect').value;
+      const remarks = document.getElementById('reviewRemarksText').value.trim();
+      const btn = document.getElementById('btnSubmitDecision');
+
+      btn.disabled = true;
+      btn.textContent = 'Saving Decision...';
+
+      try {
+        const res = await fetch(`/api/manager/applications/${currentReviewingApp.id}/review`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, remarks })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'Failed to submit review');
+        }
+
+        ManagerApp.showToast('Application Reviewed', data.message || `Application #${currentReviewingApp.id} marked as ${status}.`, 'success');
+        closeReviewModal();
+        loadApplications();
+      } catch (err) {
+        console.error('Error submitting review:', err);
+        ManagerApp.showToast('Error', err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Submit Review Decision';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

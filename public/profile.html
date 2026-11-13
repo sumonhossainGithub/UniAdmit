@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .avatar-preview {
+      width: 130px;
+      height: 150px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #f8fafc;
+      margin-bottom: 8px;
+    }
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sig-preview {
+      width: 180px;
+      height: 60px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #f8fafc;
+      margin-bottom: 8px;
+    }
+    .sig-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/universities">Universities</a></li>
+      <li><a href="/suggestions">Suggestions</a></li>
+      <li><a href="/my-applications">My Applications</a></li>
+      <li><a href="/merit-list">Merit Lists</a></li>
+      <li><a href="/profile" class="active">My Profile</a></li>
+    </ul>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="user-badge" id="userNameBadge">Student</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container" style="max-width: 950px;">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Student Profile & Academic Records</h1>
+        <p class="page-subtitle">Manage your personal details, academic results, and admission test identification documents.</p>
+      </div>
+      <div id="verificationBadge">
+        <span class="badge badge-warning" style="font-size: 13px; padding: 6px 12px;">Verification Pending</span>
+      </div>
+    </div>
+
+    <div id="alertSuccess" class="card" style="display:none; background:#ecfdf5; border-color:#a7f3d0; color:#065f46; margin-bottom: 20px;">
+      <strong>Success!</strong> Profile has been updated.
+    </div>
+    <div id="alertError" class="card" style="display:none; background:#fef2f2; border-color:#fecaca; color:#991b1b; margin-bottom: 20px;">
+      <strong>Error:</strong> <span id="errorMessageText"></span>
+    </div>
+
+    <form id="profileForm" enctype="multipart/form-data">
+      <!-- Personal Details -->
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="section-title">
+          <span>1. Personal Information</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="full_name">Full Name</label>
+            <input type="text" id="full_name" name="full_name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address (Read-only)</label>
+            <input type="email" id="email" class="form-control" readonly style="background:#f1f5f9; cursor:not-allowed;">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="father_name">Father's Name</label>
+            <input type="text" id="father_name" name="father_name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mother_name">Mother's Name</label>
+            <input type="text" id="mother_name" name="mother_name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="date_of_birth">Date of Birth</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="gender">Gender</label>
+            <select id="gender" name="gender" class="form-control" required>
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nationality">Nationality</label>
+            <input type="text" id="nationality" name="nationality" class="form-control" value="Bangladeshi" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nid_number">NID or Birth Registration No.</label>
+            <input type="text" id="nid_number" name="nid_number" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label" for="present_address">Present Address</label>
+            <input type="text" id="present_address" name="present_address" class="form-control" placeholder="House/Road, Thana/Upazila, District" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label" for="permanent_address">Permanent Address</label>
+            <input type="text" id="permanent_address" name="permanent_address" class="form-control" placeholder="Village, Post Office, Upazila, District" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Records -->
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="section-title">
+          <span>2. Academic Background (SSC & HSC)</span>
+        </div>
+
+        <!-- SSC Row -->
+        <h4 style="font-size: 14px; color: var(--primary); margin-bottom: 12px;">Secondary School Certificate (SSC / Equivalent)</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="ssc_board">Education Board</label>
+            <select id="ssc_board" name="ssc_board" class="form-control" required>
+              <option value="">Select Board</option>
+              <option value="Dhaka">Dhaka</option>
+              <option value="Rajshahi">Rajshahi</option>
+              <option value="Chittagong">Chittagong</option>
+              <option value="Comilla">Comilla</option>
+              <option value="Barisal">Barisal</option>
+              <option value="Sylhet">Sylhet</option>
+              <option value="Dinajpur">Dinajpur</option>
+              <option value="Jessore">Jessore</option>
+              <option value="Mymensingh">Mymensingh</option>
+              <option value="Madrasah">Madrasah</option>
+              <option value="Technical">Technical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ssc_roll">Roll Number</label>
+            <input type="text" id="ssc_roll" name="ssc_roll" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ssc_year">Passing Year</label>
+            <input type="number" id="ssc_year" name="ssc_year" class="form-control" min="2015" max="2026" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ssc_group">Group / Major</label>
+            <select id="ssc_group" name="ssc_group" class="form-control" required>
+              <option value="">Select Group</option>
+              <option value="Science">Science</option>
+              <option value="Commerce">Commerce / Business</option>
+              <option value="Arts">Humanities / Arts</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ssc_gpa">SSC GPA (Max 5.00)</label>
+            <input type="number" step="0.01" min="1.00" max="5.00" id="ssc_gpa" name="ssc_gpa" class="form-control" placeholder="e.g. 5.00" required>
+          </div>
+        </div>
+
+        <!-- HSC Row -->
+        <h4 style="font-size: 14px; color: var(--primary); margin: 18px 0 12px 0;">Higher Secondary Certificate (HSC / Equivalent)</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="hsc_board">Education Board</label>
+            <select id="hsc_board" name="hsc_board" class="form-control" required>
+              <option value="">Select Board</option>
+              <option value="Dhaka">Dhaka</option>
+              <option value="Rajshahi">Rajshahi</option>
+              <option value="Chittagong">Chittagong</option>
+              <option value="Comilla">Comilla</option>
+              <option value="Barisal">Barisal</option>
+              <option value="Sylhet">Sylhet</option>
+              <option value="Dinajpur">Dinajpur</option>
+              <option value="Jessore">Jessore</option>
+              <option value="Mymensingh">Mymensingh</option>
+              <option value="Madrasah">Madrasah</option>
+              <option value="Technical">Technical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="hsc_roll">Roll Number</label>
+            <input type="text" id="hsc_roll" name="hsc_roll" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="hsc_year">Passing Year</label>
+            <input type="number" id="hsc_year" name="hsc_year" class="form-control" min="2017" max="2026" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="hsc_group">Group / Major</label>
+            <select id="hsc_group" name="hsc_group" class="form-control" required>
+              <option value="">Select Group</option>
+              <option value="Science">Science</option>
+              <option value="Commerce">Commerce / Business</option>
+              <option value="Arts">Humanities / Arts</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="hsc_gpa">HSC GPA (Max 5.00)</label>
+            <input type="number" step="0.01" min="1.00" max="5.00" id="hsc_gpa" name="hsc_gpa" class="form-control" placeholder="e.g. 4.85" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo & Signature Upload -->
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="section-title">
+          <span>3. Candidate Identification Documents</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label">Passport Size Photo (Max 5MB)</label>
+            <div class="avatar-preview" id="photoPreviewContainer">
+              <span id="photoPlaceholder" style="font-size:12px; color:var(--text-muted);">No photo</span>
+              <img id="photoImg" style="display:none;" alt="Student Photo">
+            </div>
+            <input type="file" id="photo" name="photo" accept="image/*" class="form-control" onchange="previewImage(this, 'photoImg', 'photoPlaceholder')">
+            <small style="color:var(--text-muted); font-size:11px;">Clear, front-facing color photo.</small>
+          </div>
+
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label">Candidate Signature (Max 5MB)</label>
+            <div class="sig-preview" id="sigPreviewContainer">
+              <span id="sigPlaceholder" style="font-size:12px; color:var(--text-muted);">No signature</span>
+              <img id="sigImg" style="display:none;" alt="Candidate Signature">
+            </div>
+            <input type="file" id="signature" name="signature" accept="image/*" class="form-control" onchange="previewImage(this, 'sigImg', 'sigPlaceholder')">
+            <small style="color:var(--text-muted); font-size:11px;">Clear signature on plain white paper.</small>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 40px;">
+        <a href="/dashboard" class="btn btn-outline">Cancel</a>
+        <button type="submit" id="saveProfileBtn" class="btn btn-primary" style="padding: 10px 24px;">
+          💾 Save & Update Profile
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function previewImage(input, imgId, placeholderId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById(imgId);
+          const placeholder = document.getElementById(placeholderId);
+          img.src = e.target.result;
+          img.style.display = 'block';
+          if (placeholder) placeholder.style.display = 'none';
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/student/profile');
+        if (!res.ok) {
+          window.location.href = '/';
+          return;
+        }
+        const data = await res.json();
+        const user = data.user;
+        const profile = data.profile || {};
+
+        document.getElementById('userNameBadge').innerText = user.full_name || user.email;
+        document.getElementById('full_name').value = user.full_name || '';
+        document.getElementById('email').value = user.email || '';
+        document.getElementById('phone').value = user.phone || '';
+
+        // Verification status badge
+        const badgeEl = document.getElementById('verificationBadge');
+        if (profile.documents_verified) {
+          badgeEl.innerHTML = '<span class="badge badge-success" style="font-size: 13px; padding: 6px 12px;">✅ Documents Verified</span>';
+        } else {
+          badgeEl.innerHTML = '<span class="badge badge-warning" style="font-size: 13px; padding: 6px 12px;">⏳ Verification Pending</span>';
+        }
+
+        // Profile fields
+        const fields = [
+          'father_name', 'mother_name', 'date_of_birth', 'gender', 'nationality',
+          'nid_number', 'present_address', 'permanent_address',
+          'ssc_board', 'ssc_roll', 'ssc_year', 'ssc_gpa', 'ssc_group',
+          'hsc_board', 'hsc_roll', 'hsc_year', 'hsc_gpa', 'hsc_group'
+        ];
+
+        fields.forEach(f => {
+          if (profile[f] !== undefined && profile[f] !== null) {
+            const el = document.getElementById(f);
+            if (el) el.value = profile[f];
+          }
+        });
+
+        // Preload photo & signature
+        if (profile.photo_path) {
+          const photoImg = document.getElementById('photoImg');
+          photoImg.src = profile.photo_path;
+          photoImg.style.display = 'block';
+          document.getElementById('photoPlaceholder').style.display = 'none';
+        }
+
+        if (profile.signature_path) {
+          const sigImg = document.getElementById('sigImg');
+          sigImg.src = profile.signature_path;
+          sigImg.style.display = 'block';
+          document.getElementById('sigPlaceholder').style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
+      }
+    }
+
+    const form = document.getElementById('profileForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveProfileBtn');
+      const alertSuccess = document.getElementById('alertSuccess');
+      const alertError = document.getElementById('alertError');
+
+      alertSuccess.style.display = 'none';
+      alertError.style.display = 'none';
+      saveBtn.disabled = true;
+      saveBtn.innerText = 'Saving profile...';
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('/api/student/profile', {
+          method: 'PUT',
+          body: formData
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          alertSuccess.style.display = 'block';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          loadProfile();
+        } else {
+          document.getElementById('errorMessageText').innerText = result.message || 'Failed to save profile.';
+          alertError.style.display = 'block';
+        }
+      } catch (err) {
+        document.getElementById('errorMessageText').innerText = 'Network error. Could not update profile.';
+        alertError.style.display = 'block';
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = '💾 Save & Update Profile';
+      }
+    });
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

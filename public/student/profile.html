@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit - My Profile</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    /* Premium Compact Layout */
+    .profile-card {
+      background: var(--color-surface, #ffffff);
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      transition: all 0.2s ease;
+    }
+    .profile-card:hover {
+      border-color: #cbd5e1;
+    }
+    .profile-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+    .profile-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .profile-card-title .icon-dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: var(--color-accent, #2ca4a0);
+      font-size: 13px;
+    }
+    .profile-card-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin: 0;
+    }
+
+    /* Minimal Compact Form Controls */
+    .compact-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px 14px;
+    }
+    .compact-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 18px;
+    }
+    @media (max-width: 900px) {
+      .compact-grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .compact-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      .compact-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group-compact {
+      margin-bottom: 10px;
+    }
+    .form-label-compact {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+    .form-label-compact.required::after {
+      content: " *";
+      color: #ef4444;
+    }
+    .form-control-compact {
+      width: 100%;
+      height: 35px;
+      padding: 6px 11px;
+      font-size: 13px;
+      color: #1e293b;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      transition: all 0.15s ease-in-out;
+      box-sizing: border-box;
+    }
+    .form-control-compact:focus {
+      outline: none;
+      border-color: var(--color-accent, #2ca4a0);
+      box-shadow: 0 0 0 2px rgba(44, 164, 160, 0.18);
+    }
+    .form-control-compact:disabled, .form-control-compact[readonly] {
+      background: #f8fafc;
+      color: #64748b;
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+    .form-textarea-compact {
+      width: 100%;
+      padding: 6px 11px;
+      font-size: 13px;
+      color: #1e293b;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: all 0.15s ease-in-out;
+    }
+    .form-textarea-compact:focus {
+      outline: none;
+      border-color: var(--color-accent, #2ca4a0);
+      box-shadow: 0 0 0 2px rgba(44, 164, 160, 0.18);
+    }
+
+    /* Sub-panels inside grids (e.g. SSC / HSC / Address) */
+    .sub-panel {
+      background: #fbfcfe;
+      border: 1px solid #edf2f7;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .sub-panel-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--color-primary-dark, #06152b);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Minimal Media Uploaders */
+    .upload-tile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      background: #fbfcfe;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    .preview-box-mini {
+      width: 80px;
+      height: 96px;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 6px;
+      background: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .preview-box-mini:hover {
+      border-color: var(--color-accent, #2ca4a0);
+      background: #f0fdfa;
+    }
+    .preview-box-mini img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sig-preview-mini {
+      width: 130px;
+      height: 60px;
+    }
+    .sig-preview-mini img {
+      object-fit: contain !important;
+      padding: 4px;
+    }
+
+    /* Sticky Bottom Action Strip */
+    .bottom-save-strip {
+      position: sticky;
+      bottom: 14px;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 18px;
+      margin-top: 18px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body class="app-layout">
+
+  <!-- =========================================================================
+       SIDEBAR NAVIGATION
+       ========================================================================= -->
+  <aside class="sidebar" aria-label="Student Navigation">
+    <div class="sidebar-header">
+      <a href="/student/dashboard.html" class="sidebar-brand">
+        <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+        <div class="brand-text">
+          <span class="brand-name">Uni<span>Admit</span></span>
+          <span class="brand-role-badge badge-student">Student</span>
+        </div>
+      </a>
+      <button type="button" class="sidebar-toggle-btn mobile-menu-close" id="sidebarCloseBtn" aria-label="Close sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main Menu</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <a href="/student/dashboard.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            <span class="sidebar-menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/profile.html" class="sidebar-menu-link active">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="sidebar-menu-text">My Profile</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/universities.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 10h1v2H9z"/><path d="M9 14h1v2H9z"/><path d="M14 10h1v2H14z"/><path d="M14 14h1v2H14z"/></svg>
+            <span class="sidebar-menu-text">Browse Universities</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/applications.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span class="sidebar-menu-text">My Applications</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/payments.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span class="sidebar-menu-text">Payments</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/merit-list.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+            <span class="sidebar-menu-text">Merit Lists</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="/student/notifications.html" class="sidebar-menu-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="sidebar-menu-text">Notifications</span>
+            <span class="sidebar-badge" id="sidebarNotifBadge" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section" style="margin-top:20px;">Session</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <button type="button" class="sidebar-menu-link" onclick="handleLogout()" style="width:100%; border:none; text-align:left; background:transparent; cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span class="sidebar-menu-text">Logout</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar">
+          <span id="sidebarUserInitials">S</span>
+        </div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name" id="sidebarUserName">Student</span>
+          <span class="sidebar-user-role" id="sidebarUserEmail">student@uniadmit.com</span>
+        </div>
+      </div>
+      <button class="sidebar-logout-btn" onclick="handleLogout()" title="Logout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       MAIN WRAPPER & TOPBAR
+       ========================================================================= -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="breadcrumbs">
+          <span class="breadcrumb-item"><a href="/student/dashboard.html">Portal</a></span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item active">My Profile</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div style="position:relative;">
+          <a href="/student/notifications.html" class="topbar-action-btn" title="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="topbar-badge" id="topbarNotifBadge" style="display:none;">0</span>
+          </a>
+        </div>
+
+        <div style="position:relative;">
+          <div class="topbar-user" id="topbarUserBtn" tabindex="0">
+            <div class="topbar-avatar" id="topbarAvatar">
+              <span id="topbarInitials">S</span>
+            </div>
+            <div class="topbar-user-meta">
+              <span class="topbar-user-name" id="topbarUserName">Student</span>
+              <span class="topbar-user-role">Student Candidate</span>
+            </div>
+            <svg class="topbar-user-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="notifications-dropdown" id="userDropdown" style="width: 220px; right: 0;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-border); background: var(--color-surface-muted);">
+              <div style="font-weight: 700; color: var(--color-primary-dark); font-size: 14px;" id="dropdownUserName">Student</div>
+              <div style="font-size: 12px; color: var(--color-text-secondary);" id="dropdownUserEmail">student@uniadmit.com</div>
+            </div>
+            <div style="padding: 8px 0;">
+              <a href="/student/dashboard.html" style="display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-text-primary); text-decoration:none; font-size:13px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                Dashboard
+              </a>
+              <button onclick="handleLogout()" style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--color-danger); font-size:13px; background:none; border:none; text-align:left; cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =========================================================================
+         MAIN CONTENT: STREAMLINED PREMIUM SINGLE PAGE PROFILE
+         ========================================================================= -->
+    <main class="main-content" style="max-width: 1080px; margin: 0 auto; padding-bottom: 24px;">
+      
+      <!-- Compact Top Header -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h1 style="font-size:1.35rem; font-weight:800; color:#0f172a; margin:0 0 3px 0; letter-spacing:-0.02em;">Candidate Profile</h1>
+          <p style="font-size:0.82rem; color:#64748b; margin:0;">Standardized personal, residential, and academic credentials across all applications.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div id="verificationBadgeContainer"></div>
+          <button type="button" class="btn btn-primary" onclick="triggerSaveForm()" style="height:34px; padding:0 16px; font-size:12.5px; font-weight:700; background:linear-gradient(135deg, #10b981 0%, #0d9488 100%);">
+            Save Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Alert Banner -->
+      <div id="profileAlert" class="alert" style="display:none; margin-bottom:14px; padding:10px 14px; font-size:13px;" role="alert"></div>
+
+      <!-- Unified Minimal Profile Form -->
+      <form id="profileForm" enctype="multipart/form-data" novalidate>
+
+        <!-- =================================================================
+             1. PERSONAL & IDENTIFICATION
+             ================================================================= -->
+        <section class="profile-card">
+          <div class="profile-card-header">
+            <h2 class="profile-card-title">
+              <span class="icon-dot">👤</span>
+              Personal & Contact Information
+            </h2>
+            <span style="font-size:11px; font-weight:600; color:#64748b; background:#f8fafc; border:1px solid #e2e8f0; padding:2px 8px; border-radius:4px;">1 of 4</span>
+          </div>
+
+          <div class="compact-grid-3">
+            <div class="form-group-compact">
+              <label for="full_name" class="form-label-compact required">Full Name</label>
+              <input type="text" id="full_name" name="full_name" class="form-control-compact" placeholder="Official full name" required>
+            </div>
+            <div class="form-group-compact">
+              <label for="email" class="form-label-compact">Registered Email</label>
+              <input type="email" id="email" class="form-control-compact" disabled title="Registered email address">
+            </div>
+            <div class="form-group-compact">
+              <label for="phone" class="form-label-compact required">Phone Number</label>
+              <input type="tel" id="phone" name="phone" class="form-control-compact" placeholder="+8801XXXXXXXXX" required>
+            </div>
+
+            <div class="form-group-compact">
+              <label for="father_name" class="form-label-compact required">Father's Name</label>
+              <input type="text" id="father_name" name="father_name" class="form-control-compact" placeholder="Father's full name" required>
+            </div>
+            <div class="form-group-compact">
+              <label for="mother_name" class="form-label-compact required">Mother's Name</label>
+              <input type="text" id="mother_name" name="mother_name" class="form-control-compact" placeholder="Mother's full name" required>
+            </div>
+            <div class="form-group-compact">
+              <label for="date_of_birth" class="form-label-compact required">Date of Birth</label>
+              <input type="date" id="date_of_birth" name="date_of_birth" class="form-control-compact" required>
+            </div>
+
+            <div class="form-group-compact">
+              <label for="gender" class="form-label-compact required">Gender</label>
+              <select id="gender" name="gender" class="form-control-compact" required>
+                <option value="">-- Select Gender --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group-compact">
+              <label for="nationality" class="form-label-compact">Nationality</label>
+              <input type="text" id="nationality" name="nationality" class="form-control-compact" value="Bangladeshi">
+            </div>
+            <div class="form-group-compact">
+              <label for="nid_number" class="form-label-compact required">NID / Birth Reg No.</label>
+              <input type="text" id="nid_number" name="nid_number" class="form-control-compact" placeholder="10, 13, or 17 digit ID" required>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             2. RESIDENTIAL ADDRESSES (SIDE-BY-SIDE IN ONE ROW)
+             ================================================================= -->
+        <section class="profile-card">
+          <div class="profile-card-header">
+            <h2 class="profile-card-title">
+              <span class="icon-dot">📍</span>
+              Residential Addresses
+            </h2>
+            <span style="font-size:11px; font-weight:600; color:#64748b; background:#f8fafc; border:1px solid #e2e8f0; padding:2px 8px; border-radius:4px;">2 of 4</span>
+          </div>
+
+          <div class="compact-grid-2">
+            <!-- Present Address Panel -->
+            <div class="sub-panel">
+              <div class="sub-panel-title">
+                <span>📍 Present Address (বর্তমান ঠিকানা)</span>
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="pres_division" class="form-label-compact required">Division</label>
+                  <select id="pres_division" class="form-control-compact" onchange="composeAddress('present')">
+                    <option value="">-- Select --</option>
+                    <option value="Dhaka">Dhaka</option>
+                    <option value="Chittagong">Chittagong</option>
+                    <option value="Rajshahi">Rajshahi</option>
+                    <option value="Khulna">Khulna</option>
+                    <option value="Barisal">Barisal</option>
+                    <option value="Sylhet">Sylhet</option>
+                    <option value="Rangpur">Rangpur</option>
+                    <option value="Mymensingh">Mymensingh</option>
+                  </select>
+                </div>
+                <div class="form-group-compact">
+                  <label for="pres_district" class="form-label-compact required">District</label>
+                  <input type="text" id="pres_district" class="form-control-compact" placeholder="e.g. Dhaka" oninput="composeAddress('present')">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="pres_upazila" class="form-label-compact required">Upazila / Thana</label>
+                  <input type="text" id="pres_upazila" class="form-control-compact" placeholder="e.g. Dhanmondi" oninput="composeAddress('present')">
+                </div>
+                <div class="form-group-compact">
+                  <label for="pres_postcode" class="form-label-compact required">Post Code</label>
+                  <input type="text" id="pres_postcode" class="form-control-compact" placeholder="e.g. 1205" oninput="composeAddress('present')">
+                </div>
+              </div>
+
+              <div class="form-group-compact" style="margin-bottom:0;">
+                <label for="pres_details" class="form-label-compact required">House / Road / Area Details</label>
+                <textarea id="pres_details" class="form-textarea-compact" rows="2" placeholder="House #, Road #, Area details..." oninput="composeAddress('present')"></textarea>
+              </div>
+              <input type="hidden" name="present_address" id="present_address">
+            </div>
+
+            <!-- Permanent Address Panel -->
+            <div class="sub-panel" id="permanentAddressBox">
+              <div class="sub-panel-title">
+                <span>🏡 Permanent Address (স্থায়ী ঠিকানা)</span>
+                <label style="font-size:11px; font-weight:600; color:var(--color-primary-dark); display:inline-flex; align-items:center; gap:5px; margin:0; cursor:pointer;">
+                  <input type="checkbox" id="sameAddressCheck" onchange="toggleSameAddress(this.checked)" style="width:14px; height:14px;">
+                  Same as Present
+                </label>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="perm_division" class="form-label-compact required">Division</label>
+                  <select id="perm_division" class="form-control-compact" onchange="composeAddress('permanent')">
+                    <option value="">-- Select --</option>
+                    <option value="Dhaka">Dhaka</option>
+                    <option value="Chittagong">Chittagong</option>
+                    <option value="Rajshahi">Rajshahi</option>
+                    <option value="Khulna">Khulna</option>
+                    <option value="Barisal">Barisal</option>
+                    <option value="Sylhet">Sylhet</option>
+                    <option value="Rangpur">Rangpur</option>
+                    <option value="Mymensingh">Mymensingh</option>
+                  </select>
+                </div>
+                <div class="form-group-compact">
+                  <label for="perm_district" class="form-label-compact required">District</label>
+                  <input type="text" id="perm_district" class="form-control-compact" placeholder="e.g. Sirajganj" oninput="composeAddress('permanent')">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="perm_upazila" class="form-label-compact required">Upazila / Thana</label>
+                  <input type="text" id="perm_upazila" class="form-control-compact" placeholder="e.g. Chauhali" oninput="composeAddress('permanent')">
+                </div>
+                <div class="form-group-compact">
+                  <label for="perm_postcode" class="form-label-compact required">Post Code</label>
+                  <input type="text" id="perm_postcode" class="form-control-compact" placeholder="e.g. 6750" oninput="composeAddress('permanent')">
+                </div>
+              </div>
+
+              <div class="form-group-compact" style="margin-bottom:0;">
+                <label for="perm_details" class="form-label-compact required">Village / Area Details</label>
+                <textarea id="perm_details" class="form-textarea-compact" rows="2" placeholder="Permanent residence details..." oninput="composeAddress('permanent')"></textarea>
+              </div>
+              <input type="hidden" name="permanent_address" id="permanent_address">
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             3. ACADEMIC RECORDS (SSC & HSC SIDE-BY-SIDE IN ONE ROW)
+             ================================================================= -->
+        <section class="profile-card">
+          <div class="profile-card-header">
+            <h2 class="profile-card-title">
+              <span class="icon-dot">🎓</span>
+              Academic Records (SSC & HSC)
+            </h2>
+            <span style="font-size:11px; font-weight:600; color:#64748b; background:#f8fafc; border:1px solid #e2e8f0; padding:2px 8px; border-radius:4px;">3 of 4</span>
+          </div>
+
+          <div class="compact-grid-2">
+            <!-- SSC Panel -->
+            <div class="sub-panel">
+              <div class="sub-panel-title">
+                <span>📘 SSC / Dakhil / O-Level</span>
+                <span style="font-size:11px; color:#64748b; font-weight:normal;">Secondary</span>
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="ssc_board" class="form-label-compact required">Board</label>
+                  <select id="ssc_board" name="ssc_board" class="form-control-compact" required>
+                    <option value="">-- Board --</option>
+                    <option value="Dhaka">Dhaka</option>
+                    <option value="Rajshahi">Rajshahi</option>
+                    <option value="Chittagong">Chittagong</option>
+                    <option value="Comilla">Comilla</option>
+                    <option value="Sylhet">Sylhet</option>
+                    <option value="Jessore">Jessore</option>
+                    <option value="Barisal">Barisal</option>
+                    <option value="Dinajpur">Dinajpur</option>
+                    <option value="Madrasah">Madrasah</option>
+                    <option value="Technical">Technical</option>
+                  </select>
+                </div>
+                <div class="form-group-compact">
+                  <label for="ssc_group" class="form-label-compact required">Group</label>
+                  <select id="ssc_group" name="ssc_group" class="form-control-compact" required>
+                    <option value="">-- Group --</option>
+                    <option value="Science">Science</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts">Humanities / Arts</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="ssc_roll" class="form-label-compact required">Roll No</label>
+                  <input type="text" id="ssc_roll" name="ssc_roll" class="form-control-compact" placeholder="6-digit Roll" required>
+                </div>
+                <div class="form-group-compact">
+                  <label for="ssc_reg" class="form-label-compact">Reg No</label>
+                  <input type="text" id="ssc_reg" name="ssc_reg" class="form-control-compact" placeholder="10-digit Reg">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact" style="margin-bottom:0;">
+                  <label for="ssc_year" class="form-label-compact required">Year</label>
+                  <select id="ssc_year" name="ssc_year" class="form-control-compact" required>
+                    <option value="">-- Year --</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                  </select>
+                </div>
+                <div class="form-group-compact" style="margin-bottom:0;">
+                  <label for="ssc_gpa" class="form-label-compact required">GPA (Out of 5.0)</label>
+                  <input type="number" step="0.01" min="1.00" max="5.00" id="ssc_gpa" name="ssc_gpa" class="form-control-compact" placeholder="e.g. 5.00" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- HSC Panel -->
+            <div class="sub-panel">
+              <div class="sub-panel-title">
+                <span>🎓 HSC / Alim / A-Level</span>
+                <span style="font-size:11px; color:#64748b; font-weight:normal;">Higher Secondary</span>
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="hsc_board" class="form-label-compact required">Board</label>
+                  <select id="hsc_board" name="hsc_board" class="form-control-compact" required>
+                    <option value="">-- Board --</option>
+                    <option value="Dhaka">Dhaka</option>
+                    <option value="Rajshahi">Rajshahi</option>
+                    <option value="Chittagong">Chittagong</option>
+                    <option value="Comilla">Comilla</option>
+                    <option value="Sylhet">Sylhet</option>
+                    <option value="Jessore">Jessore</option>
+                    <option value="Barisal">Barisal</option>
+                    <option value="Dinajpur">Dinajpur</option>
+                    <option value="Madrasah">Madrasah</option>
+                    <option value="Technical">Technical</option>
+                  </select>
+                </div>
+                <div class="form-group-compact">
+                  <label for="hsc_group" class="form-label-compact required">Group</label>
+                  <select id="hsc_group" name="hsc_group" class="form-control-compact" required>
+                    <option value="">-- Group --</option>
+                    <option value="Science">Science</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts">Humanities / Arts</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact">
+                  <label for="hsc_roll" class="form-label-compact required">Roll No</label>
+                  <input type="text" id="hsc_roll" name="hsc_roll" class="form-control-compact" placeholder="6-digit Roll" required>
+                </div>
+                <div class="form-group-compact">
+                  <label for="hsc_reg" class="form-label-compact">Reg No</label>
+                  <input type="text" id="hsc_reg" name="hsc_reg" class="form-control-compact" placeholder="10-digit Reg">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group-compact" style="margin-bottom:0;">
+                  <label for="hsc_year" class="form-label-compact required">Year</label>
+                  <select id="hsc_year" name="hsc_year" class="form-control-compact" required>
+                    <option value="">-- Year --</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                  </select>
+                </div>
+                <div class="form-group-compact" style="margin-bottom:0;">
+                  <label for="hsc_gpa" class="form-label-compact required">GPA (Out of 5.0)</label>
+                  <input type="number" step="0.01" min="1.00" max="5.00" id="hsc_gpa" name="hsc_gpa" class="form-control-compact" placeholder="e.g. 4.85" required>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             4. PHOTO & SIGNATURE CREDENTIALS
+             ================================================================= -->
+        <section class="profile-card">
+          <div class="profile-card-header">
+            <h2 class="profile-card-title">
+              <span class="icon-dot">📸</span>
+              Photograph & Signature Credentials
+            </h2>
+            <div id="docVerificationStatus">
+              <span class="badge badge-warning" style="font-size:11px; padding:3px 10px;">Verification Pending</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+            <!-- Passport Photo -->
+            <div class="upload-tile">
+              <div class="preview-box-mini" id="photoPreviewBox" onclick="document.getElementById('photoInput').click()" title="Click to upload photograph">
+                <span style="font-size:20px; color:#94a3b8;">📷</span>
+                <span style="font-size:10px; color:#64748b; margin-top:4px;">Photo</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:12.5px; font-weight:700; color:#0f172a; margin-bottom:2px;">Passport Photograph</div>
+                <div style="font-size:11px; color:#64748b; margin-bottom:8px;">Light background, max 300 KB (JPG, PNG)</div>
+                <input type="file" id="photoInput" name="photo" accept="image/jpeg,image/png" style="display:none;" onchange="handleImagePreview(this, 'photoPreviewBox', 300)">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()" style="padding:4px 10px; font-size:11.5px; height:28px;">
+                  Choose File
+                </button>
+                <span style="font-size:11px; color:#94a3b8; margin-left:6px;" id="photoFileName">No file selected</span>
+              </div>
+            </div>
+
+            <!-- Candidate Signature -->
+            <div class="upload-tile">
+              <div class="preview-box-mini sig-preview-mini" id="sigPreviewBox" onclick="document.getElementById('signatureInput').click()" title="Click to upload signature">
+                <span style="font-size:16px; color:#94a3b8;">✍️</span>
+                <span style="font-size:10px; color:#64748b; margin-top:2px;">Signature</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:12.5px; font-weight:700; color:#0f172a; margin-bottom:2px;">Digital Signature</div>
+                <div style="font-size:11px; color:#64748b; margin-bottom:8px;">Plain white paper, max 200 KB (JPG, PNG)</div>
+                <input type="file" id="signatureInput" name="signature" accept="image/jpeg,image/png" style="display:none;" onchange="handleImagePreview(this, 'sigPreviewBox', 200)">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('signatureInput').click()" style="padding:4px 10px; font-size:11.5px; height:28px;">
+                  Choose File
+                </button>
+                <span style="font-size:11px; color:#94a3b8; margin-left:6px;" id="sigFileName">No file selected</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             STICKY BOTTOM ACTION STRIP
+             ================================================================= -->
+        <div class="bottom-save-strip">
+          <a href="/student/dashboard.html" class="btn" style="background:#f1f5f9; color:#334155; font-size:12.5px; height:34px; padding:0 14px;">
+            ← Return to Dashboard
+          </a>
+          <button type="submit" class="btn btn-primary" id="submitBtn" style="height:36px; padding:0 22px; font-size:13px; font-weight:700; background:linear-gradient(135deg, #10b981 0%, #0d9488 100%); box-shadow:0 2px 8px rgba(16, 185, 129, 0.25);">
+            💾 Save Profile Details
+          </button>
+        </div>
+
+      </form>
+    </main>
+  </div>
+
+  <script src="/js/student.js"></script>
+  <script>
+    let studentUser = null;
+    let studentProfile = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authData = await initStudentAuth('profile');
+      if (!authData) return;
+
+      studentUser = authData.user;
+      studentProfile = authData.profile;
+
+      populateProfileForm(studentUser, studentProfile);
+    });
+
+    // Populate existing values into all fields on the page
+    function populateProfileForm(user, profile) {
+      if (!user) return;
+      document.getElementById('full_name').value = user.full_name || '';
+      document.getElementById('email').value = user.email || '';
+      document.getElementById('phone').value = user.phone || '';
+
+      if (profile) {
+        document.getElementById('father_name').value = profile.father_name || '';
+        document.getElementById('mother_name').value = profile.mother_name || '';
+        document.getElementById('date_of_birth').value = profile.date_of_birth || '';
+        document.getElementById('gender').value = profile.gender || '';
+        document.getElementById('nationality').value = profile.nationality || 'Bangladeshi';
+        document.getElementById('nid_number').value = profile.nid_number || '';
+
+        // Addresses
+        if (profile.present_address) {
+          parseAddressIntoFields(profile.present_address, 'present');
+        }
+        if (profile.permanent_address) {
+          parseAddressIntoFields(profile.permanent_address, 'permanent');
+        }
+
+        // SSC
+        document.getElementById('ssc_board').value = profile.ssc_board || '';
+        document.getElementById('ssc_group').value = profile.ssc_group || '';
+        document.getElementById('ssc_roll').value = profile.ssc_roll || '';
+        document.getElementById('ssc_reg').value = profile.ssc_reg || '';
+        document.getElementById('ssc_year').value = profile.ssc_year || '';
+        if (profile.ssc_gpa !== null && profile.ssc_gpa !== undefined) {
+          document.getElementById('ssc_gpa').value = profile.ssc_gpa;
+        }
+
+        // HSC
+        document.getElementById('hsc_board').value = profile.hsc_board || '';
+        document.getElementById('hsc_group').value = profile.hsc_group || '';
+        document.getElementById('hsc_roll').value = profile.hsc_roll || '';
+        document.getElementById('hsc_reg').value = profile.hsc_reg || '';
+        document.getElementById('hsc_year').value = profile.hsc_year || '';
+        if (profile.hsc_gpa !== null && profile.hsc_gpa !== undefined) {
+          document.getElementById('hsc_gpa').value = profile.hsc_gpa;
+        }
+
+        // Photo Preview
+        if (profile.photo_path) {
+          const photoBox = document.getElementById('photoPreviewBox');
+          photoBox.innerHTML = `<img src="${profile.photo_path}" alt="Photo">`;
+        }
+
+        // Signature Preview
+        if (profile.signature_path) {
+          const sigBox = document.getElementById('sigPreviewBox');
+          sigBox.innerHTML = `<img src="${profile.signature_path}" alt="Signature">`;
+        }
+
+        // Verification status badge
+        const badgeElem = document.getElementById('docVerificationStatus');
+        const headerBadge = document.getElementById('verificationBadgeContainer');
+        if (profile.documents_verified) {
+          const vHtml = '<span class="badge badge-success" style="font-size:11.5px; padding:4px 10px;"><span class="badge-dot"></span> Verified</span>';
+          if (badgeElem) badgeElem.innerHTML = vHtml;
+          if (headerBadge) headerBadge.innerHTML = vHtml;
+        } else {
+          const pHtml = '<span class="badge badge-warning" style="font-size:11.5px; padding:4px 10px;"><span class="badge-dot pulse"></span> Verification Pending</span>';
+          if (badgeElem) badgeElem.innerHTML = pHtml;
+          if (headerBadge) headerBadge.innerHTML = pHtml;
+        }
+      }
+    }
+
+    // Trigger form save from header button
+    function triggerSaveForm() {
+      document.getElementById('profileForm').requestSubmit();
+    }
+
+    // Compose formatted address from subfields
+    function composeAddress(type) {
+      const prefix = type === 'present' ? 'pres' : 'perm';
+      const divElem = document.getElementById(`${prefix}_division`);
+      const distElem = document.getElementById(`${prefix}_district`);
+      const upaElem = document.getElementById(`${prefix}_upazila`);
+      const postElem = document.getElementById(`${prefix}_postcode`);
+      const detElem = document.getElementById(`${prefix}_details`);
+
+      const div = divElem ? divElem.value : '';
+      const dist = distElem ? distElem.value.trim() : '';
+      const upa = upaElem ? upaElem.value.trim() : '';
+      const post = postElem ? postElem.value.trim() : '';
+      const det = detElem ? detElem.value.trim() : '';
+
+      const parts = [];
+      if (det) parts.push(det);
+      if (upa) parts.push(`Upazila: ${upa}`);
+      if (dist) parts.push(dist);
+      if (post) parts.push(`Post: ${post}`);
+      if (div) parts.push(div);
+
+      const fullAddr = parts.join(', ');
+      const hiddenInput = document.getElementById(`${type}_address`);
+      if (hiddenInput) hiddenInput.value = fullAddr;
+      return fullAddr;
+    }
+
+    function parseAddressIntoFields(addrStr, type) {
+      const prefix = type === 'present' ? 'pres' : 'perm';
+      const hiddenInput = document.getElementById(`${type}_address`);
+      if (hiddenInput) hiddenInput.value = addrStr;
+
+      const divisions = ['Dhaka', 'Chittagong', 'Rajshahi', 'Khulna', 'Barisal', 'Sylhet', 'Rangpur', 'Mymensingh'];
+      const divElem = document.getElementById(`${prefix}_division`);
+      for (const d of divisions) {
+        if (addrStr.includes(d)) {
+          if (divElem) divElem.value = d;
+          break;
+        }
+      }
+
+      const detElem = document.getElementById(`${prefix}_details`);
+      if (detElem) detElem.value = addrStr;
+    }
+
+    // Toggle same address checkbox
+    function toggleSameAddress(isSame) {
+      const box = document.getElementById('permanentAddressBox');
+      if (isSame) {
+        document.getElementById('perm_division').value = document.getElementById('pres_division').value;
+        document.getElementById('perm_district').value = document.getElementById('pres_district').value;
+        document.getElementById('perm_upazila').value = document.getElementById('pres_upazila').value;
+        document.getElementById('perm_postcode').value = document.getElementById('pres_postcode').value;
+        document.getElementById('perm_details').value = document.getElementById('pres_details').value;
+        composeAddress('permanent');
+        box.style.opacity = '0.6';
+        box.style.pointerEvents = 'none';
+      } else {
+        box.style.opacity = '1';
+        box.style.pointerEvents = 'auto';
+      }
+    }
+
+    // Image file upload preview & size validation
+    function handleImagePreview(input, previewBoxId, maxKb) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+
+      if (file.size > maxKb * 1024) {
+        alert(`File size exceeds ${maxKb}KB limit (${Math.round(file.size / 1024)}KB). Please choose a smaller image.`);
+        input.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const box = document.getElementById(previewBoxId);
+        box.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+      };
+      reader.readAsDataURL(file);
+
+      const nameLabel = previewBoxId === 'photoPreviewBox' ? document.getElementById('photoFileName') : document.getElementById('sigFileName');
+      if (nameLabel) nameLabel.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+    }
+
+    // Comprehensive Single-Page Form Validation
+    function validateFullProfile() {
+      const alertBox = document.getElementById('profileAlert');
+      alertBox.style.display = 'none';
+
+      // 1. Personal Details
+      const name = document.getElementById('full_name').value.trim();
+      const father = document.getElementById('father_name').value.trim();
+      const mother = document.getElementById('mother_name').value.trim();
+      const dob = document.getElementById('date_of_birth').value;
+      const gender = document.getElementById('gender').value;
+      const nid = document.getElementById('nid_number').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      if (!name || !father || !mother || !dob || !gender || !nid || !phone) {
+        showError('Please complete all required Personal Information fields (*).');
+        return false;
+      }
+
+      // 2. Addresses
+      composeAddress('present');
+      composeAddress('permanent');
+      const pres = document.getElementById('present_address').value.trim();
+      const perm = document.getElementById('permanent_address').value.trim();
+
+      if (!pres || !perm) {
+        showError('Please provide both present and permanent residential addresses.');
+        return false;
+      }
+
+      // 3. SSC Academic Records
+      const sscBoard = document.getElementById('ssc_board').value;
+      const sscGroup = document.getElementById('ssc_group').value;
+      const sscRoll = document.getElementById('ssc_roll').value.trim();
+      const sscYear = document.getElementById('ssc_year').value;
+      const sscGpa = parseFloat(document.getElementById('ssc_gpa').value);
+
+      if (!sscBoard || !sscGroup || !sscRoll || !sscYear || isNaN(sscGpa) || sscGpa < 1 || sscGpa > 5) {
+        showError('Please enter valid SSC education records and GPA (between 1.00 and 5.00).');
+        return false;
+      }
+
+      // 4. HSC Academic Records
+      const hscBoard = document.getElementById('hsc_board').value;
+      const hscGroup = document.getElementById('hsc_group').value;
+      const hscRoll = document.getElementById('hsc_roll').value.trim();
+      const hscYear = document.getElementById('hsc_year').value;
+      const hscGpa = parseFloat(document.getElementById('hsc_gpa').value);
+
+      if (!hscBoard || !hscGroup || !hscRoll || !hscYear || isNaN(hscGpa) || hscGpa < 1 || hscGpa > 5) {
+        showError('Please enter valid HSC education records and GPA (between 1.00 and 5.00).');
+        return false;
+      }
+
+      return true;
+    }
+
+    function showError(msg) {
+      const alertBox = document.getElementById('profileAlert');
+      alertBox.className = 'alert alert-danger';
+      alertBox.innerHTML = `<strong>⚠️ Validation Error:</strong> ${msg}`;
+      alertBox.style.display = 'flex';
+      window.scrollTo({ top: 40, behavior: 'smooth' });
+    }
+
+    // Submit Full Form with FormData (supports Photo and Signature upload)
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!validateFullProfile()) {
+        return;
+      }
+
+      composeAddress('present');
+      composeAddress('permanent');
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
+
+      const formData = new FormData(document.getElementById('profileForm'));
+
+      try {
+        const res = await fetch('/api/student/profile', {
+          method: 'PUT',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showToast('Profile updated successfully!', 'success');
+          const alertBox = document.getElementById('profileAlert');
+          alertBox.className = 'alert alert-success';
+          alertBox.innerHTML = '<strong>✅ Saved!</strong> Your profile details, addresses, and academic records have been updated.';
+          alertBox.style.display = 'flex';
+          window.scrollTo({ top: 40, behavior: 'smooth' });
+
+          if (data.profile) {
+            studentProfile = data.profile;
+            populateProfileForm(studentUser, studentProfile);
+          }
+        } else {
+          showError(data.message || 'Failed to update profile.');
+        }
+      } catch (err) {
+        console.error('Error saving profile:', err);
+        showError('Network error while saving profile. Please check connection and try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '💾 Save Profile Details';
+      }
+    });
+  </script>
+</body>
+</html>

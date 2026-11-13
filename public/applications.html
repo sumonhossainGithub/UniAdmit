@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Applications - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .pay-method-opt {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .pay-method-opt:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+    .pay-method-opt.selected {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/universities">Universities</a></li>
+      <li><a href="/suggestions">Suggestions</a></li>
+      <li><a href="/my-applications" class="active">My Applications</a></li>
+      <li><a href="/merit-list">Merit Lists</a></li>
+      <li><a href="/profile">My Profile</a></li>
+    </ul>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="user-badge" id="userNameBadge">Student</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">My Admission Applications</h1>
+        <p class="page-subtitle">Manage all your university applications, submit fee payments, and download admit cards.</p>
+      </div>
+      <a href="/universities" class="btn btn-primary">➕ New Application</a>
+    </div>
+
+    <div id="applicationsTableContainer" class="card">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>App ID</th>
+              <th>University & Program</th>
+              <th>Application Date</th>
+              <th>Review Status</th>
+              <th>Payment Status</th>
+              <th>Roll / Assigned ID</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="appsTbody">
+            <tr>
+              <td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Loading applications...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div id="payModal" class="modal">
+    <div class="modal-content" style="max-width: 480px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="font-size:18px; font-weight:700; color:var(--dark);">Fee Payment Gateway</h3>
+        <button onclick="closePayModal()" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+      </div>
+
+      <div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid var(--border); margin-bottom:16px;">
+        <div style="font-size:12px; color:var(--text-muted);">Application:</div>
+        <div id="modalAppInfo" style="font-size:14px; font-weight:700; color:var(--dark);"></div>
+        <div style="font-size:13px; color:var(--primary); font-weight:700; margin-top:4px;">
+          Amount Due: <span id="modalPayAmount">0</span> BDT
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Payment Method</label>
+        <div class="pay-method-opt selected" onclick="selectMethod(this, 'bKash')">
+          <span>📱</span> <strong>bKash Mobile Banking</strong>
+        </div>
+        <div class="pay-method-opt" onclick="selectMethod(this, 'Nagad')">
+          <span>⚡</span> <strong>Nagad Digital Payment</strong>
+        </div>
+        <div class="pay-method-opt" onclick="selectMethod(this, 'Rocket')">
+          <span>🚀</span> <strong>Dutch-Bangla Rocket</strong>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="manualTxnId">Transaction ID (Optional / Auto-generated if left blank)</label>
+        <input type="text" id="manualTxnId" class="form-control" placeholder="e.g. TXN_BKASH_994821">
+      </div>
+
+      <div id="payError" style="display:none; color:var(--danger); font-size:12px; margin-bottom:12px;"></div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button onclick="closePayModal()" class="btn btn-outline">Cancel</button>
+        <button id="confirmPayBtn" onclick="submitPayment()" class="btn btn-success">Confirm & Pay</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let activePayAppId = null;
+    let selectedPayMethod = 'bKash';
+
+    async function init() {
+      try {
+        const userRes = await fetch('/api/auth/me');
+        if (userRes.ok) {
+          const u = await userRes.json();
+          document.getElementById('userNameBadge').innerText = u.user.full_name || 'Student';
+        }
+        await loadApplications();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadApplications() {
+      try {
+        const res = await fetch('/api/applications');
+        const data = await res.json();
+        const apps = data.applications || [];
+        const tbody = document.getElementById('appsTbody');
+
+        if (apps.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align:center; padding:40px; color:var(--text-muted);">
+                <p style="margin-bottom:12px;">You haven't submitted any admission applications yet.</p>
+                <a href="/universities" class="btn btn-primary btn-sm">Find Universities & Apply</a>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = apps.map(app => `
+          <tr>
+            <td><strong>#${app.id}</strong></td>
+            <td>
+              <div style="font-weight:700; color:var(--dark);">${app.university_name} (${app.university_short_name})</div>
+              <div style="font-size:12px; color:var(--text-muted);">${app.program_name} • ${app.program_department}</div>
+            </td>
+            <td>${app.application_date ? app.application_date.split(' ')[0] : '-'}</td>
+            <td>
+              <span class="badge ${getStatusBadge(app.status)}">${app.status.replace('_', ' ')}</span>
+              ${app.remarks ? `<div style="font-size:11px; color:#64748b; margin-top:2px;"><em>${app.remarks}</em></div>` : ''}
+            </td>
+            <td>
+              <span class="badge ${getPaymentBadge(app.payment_status)}">${app.payment_status}</span>
+              <div style="font-size:11px; color:var(--text-muted);">${app.payment_amount} BDT</div>
+              ${app.payment_transaction_id ? `<div style="font-size:10px; color:#64748b;">${app.payment_transaction_id}</div>` : ''}
+            </td>
+            <td>
+              ${app.assigned_id ? `<strong style="color:var(--primary);">${app.assigned_id}</strong>` : '<span style="color:var(--text-muted); font-size:12px;">Not Assigned</span>'}
+            </td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                ${app.payment_status === 'unpaid' ? `
+                  <button onclick="openPayModal(${app.id}, '${app.university_short_name}', '${app.program_name.replace(/'/g, "\\'")}', ${app.payment_amount})" class="btn btn-success btn-sm">
+                    💳 Pay Fee
+                  </button>
+                ` : ''}
+                <a href="/api/applications/${app.id}/admit-card" target="_blank" class="btn btn-primary btn-sm">
+                  🖨️ Admit Card
+                </a>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error('Error loading applications:', err);
+      }
+    }
+
+    function getStatusBadge(status) {
+      switch(status) {
+        case 'approved': return 'badge-success';
+        case 'under_review': return 'badge-info';
+        case 'rejected': return 'badge-danger';
+        case 'waitlisted': return 'badge-warning';
+        default: return 'badge-secondary';
+      }
+    }
+
+    function getPaymentBadge(status) {
+      switch(status) {
+        case 'verified': return 'badge-success';
+        case 'paid': return 'badge-info';
+        default: return 'badge-warning';
+      }
+    }
+
+    function openPayModal(appId, uniShort, progName, amount) {
+      activePayAppId = appId;
+      document.getElementById('modalAppInfo').innerText = `${uniShort} - ${progName} (App #${appId})`;
+      document.getElementById('modalPayAmount').innerText = amount;
+      document.getElementById('manualTxnId').value = '';
+      document.getElementById('payError').style.display = 'none';
+      document.getElementById('confirmPayBtn').disabled = false;
+      document.getElementById('confirmPayBtn').innerText = 'Confirm & Pay';
+      document.getElementById('payModal').classList.add('show');
+    }
+
+    function closePayModal() {
+      document.getElementById('payModal').classList.remove('show');
+    }
+
+    function selectMethod(el, method) {
+      document.querySelectorAll('.pay-method-opt').forEach(opt => opt.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPayMethod = method;
+    }
+
+    async function submitPayment() {
+      if (!activePayAppId) return;
+
+      const btn = document.getElementById('confirmPayBtn');
+      const errBox = document.getElementById('payError');
+      btn.disabled = true;
+      btn.innerText = 'Processing...';
+      errBox.style.display = 'none';
+
+      const txnId = document.getElementById('manualTxnId').value.trim();
+
+      try {
+        const res = await fetch(`/api/applications/${activePayAppId}/pay`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            payment_method: selectedPayMethod,
+            transaction_id: txnId || undefined
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          closePayModal();
+          alert('Payment successful! Your application status has been updated.');
+          loadApplications();
+        } else {
+          errBox.innerText = data.message || 'Payment failed.';
+          errBox.style.display = 'block';
+          btn.disabled = false;
+          btn.innerText = 'Confirm & Pay';
+        }
+      } catch (err) {
+        errBox.innerText = 'Network error while processing payment.';
+        errBox.style.display = 'block';
+        btn.disabled = false;
+        btn.innerText = 'Confirm & Pay';
+      }
+    }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    init();
+  </script>
+</body>
+</html>

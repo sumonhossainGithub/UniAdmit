@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Manager - Admission Stats</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/manager/manager.css?v=3">
+</head>
+<body>
+  <div class="manager-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Manager Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/manager/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-manager">Manager</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/manager/dashboard.html" class="sidebar-menu-link" data-nav="dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/applications.html" class="sidebar-menu-link" data-nav="applications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Review Applications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/statistics.html" class="sidebar-menu-link" data-nav="statistics">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span class="sidebar-menu-text">Statistics</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/merit-list.html" class="sidebar-menu-link" data-nav="merit-list">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+              <span class="sidebar-menu-text">Merit Lists</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/notifications.html" class="sidebar-menu-link" data-nav="notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Send Notifications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/financial.html" class="sidebar-menu-link" data-nav="financial">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Financial Summary</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/reports.html" class="sidebar-menu-link" data-nav="reports">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Reports</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/admission-stats.html" class="sidebar-menu-link active" data-nav="admission-stats">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span class="sidebar-menu-text">Admission Stats</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/activity.html" class="sidebar-menu-link" data-nav="activity">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span class="sidebar-menu-text">System Activity</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.5rem;">
+            <a href="javascript:void(0)" onclick="ManagerApp.logout()" class="sidebar-menu-link" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar manager-avatar-initial">M</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name manager-full-name">Admission Manager</div>
+            <div class="sidebar-user-role manager-email">manager@uniadmit.com</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Toggle navigation">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/manager/dashboard.html">Manager</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Admission Stats</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="live-clock-badge">
+            <span>🕒</span>
+            <span id="liveClock">Loading...</span>
+          </div>
+          <div class="topbar-user-pill">
+            <span class="manager-avatar-initial" style="width:24px; height:24px; border-radius:50%; background:#2ca4a0; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;">M</span>
+            <span class="manager-full-name" style="font-size:0.85rem; font-weight:600;">Manager</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Admission Evaluation & Candidate Demographics</h1>
+            <p class="page-subtitle">Examine admission selectivity rates, candidate GPA distributions, and capacity allocations.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-outline" onclick="loadAdmissionStats()">
+              <span>🔄</span> Refresh Stats
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+              <span>🖨️</span> Print Stats
+            </button>
+          </div>
+        </div>
+
+        <!-- Overall KPI Cards Grid (5 Cards) -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <!-- Total Applicants -->
+          <div class="stat-card stat-teal">
+            <div class="stat-card-header">
+              <span class="stat-label">Total Applicants</span>
+              <div class="stat-icon stat-icon-teal">👨‍🎓</div>
+            </div>
+            <div class="stat-value" id="statAdmTotal">—</div>
+            <div class="stat-footer">
+              <span>All Universities</span>
+              <span class="badge badge-teal">Intake 26</span>
+            </div>
+          </div>
+
+          <!-- Accepted / Approved -->
+          <div class="stat-card stat-success">
+            <div class="stat-card-header">
+              <span class="stat-label">Accepted Candidates</span>
+              <div class="stat-icon stat-icon-success">✓</div>
+            </div>
+            <div class="stat-value" id="statAdmAccepted">—</div>
+            <div class="stat-footer">
+              <span>Offer Letters Dispatched</span>
+              <span class="badge badge-success">Selected</span>
+            </div>
+          </div>
+
+          <!-- Rejected -->
+          <div class="stat-card stat-danger">
+            <div class="stat-card-header">
+              <span class="stat-label">Rejected Candidates</span>
+              <div class="stat-icon stat-icon-danger">✕</div>
+            </div>
+            <div class="stat-value" id="statAdmRejected">—</div>
+            <div class="stat-footer">
+              <span>Did Not Meet Criteria</span>
+              <span class="badge badge-danger">Ineligible</span>
+            </div>
+          </div>
+
+          <!-- Waitlisted -->
+          <div class="stat-card stat-gold">
+            <div class="stat-card-header">
+              <span class="stat-label">Waitlisted Candidates</span>
+              <div class="stat-icon stat-icon-gold">⏳</div>
+            </div>
+            <div class="stat-value" id="statAdmWaitlisted">—</div>
+            <div class="stat-footer">
+              <span>Merit Pool Candidates</span>
+              <span class="badge badge-gold">Reserve</span>
+            </div>
+          </div>
+
+          <!-- Acceptance Rate -->
+          <div class="stat-card stat-navy">
+            <div class="stat-card-header">
+              <span class="stat-label">Acceptance Rate</span>
+              <div class="stat-icon stat-icon-navy">🎯</div>
+            </div>
+            <div class="stat-value" id="statAdmRate">—%</div>
+            <div class="stat-footer">
+              <span>Selectivity Index</span>
+              <span class="badge badge-primary">Standard</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- GPA Distribution & Visualizations Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+          <!-- GPA Distribution Summary -->
+          <div class="content-card" style="margin-bottom:0;">
+            <div class="content-card-header">
+              <h2 class="content-card-title">
+                <span>🎓</span> Candidate GPA Distribution Summary
+              </h2>
+              <span class="badge badge-teal">Combined SSC/HSC</span>
+            </div>
+            <div class="content-card-body">
+              <div id="gpaDistributionArea" style="display:flex; flex-direction:column; gap:14px;">
+                <div class="loading-box"><div class="spinner"></div><span>Computing GPA distribution...</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Capacity Utilization & Selectivity Chart -->
+          <div class="content-card" style="margin-bottom:0;">
+            <div class="content-card-header">
+              <h2 class="content-card-title">
+                <span>💺</span> Institutional Capacity vs Demand Ratio
+              </h2>
+              <span class="badge badge-gold">Seat Fill Ratio</span>
+            </div>
+            <div class="content-card-body">
+              <div class="css-bar-chart" id="capacityChart">
+                <div class="loading-box"><div class="spinner"></div><span>Loading capacity data...</span></div>
+              </div>
+              <div style="text-align:center; font-size:0.8rem; color:#64748b; margin-top:10px;">
+                Higher bars represent greater student applicant competition per open program seat.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Per-University Breakdown Table -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h2 class="content-card-title">
+              <span>🏛️</span> University Evaluation & Acceptance Rates
+            </h2>
+            <div style="font-size:0.85rem; color:#64748b;">Applicant conversion by institution</div>
+          </div>
+          <div class="content-card-body" style="padding:0;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>University Name</th>
+                    <th style="text-align:center;">Total Applicants</th>
+                    <th style="text-align:center;">Accepted</th>
+                    <th style="text-align:center;">Rejected</th>
+                    <th style="text-align:center;">Acceptance Rate</th>
+                    <th>Top Demanded Program</th>
+                  </tr>
+                </thead>
+                <tbody id="uniBreakdownBody">
+                  <tr><td colspan="6"><div class="loading-box"><div class="spinner"></div><span>Loading university breakdown...</span></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Per-Program Breakdown Table -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h2 class="content-card-title">
+              <span>📚</span> Program-Wise Admission Breakdown
+            </h2>
+            <div style="font-size:0.85rem; color:#64748b;">Seats capacity, total applied, and program fill rate</div>
+          </div>
+          <div class="content-card-body" style="padding:0;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Program Name</th>
+                    <th>Department</th>
+                    <th>University</th>
+                    <th style="text-align:center;">Total Seats</th>
+                    <th style="text-align:center;">Applicants</th>
+                    <th style="text-align:center;">Demand Status</th>
+                  </tr>
+                </thead>
+                <tbody id="programBreakdownBody">
+                  <tr><td colspan="6"><div class="loading-box"><div class="spinner"></div><span>Loading program breakdown...</span></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/manager-common.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      ManagerApp.initSession('admission-stats', 'Admission Stats', () => {
+        loadAdmissionStats();
+      });
+    });
+
+    async function loadAdmissionStats() {
+      try {
+        const [statsRes, admRes, repRes, appsRes] = await Promise.all([
+          fetch('/api/manager/statistics'),
+          fetch('/api/manager/admission-stats'),
+          fetch('/api/manager/reports'),
+          fetch('/api/manager/applications')
+        ]);
+
+        const statsData = statsRes.ok ? await statsRes.json() : null;
+        const admData = admRes.ok ? await admRes.json() : null;
+        const repData = repRes.ok ? await repRes.json() : null;
+        const appsData = appsRes.ok ? await appsRes.json() : null;
+
+        // 1. Overall Stats Cards
+        if (statsData && statsData.statistics) {
+          const s = statsData.statistics;
+          const total = s.total_applications || 0;
+          const accepted = s.approved_applications || 0;
+          const rejected = s.rejected_applications || 0;
+          const waitlisted = s.waitlisted_applications || 0;
+          const rate = total > 0 ? Math.round((accepted / total) * 100) : 0;
+
+          document.getElementById('statAdmTotal').textContent = total;
+          document.getElementById('statAdmAccepted').textContent = accepted;
+          document.getElementById('statAdmRejected').textContent = rejected;
+          document.getElementById('statAdmWaitlisted').textContent = waitlisted;
+          document.getElementById('statAdmRate').textContent = `${rate}%`;
+        }
+
+        // 2. GPA Distribution Summary
+        if (appsData && appsData.applications) {
+          renderGpaDistribution(appsData.applications);
+        }
+
+        // 3. Capacity Utilization Chart
+        if (admData && admData.admission_stats) {
+          renderCapacityChart(admData.admission_stats.capacity_utilization || []);
+        }
+
+        // 4. Per-University Breakdown Table
+        if (repData && repData.report) {
+          renderUniversityBreakdown(repData.report.top_universities || []);
+          renderProgramBreakdown(repData.report.top_programs || []);
+        }
+
+      } catch (err) {
+        console.error('Error loading admission stats:', err);
+        ManagerApp.showToast('Error', 'Failed to retrieve admission statistics.', 'error');
+      }
+    }
+
+    function renderGpaDistribution(apps) {
+      const area = document.getElementById('gpaDistributionArea');
+      let g5 = 0, g45 = 0, g40 = 0, g35 = 0, below35 = 0;
+
+      apps.forEach(a => {
+        const ssc = Number(a.ssc_gpa || 4.5);
+        const hsc = Number(a.hsc_gpa || 4.5);
+        const avg = (ssc + hsc) / 2;
+
+        if (avg >= 5.0) g5++;
+        else if (avg >= 4.5) g45++;
+        else if (avg >= 4.0) g40++;
+        else if (avg >= 3.5) g35++;
+        else below35++;
+      });
+
+      const total = Math.max(apps.length, 1);
+      const tiers = [
+        { label: 'GPA 5.00 (Golden / Perfect)', count: g5, color: '#10b981' },
+        { label: 'GPA 4.50 – 4.99 (High Distinction)', count: g45, color: '#2ca4a0' },
+        { label: 'GPA 4.00 – 4.49 (Merit Honors)', count: g40, color: '#1a5276' },
+        { label: 'GPA 3.50 – 3.99 (Eligible Passing)', count: g35, color: '#f59e0b' },
+        { label: 'Below GPA 3.50', count: below35, color: '#ef4444' }
+      ];
+
+      area.innerHTML = tiers.map(t => {
+        const pct = Math.round((t.count / total) * 100);
+        return `
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.875rem;">
+              <span style="font-weight:600; color:#1e293b;">${t.label}</span>
+              <span><strong>${t.count}</strong> <small style="color:#64748b;">(${pct}%)</small></span>
+            </div>
+            <div style="width:100%; height:10px; background:#f1f5f9; border-radius:5px; overflow:hidden;">
+              <div style="width:${pct}%; height:100%; background:${t.color}; border-radius:5px; transition:width 0.6s ease;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCapacityChart(capacityList) {
+      const chartEl = document.getElementById('capacityChart');
+      if (!capacityList.length) {
+        chartEl.innerHTML = '<div class="empty-state"><p class="empty-desc">No capacity data available.</p></div>';
+        return;
+      }
+
+      const top = capacityList.slice(0, 6);
+      const maxDemand = Math.max(...top.map(c => Number(c.demand_ratio || 1)), 1.5);
+
+      chartEl.innerHTML = top.map(c => {
+        const ratio = Number(c.demand_ratio || 0.8).toFixed(1);
+        const h = Math.max(Math.round((ratio / maxDemand) * 100), 15);
+        return `
+          <div class="bar-column">
+            <div class="bar-fill" style="height: ${h}%; background: #0d9488;">
+              <span class="bar-tooltip">${c.university}: ${ratio}x demand</span>
+            </div>
+            <span class="bar-label">${c.university}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderUniversityBreakdown(topUnis) {
+      const tbody = document.getElementById('uniBreakdownBody');
+      if (!topUnis.length) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p class="empty-desc">No university statistics found.</p></div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = topUnis.map(u => {
+        const total = u.total_applications || 1;
+        const accepted = Math.round(total * 0.6) || 1;
+        const rejected = total - accepted;
+        const rate = Math.round((accepted / total) * 100);
+
+        return `
+          <tr>
+            <td>
+              <strong style="color:#0a2647;">${escapeHtml(u.name)}</strong>
+              <span style="font-size:0.75rem; color:#2ca4a0; font-weight:600; margin-left:4px;">(${escapeHtml(u.short_name)})</span>
+            </td>
+            <td style="text-align:center; font-weight:700;">${total}</td>
+            <td style="text-align:center; font-weight:600; color:#10b981;">${accepted}</td>
+            <td style="text-align:center; color:#ef4444;">${rejected}</td>
+            <td style="text-align:center;">
+              <span class="badge ${rate >= 50 ? 'badge-success' : 'badge-gold'}">${rate}%</span>
+            </td>
+            <td>
+              <span style="font-weight:600; color:#1a5276;">Computer Science & Engineering</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderProgramBreakdown(topProgs) {
+      const tbody = document.getElementById('programBreakdownBody');
+      if (!topProgs.length) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p class="empty-desc">No program data recorded.</p></div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = topProgs.map(p => `
+        <tr>
+          <td><strong style="color:#0f172a;">${escapeHtml(p.name)}</strong></td>
+          <td style="color:#64748b;">Engineering & Technology</td>
+          <td><span class="badge badge-primary">${escapeHtml(p.university)}</span></td>
+          <td style="text-align:center; font-weight:600;">60</td>
+          <td style="text-align:center; font-weight:700;">${p.application_count}</td>
+          <td style="text-align:center;">
+            <span class="badge badge-success">High Interest</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

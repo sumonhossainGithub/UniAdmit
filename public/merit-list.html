@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merit Lists - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .rank-badge {
+      font-weight: 800;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .rank-top { background: #fef08a; color: #854d0e; border: 1px solid #fde047; }
+    .rank-normal { background: #f1f5f9; color: #475569; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/universities">Universities</a></li>
+      <li><a href="/suggestions">Suggestions</a></li>
+      <li><a href="/my-applications">My Applications</a></li>
+      <li><a href="/merit-list" class="active">Merit Lists</a></li>
+      <li><a href="/profile">My Profile</a></li>
+    </ul>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="user-badge" id="userNameBadge">Student</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Admission Merit & Waiting Lists</h1>
+        <p class="page-subtitle">View officially published university admission rankings and selection results.</p>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div style="flex: 2; min-width: 200px;">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by student name..." oninput="filterMeritList()">
+      </div>
+      <div style="flex: 2; min-width: 200px;">
+        <select id="uniSelect" class="form-control" onchange="onUniversityChange()">
+          <option value="">All Universities</option>
+        </select>
+      </div>
+      <div style="flex: 2; min-width: 200px;">
+        <select id="programSelect" class="form-control" onchange="filterMeritList()">
+          <option value="">All Programs</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Merit Pos</th>
+              <th>Candidate Name</th>
+              <th>University</th>
+              <th>Program</th>
+              <th>SSC / HSC GPA</th>
+              <th>Admission Status</th>
+              <th>Published Date</th>
+            </tr>
+          </thead>
+          <tbody id="meritTbody">
+            <tr>
+              <td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Loading merit lists...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let allMeritData = [];
+    let universitiesList = [];
+
+    async function init() {
+      try {
+        const userRes = await fetch('/api/auth/me');
+        if (userRes.ok) {
+          const u = await userRes.json();
+          document.getElementById('userNameBadge').innerText = u.user.full_name || 'Student';
+        }
+
+        // Fetch Universities for dropdown
+        const uniRes = await fetch('/api/universities');
+        const uniData = await uniRes.json();
+        universitiesList = uniData.universities || [];
+
+        const uniSelect = document.getElementById('uniSelect');
+        universitiesList.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u.id;
+          opt.innerText = `${u.name} (${u.short_name})`;
+          uniSelect.appendChild(opt);
+        });
+
+        await loadMeritList();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadMeritList() {
+      try {
+        const res = await fetch('/api/merit-lists');
+        const data = await res.json();
+        allMeritData = data.merit_list || [];
+        filterMeritList();
+      } catch (err) {
+        console.error('Error fetching merit list:', err);
+      }
+    }
+
+    function onUniversityChange() {
+      const uniId = parseInt(document.getElementById('uniSelect').value, 10);
+      const progSelect = document.getElementById('programSelect');
+      progSelect.innerHTML = '<option value="">All Programs</option>';
+
+      if (uniId) {
+        const uni = universitiesList.find(u => u.id === uniId);
+        if (uni && uni.programs) {
+          uni.programs.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.innerText = `${p.name} (${p.department})`;
+            progSelect.appendChild(opt);
+          });
+        }
+      }
+
+      filterMeritList();
+    }
+
+    function filterMeritList() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const uniId = document.getElementById('uniSelect').value;
+      const progId = document.getElementById('programSelect').value;
+
+      const filtered = allMeritData.filter(m => {
+        const matchSearch = !search || m.student_name.toLowerCase().includes(search);
+        const matchUni = !uniId || m.university_name === universitiesList.find(u => u.id == uniId)?.name || (m.university_id == uniId);
+        const matchProg = !progId || (m.program_id == progId);
+        return matchSearch && matchUni && matchProg;
+      });
+
+      renderTable(filtered);
+    }
+
+    function renderTable(list) {
+      const tbody = document.getElementById('meritTbody');
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center; padding:40px; color:var(--text-muted);">
+              No merit list published for the selected university/program yet.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map(m => `
+        <tr>
+          <td>
+            <span class="rank-badge ${m.merit_position <= 3 ? 'rank-top' : 'rank-normal'}">
+              ${m.merit_position}
+            </span>
+          </td>
+          <td><strong>${m.student_name}</strong></td>
+          <td>${m.university_name} (${m.university_short_name})</td>
+          <td>${m.program_name}</td>
+          <td>
+            <span style="font-size:12px;">SSC: ${m.ssc_gpa ? m.ssc_gpa.toFixed(2) : '-'} | HSC: ${m.hsc_gpa ? m.hsc_gpa.toFixed(2) : '-'}</span>
+          </td>
+          <td>
+            <span class="badge ${m.status === 'selected' ? 'badge-success' : 'badge-warning'}">
+              ${m.status.toUpperCase()}
+            </span>
+          </td>
+          <td>${m.published_at ? m.published_at.split(' ')[0] : '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    init();
+  </script>
+</body>
+</html>

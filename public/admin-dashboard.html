@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - UniAdmit</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .badge-admin { background: #fee2e2; color: #b91c1c; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/admin/dashboard" class="nav-brand">
+      <img src="/Logo.png" alt="UniAdmit">
+      <span>UniAdmit <span class="badge badge-admin" style="font-size:11px; margin-left:6px;">ADMIN</span></span>
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="user-badge" id="adminBadge">Administrator</div>
+      <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">UniAdmit Administration Console</h1>
+        <p class="page-subtitle">Verify student documents, manage admissions, approve payments, and publish announcements.</p>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-4" style="margin-bottom: 24px;">
+      <div class="stat-card">
+        <div class="stat-icon blue">🎓</div>
+        <div>
+          <div class="stat-value" id="statStudents">0</div>
+          <div class="stat-label">Registered Students</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">📑</div>
+        <div>
+          <div class="stat-value" id="statApps">0</div>
+          <div class="stat-label">Total Applications</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">💰</div>
+        <div>
+          <div class="stat-value" id="statPayments">0</div>
+          <div class="stat-label">Fee Transactions</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">📢</div>
+        <div>
+          <div class="stat-value" id="statNotices">0</div>
+          <div class="stat-label">Active Notices</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this, 'studentsTab')">👨‍🎓 Students Directory</button>
+      <button class="tab-btn" onclick="switchTab(this, 'appsTab')">📋 Applications & ID Assign</button>
+      <button class="tab-btn" onclick="switchTab(this, 'paymentsTab')">💳 Payment Verification</button>
+      <button class="tab-btn" onclick="switchTab(this, 'noticesTab')">📢 Admission Notices</button>
+      <button class="tab-btn" onclick="switchTab(this, 'managersTab')">👥 Staff & Managers</button>
+    </div>
+
+    <!-- Tab 1: Students Directory -->
+    <div id="studentsTab" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Registered Students</h2>
+          <input type="text" id="studentSearch" class="form-control" style="width:250px;" placeholder="Search students..." oninput="loadStudents()">
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Candidate Name</th>
+                <th>Contact</th>
+                <th>SSC / HSC GPA</th>
+                <th>Doc Verification</th>
+                <th>Total Apps</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Applications & ID Assign -->
+    <div id="appsTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">All Applications</h2>
+          <div style="display:flex; gap:10px;">
+            <select id="appStatusFilter" class="form-control" style="width:160px;" onchange="loadApplications()">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="under_review">Under Review</option>
+              <option value="approved">Approved</option>
+              <option value="waitlisted">Waitlisted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <input type="text" id="appSearch" class="form-control" style="width:200px;" placeholder="Search candidate..." oninput="loadApplications()">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>App #</th>
+                <th>Student</th>
+                <th>University & Program</th>
+                <th>Status</th>
+                <th>Payment</th>
+                <th>Assigned ID</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Payment Verification -->
+    <div id="paymentsTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Payment Transactions</h2>
+          <button onclick="loadPayments()" class="btn btn-outline btn-sm">🔄 Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>App ID</th>
+                <th>Student Name</th>
+                <th>University</th>
+                <th>Amount</th>
+                <th>Transaction ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Notices Management -->
+    <div id="noticesTab" class="tab-content">
+      <div class="grid grid-cols-2">
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Publish New Admission Notice</h3>
+          <form id="noticeForm">
+            <div class="form-group">
+              <label class="form-label" for="noticeTitle">Notice Title</label>
+              <input type="text" id="noticeTitle" class="form-control" placeholder="e.g. Admission Test Schedule" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="noticeUniversity">University (Leave empty for all universities)</label>
+              <select id="noticeUniversity" class="form-control">
+                <option value="">Central Notice (All Universities)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="noticeContent">Notice Content</label>
+              <textarea id="noticeContent" class="form-control" rows="4" placeholder="Detailed announcement..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Publish Notice</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Active Admission Notices</h3>
+          <div id="adminNoticesList" style="max-height:400px; overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Managers Tab -->
+    <div id="managersTab" class="tab-content">
+      <div class="grid grid-cols-2">
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Create Manager Account</h3>
+          <form id="managerForm">
+            <div class="form-group">
+              <label class="form-label" for="mgrName">Full Name</label>
+              <input type="text" id="mgrName" class="form-control" placeholder="Manager Name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mgrEmail">Email Address</label>
+              <input type="email" id="mgrEmail" class="form-control" placeholder="manager@domain.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mgrPhone">Phone Number</label>
+              <input type="tel" id="mgrPhone" class="form-control" placeholder="+880 1XXXXXXXXX">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mgrPass">Password</label>
+              <input type="password" id="mgrPass" class="form-control" placeholder="Min 6 characters" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Create Manager</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:16px;">Current Admission Managers</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody id="managersTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Details & Verification Modal -->
+  <div id="studentDetailModal" class="modal">
+    <div class="modal-content" style="max-width:650px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 id="modalStudentName" style="font-size:18px; font-weight:700;">Student Details</h3>
+        <button onclick="closeStudentModal()" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+      </div>
+      <div id="modalStudentContent"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 UniAdmit - Centralized Student Admission Management System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    async function init() {
+      try {
+        const userRes = await fetch('/api/auth/me');
+        if (!userRes.ok) { window.location.href = '/'; return; }
+        const u = await userRes.json();
+        if (u.user.role !== 'admin') { window.location.href = '/dashboard'; return; }
+        document.getElementById('adminBadge').innerText = u.user.full_name || 'Admin';
+
+        // Load Universities for notices dropdown
+        const uniRes = await fetch('/api/universities');
+        const uniData = await uniRes.json();
+        const uniSelect = document.getElementById('noticeUniversity');
+        (uniData.universities || []).forEach(uni => {
+          const opt = document.createElement('option');
+          opt.value = uni.id;
+          opt.innerText = uni.name;
+          uniSelect.appendChild(opt);
+        });
+
+        loadStudents();
+        loadApplications();
+        loadPayments();
+        loadNotices();
+        loadManagers();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // Students
+    async function loadStudents() {
+      const search = document.getElementById('studentSearch')?.value || '';
+      const res = await fetch(`/api/admin/students?search=${encodeURIComponent(search)}`);
+      const data = await res.json();
+      const students = data.students || [];
+
+      document.getElementById('statStudents').innerText = students.length;
+
+      const tbody = document.getElementById('studentsTbody');
+      tbody.innerHTML = students.map(s => `
+        <tr>
+          <td>#${s.id}</td>
+          <td><strong>${s.full_name}</strong><br><span style="font-size:11px; color:#64748b;">${s.email}</span></td>
+          <td>${s.phone || '-'}</td>
+          <td>
+            <span style="font-size:12px;">SSC: ${s.ssc_gpa || '-'} (${s.ssc_group || '-'})</span><br>
+            <span style="font-size:12px;">HSC: ${s.hsc_gpa || '-'} (${s.hsc_group || '-'})</span>
+          </td>
+          <td>
+            <span class="badge ${s.documents_verified ? 'badge-success' : 'badge-warning'}">
+              ${s.documents_verified ? 'Verified' : 'Pending'}
+            </span>
+          </td>
+          <td>${s.total_applications} apps</td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button onclick="viewStudentDetails(${s.id})" class="btn btn-outline btn-sm">View</button>
+              <button onclick="toggleVerifyDocs(${s.id}, ${s.documents_verified ? 0 : 1})" class="btn ${s.documents_verified ? 'btn-danger' : 'btn-success'} btn-sm">
+                ${s.documents_verified ? 'Revoke' : 'Verify'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function toggleVerifyDocs(studentId, verified) {
+      const res = await fetch(`/api/admin/students/${studentId}/verify-documents`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ verified })
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadStudents();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    async function viewStudentDetails(studentId) {
+      const res = await fetch(`/api/admin/students/${studentId}`);
+      const data = await res.json();
+      const s = data.student;
+      const p = data.profile || {};
+
+      document.getElementById('modalStudentName').innerText = `${s.full_name} (#${s.id})`;
+      document.getElementById('modalStudentContent').innerHTML = `
+        <div style="display:grid; grid-template-columns: 1fr 140px; gap:16px; margin-bottom:16px;">
+          <div>
+            <p><strong>Email:</strong> ${s.email}</p>
+            <p><strong>Phone:</strong> ${s.phone || 'N/A'}</p>
+            <p><strong>Father:</strong> ${p.father_name || 'N/A'} | <strong>Mother:</strong> ${p.mother_name || 'N/A'}</p>
+            <p><strong>DOB:</strong> ${p.date_of_birth || 'N/A'} | <strong>Gender:</strong> ${p.gender || 'N/A'}</p>
+            <p><strong>Present Address:</strong> ${p.present_address || 'N/A'}</p>
+            <p><strong>NID:</strong> ${p.nid_number || 'N/A'}</p>
+          </div>
+          <div style="text-align:center;">
+            ${p.photo_path ? `<img src="${p.photo_path}" style="width:110px; height:130px; object-fit:cover; border:1px solid #ccc; border-radius:4px;">` : '<span style="color:#888;">No Photo</span>'}
+            <div style="margin-top:6px;">
+              ${p.signature_path ? `<img src="${p.signature_path}" style="max-width:110px; max-height:40px;">` : ''}
+            </div>
+          </div>
+        </div>
+        <div style="background:#f8fafc; padding:10px; border-radius:6px; margin-bottom:16px;">
+          <strong>SSC:</strong> GPA ${p.ssc_gpa || '-'} (${p.ssc_board || '-'}, ${p.ssc_year || '-'}, ${p.ssc_group || '-'})<br>
+          <strong>HSC:</strong> GPA ${p.hsc_gpa || '-'} (${p.hsc_board || '-'}, ${p.hsc_year || '-'}, ${p.hsc_group || '-'})
+        </div>
+      `;
+      document.getElementById('studentDetailModal').classList.add('show');
+    }
+
+    function closeStudentModal() {
+      document.getElementById('studentDetailModal').classList.remove('show');
+    }
+
+    // Applications
+    async function loadApplications() {
+      const status = document.getElementById('appStatusFilter')?.value || 'all';
+      const search = document.getElementById('appSearch')?.value || '';
+      const res = await fetch(`/api/admin/applications?status=${status}&search=${encodeURIComponent(search)}`);
+      const data = await res.json();
+      const apps = data.applications || [];
+
+      document.getElementById('statApps').innerText = apps.length;
+
+      const tbody = document.getElementById('appsTbody');
+      tbody.innerHTML = apps.map(a => `
+        <tr>
+          <td><strong>#${a.id}</strong></td>
+          <td><strong>${a.student_name}</strong><br><span style="font-size:11px; color:#64748b;">${a.student_email}</span></td>
+          <td>${a.university_short_name} - ${a.program_name}</td>
+          <td>
+            <select onchange="updateAppStatus(${a.id}, this.value)" class="form-control" style="font-size:11px; padding:3px 6px; width:120px;">
+              <option value="pending" ${a.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="under_review" ${a.status === 'under_review' ? 'selected' : ''}>Under Review</option>
+              <option value="approved" ${a.status === 'approved' ? 'selected' : ''}>Approved</option>
+              <option value="waitlisted" ${a.status === 'waitlisted' ? 'selected' : ''}>Waitlisted</option>
+              <option value="rejected" ${a.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+            </select>
+          </td>
+          <td><span class="badge ${a.payment_status === 'verified' ? 'badge-success' : a.payment_status === 'paid' ? 'badge-info' : 'badge-warning'}">${a.payment_status}</span></td>
+          <td>
+            <div style="display:flex; gap:4px; align-items:center;">
+              <span style="font-weight:700; color:var(--primary); font-size:12px;">${a.assigned_id || '-'}</span>
+              <button onclick="promptAssignId(${a.id}, '${a.assigned_id || ''}')" title="Assign Roll" class="btn btn-outline btn-sm" style="padding:2px 5px; font-size:10px;">✏️</button>
+            </div>
+          </td>
+          <td>
+            <a href="/api/applications/${a.id}/admit-card" target="_blank" class="btn btn-outline btn-sm">Admit Card</a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function updateAppStatus(appId, status) {
+      const res = await fetch(`/api/admin/applications/${appId}/verify`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadApplications();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    async function promptAssignId(appId, currentId) {
+      const newId = prompt('Enter assigned Student Roll ID (leave empty to auto-generate):', currentId);
+      if (newId === null) return;
+
+      const res = await fetch(`/api/admin/applications/${appId}/assign-id`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ assigned_id: newId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Assigned ID saved and Admit Card generated!');
+        loadApplications();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    // Payments
+    async function loadPayments() {
+      const res = await fetch('/api/admin/payments');
+      const data = await res.json();
+      const payments = data.payments || [];
+
+      document.getElementById('statPayments').innerText = payments.length;
+
+      const tbody = document.getElementById('paymentsTbody');
+      tbody.innerHTML = payments.map(p => `
+        <tr>
+          <td>#${p.application_id}</td>
+          <td><strong>${p.student_name}</strong></td>
+          <td>${p.university_short_name} - ${p.program_name}</td>
+          <td><strong>${p.payment_amount} BDT</strong></td>
+          <td><code>${p.payment_transaction_id || '-'}</code></td>
+          <td>${p.payment_date ? p.payment_date.split(' ')[0] : '-'}</td>
+          <td>
+            <span class="badge ${p.payment_status === 'verified' ? 'badge-success' : 'badge-info'}">
+              ${p.payment_status}
+            </span>
+          </td>
+          <td>
+            <div style="display:inline-flex; gap:6px; align-items:center;">
+              <a href="/api/applications/${p.application_id}/challan" target="_blank" class="btn btn-outline btn-sm" style="border:1px solid #006a4e; color:#006a4e; text-decoration:none; padding:3px 8px; font-size:11px;" title="বাংলাদেশ সরকার স্বয়ংক্রিয় চালান ফরম">
+                ই-চালান 🧾
+              </a>
+              ${p.payment_status !== 'verified' ? `
+                <button onclick="verifyPayment(${p.application_id})" class="btn btn-success btn-sm">Verify</button>
+              ` : '<span style="color:green; font-size:12px;">Verified</span>'}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function verifyPayment(appId) {
+      const res = await fetch(`/api/admin/payments/${appId}/verify`, { method: 'PUT' });
+      const data = await res.json();
+      if (data.success) {
+        loadPayments();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    // Notices
+    async function loadNotices() {
+      const res = await fetch('/api/admin/notices');
+      const data = await res.json();
+      const notices = data.notices || [];
+
+      document.getElementById('statNotices').innerText = notices.length;
+
+      const container = document.getElementById('adminNoticesList');
+      container.innerHTML = notices.map(n => `
+        <div style="border-bottom:1px solid var(--border); padding:10px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>${n.title}</strong>
+            <span style="font-size:11px; color:#888;">${n.created_at ? n.created_at.split(' ')[0] : ''}</span>
+          </div>
+          <p style="font-size:13px; margin:4px 0;">${n.content}</p>
+          <span class="badge badge-secondary">${n.university_short_name || 'Central Notice'}</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('noticeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('noticeTitle').value.trim();
+      const content = document.getElementById('noticeContent').value.trim();
+      const university_id = document.getElementById('noticeUniversity').value;
+
+      const res = await fetch('/api/admin/notices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content, university_id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Notice published successfully!');
+        document.getElementById('noticeTitle').value = '';
+        document.getElementById('noticeContent').value = '';
+        loadNotices();
+      } else {
+        alert(data.message);
+      }
+    });
+
+    // Managers
+    async function loadManagers() {
+      const res = await fetch('/api/admin/managers');
+      const data = await res.json();
+      const managers = data.managers || [];
+
+      const tbody = document.getElementById('managersTbody');
+      tbody.innerHTML = managers.map(m => `
+        <tr>
+          <td><strong>${m.full_name}</strong></td>
+          <td>${m.email}</td>
+          <td>${m.phone || '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('managerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const full_name = document.getElementById('mgrName').value.trim();
+      const email = document.getElementById('mgrEmail').value.trim();
+      const phone = document.getElementById('mgrPhone').value.trim();
+      const password = document.getElementById('mgrPass').value;
+
+      const res = await fetch('/api/admin/managers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name, email, phone, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Manager account created successfully!');
+        document.getElementById('managerForm').reset();
+        loadManagers();
+      } else {
+        alert(data.message);
+      }
+    });
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    init();
+  </script>
+</body>
+</html>

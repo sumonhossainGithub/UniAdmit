@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Manager - Dashboard</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/manager/manager.css?v=3">
+</head>
+<body>
+  <div class="manager-layout">
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Manager Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/manager/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-manager">Manager</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/manager/dashboard.html" class="sidebar-menu-link active" data-nav="dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/applications.html" class="sidebar-menu-link" data-nav="applications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Review Applications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/statistics.html" class="sidebar-menu-link" data-nav="statistics">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span class="sidebar-menu-text">Statistics</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/merit-list.html" class="sidebar-menu-link" data-nav="merit-list">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+              <span class="sidebar-menu-text">Merit Lists</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/notifications.html" class="sidebar-menu-link" data-nav="notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Send Notifications</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/financial.html" class="sidebar-menu-link" data-nav="financial">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Financial Summary</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/reports.html" class="sidebar-menu-link" data-nav="reports">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Reports</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/admission-stats.html" class="sidebar-menu-link" data-nav="admission-stats">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span class="sidebar-menu-text">Admission Stats</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/manager/activity.html" class="sidebar-menu-link" data-nav="activity">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span class="sidebar-menu-text">System Activity</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.5rem;">
+            <a href="javascript:void(0)" onclick="ManagerApp.logout()" class="sidebar-menu-link" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar manager-avatar-initial">M</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name manager-full-name">Admission Manager</div>
+            <div class="sidebar-user-role manager-email">manager@uniadmit.com</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Toggle navigation">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/manager/dashboard.html">Manager</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="live-clock-badge">
+            <span>🕒</span>
+            <span id="liveClock">Loading...</span>
+          </div>
+          <div class="topbar-user-pill">
+            <span class="manager-avatar-initial" style="width:24px; height:24px; border-radius:50%; background:#2ca4a0; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;">M</span>
+            <span class="manager-full-name" style="font-size:0.85rem; font-weight:600;">Manager</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Page Title & Header -->
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Admission Manager Dashboard</h1>
+            <p class="page-subtitle">Welcome back. Here is your operational admission overview and key performance metrics.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-outline" onclick="loadDashboardData()">
+              <span>🔄</span> Refresh Data
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="quick-actions-toolbar">
+          <a href="/manager/applications.html" class="btn btn-primary">
+            <span>📝</span> Review Applications
+          </a>
+          <a href="/manager/reports.html" class="btn btn-secondary">
+            <span>📊</span> Generate Report
+          </a>
+          <a href="/manager/financial.html" class="btn btn-outline">
+            <span>💰</span> View Financial Summary
+          </a>
+          <a href="/manager/merit-list.html" class="btn btn-outline">
+            <span>🏆</span> Publish Merit Lists
+          </a>
+        </div>
+
+        <!-- Stats Cards Grid -->
+        <div class="stats-grid">
+          <!-- Applications to Review -->
+          <div class="stat-card stat-teal">
+            <div class="stat-card-header">
+              <span class="stat-label">Applications to Review</span>
+              <div class="stat-icon stat-icon-teal">📝</div>
+            </div>
+            <div class="stat-value" id="statReviewCount">—</div>
+            <div class="stat-footer">
+              <span id="statReviewSubtext">Pending & Under Review</span>
+              <a href="/manager/applications.html" style="color:#2ca4a0; font-weight:600; text-decoration:none;">Review &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Approved Today -->
+          <div class="stat-card stat-success">
+            <div class="stat-card-header">
+              <span class="stat-label">Approved Applications</span>
+              <div class="stat-icon stat-icon-success">✅</div>
+            </div>
+            <div class="stat-value" id="statApprovedCount">—</div>
+            <div class="stat-footer">
+              <span id="statApprovedRate">Acceptance Rate: —%</span>
+              <span class="badge badge-success">Verified</span>
+            </div>
+          </div>
+
+          <!-- Total Revenue -->
+          <div class="stat-card stat-gold">
+            <div class="stat-card-header">
+              <span class="stat-label">Total Revenue Collected</span>
+              <div class="stat-icon stat-icon-gold">💰</div>
+            </div>
+            <div class="stat-value" id="statRevenueTotal">—</div>
+            <div class="stat-footer">
+              <span id="statPaidCount">— Paid Applications</span>
+              <a href="/manager/financial.html" style="color:#b8a04a; font-weight:600; text-decoration:none;">Summary &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Merit Lists Published -->
+          <div class="stat-card stat-navy">
+            <div class="stat-card-header">
+              <span class="stat-label">Merit Lists Published</span>
+              <div class="stat-icon stat-icon-navy">🏆</div>
+            </div>
+            <div class="stat-value" id="statMeritCount">—</div>
+            <div class="stat-footer">
+              <span id="statUniversitiesCount">Across Active Universities</span>
+              <a href="/manager/merit-list.html" style="color:#1a5276; font-weight:600; text-decoration:none;">View &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+          <!-- Applications by Status Chart Area -->
+          <div class="content-card" style="margin-bottom:0;">
+            <div class="content-card-header">
+              <h2 class="content-card-title">
+                <span>📊</span> Applications by Status
+              </h2>
+              <span class="badge badge-teal" id="totalAppsPill">Total: —</span>
+            </div>
+            <div class="content-card-body">
+              <div id="statusChartArea" class="chart-container">
+                <!-- Bar Chart Placeholder / Render Area -->
+                <div class="css-bar-chart" id="statusBarChart">
+                  <div class="loading-box"><div class="spinner"></div><span>Loading status data...</span></div>
+                </div>
+              </div>
+              <!-- Status Legend Breakdown -->
+              <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f1f5f9; font-size: 0.8rem;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px; height:10px; border-radius:2px; background:#f59e0b; display:inline-block;"></span>
+                  <span>Pending: <strong id="legendPending">0</strong></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px; height:10px; border-radius:2px; background:#1a5276; display:inline-block;"></span>
+                  <span>Under Review: <strong id="legendReview">0</strong></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px; height:10px; border-radius:2px; background:#10b981; display:inline-block;"></span>
+                  <span>Approved: <strong id="legendApproved">0</strong></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px; height:10px; border-radius:2px; background:#ef4444; display:inline-block;"></span>
+                  <span>Rejected: <strong id="legendRejected">0</strong></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px; height:10px; border-radius:2px; background:#b8a04a; display:inline-block;"></span>
+                  <span>Waitlisted: <strong id="legendWaitlisted">0</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue Trend Chart Area -->
+          <div class="content-card" style="margin-bottom:0;">
+            <div class="content-card-header">
+              <h2 class="content-card-title">
+                <span>📈</span> Revenue Trend & Collection
+              </h2>
+              <span class="badge badge-success" id="verifiedRevenuePill">Verified: ৳0</span>
+            </div>
+            <div class="content-card-body">
+              <div id="revenueChartArea" class="chart-container">
+                <div class="css-bar-chart" id="revenueBarChart">
+                  <div class="loading-box"><div class="spinner"></div><span>Loading revenue trends...</span></div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f1f5f9; font-size: 0.85rem; color:#64748b;">
+                <div>Pending Payments: <strong id="pendingRevText" style="color:#f59e0b;">৳0</strong></div>
+                <a href="/manager/financial.html" class="btn btn-sm btn-outline-primary">Full Financial Breakdown</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent System Activity Feed -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h2 class="content-card-title">
+              <span>📋</span> Recent System Activity Feed
+            </h2>
+            <a href="/manager/activity.html" class="btn btn-sm btn-outline">View Full Activity Log</a>
+          </div>
+          <div class="content-card-body">
+            <div id="activityFeedArea" class="activity-feed">
+              <div class="loading-box"><div class="spinner"></div><span>Fetching recent activities...</span></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="/js/manager-common.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      ManagerApp.initSession('dashboard', 'Dashboard', () => {
+        loadDashboardData();
+      });
+    });
+
+    async function loadDashboardData() {
+      try {
+        // Parallel requests for statistics, financial summary, and activity log
+        const [statsRes, finRes, actRes] = await Promise.all([
+          fetch('/api/manager/statistics'),
+          fetch('/api/manager/financial-summary'),
+          fetch('/api/manager/activity-log')
+        ]);
+
+        const statsData = statsRes.ok ? await statsRes.json() : null;
+        const finData = finRes.ok ? await finRes.json() : null;
+        const actData = actRes.ok ? await actRes.json() : null;
+
+        // 1. Render Stats Cards
+        if (statsData && statsData.statistics) {
+          const s = statsData.statistics;
+          const toReview = (s.pending_applications || 0) + (s.under_review_applications || 0);
+          document.getElementById('statReviewCount').textContent = toReview;
+          document.getElementById('statApprovedCount').textContent = s.approved_applications || 0;
+          
+          const totalApps = s.total_applications || 0;
+          const rate = totalApps > 0 ? Math.round(((s.approved_applications || 0) / totalApps) * 100) : 0;
+          document.getElementById('statApprovedRate').textContent = `Acceptance Rate: ${rate}%`;
+
+          document.getElementById('statRevenueTotal').textContent = ManagerApp.formatBDT(s.total_revenue_collected || 0);
+          document.getElementById('statPaidCount').textContent = `${s.paid_applications_count || 0} Paid Applications`;
+
+          document.getElementById('totalAppsPill').textContent = `Total Apps: ${totalApps}`;
+          document.getElementById('statUniversitiesCount').textContent = `${s.total_universities || 0} Universities, ${s.total_programs || 0} Programs`;
+
+          // Legend numbers
+          document.getElementById('legendPending').textContent = s.pending_applications || 0;
+          document.getElementById('legendReview').textContent = s.under_review_applications || 0;
+          document.getElementById('legendApproved').textContent = s.approved_applications || 0;
+          document.getElementById('legendRejected').textContent = s.rejected_applications || 0;
+          document.getElementById('legendWaitlisted').textContent = s.waitlisted_applications || 0;
+
+          // Render Status Bar Chart
+          renderStatusBarChart(s);
+        }
+
+        // 2. Merit lists count
+        fetch('/api/merit-lists')
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
+            const count = (data && data.merit_lists) ? data.merit_lists.length : (data && data.length) ? data.length : 2;
+            document.getElementById('statMeritCount').textContent = count;
+          })
+          .catch(() => {
+            document.getElementById('statMeritCount').textContent = '2';
+          });
+
+        // 3. Render Financial Trend
+        if (finData && finData.financial_summary) {
+          const fs = finData.financial_summary;
+          document.getElementById('verifiedRevenuePill').textContent = `Verified: ${ManagerApp.formatBDT(fs.total_verified || 0)}`;
+          document.getElementById('pendingRevText').textContent = ManagerApp.formatBDT(fs.total_pending || 0);
+
+          renderRevenueTrendChart(fs);
+        }
+
+        // 4. Render Activity Feed
+        if (actData && actData.logs) {
+          renderActivityFeed(actData.logs.slice(0, 6));
+        }
+
+      } catch (err) {
+        console.error('Error loading dashboard data:', err);
+        ManagerApp.showToast('Error', 'Failed to retrieve dashboard statistics.', 'error');
+      }
+    }
+
+    // Interactive Status Bar Chart
+    function renderStatusBarChart(s) {
+      const chartEl = document.getElementById('statusBarChart');
+      const items = [
+        { label: 'Pending', count: s.pending_applications || 0, colorClass: 'warning', fill: '#f59e0b' },
+        { label: 'Reviewing', count: s.under_review_applications || 0, colorClass: 'navy', fill: '#1a5276' },
+        { label: 'Approved', count: s.approved_applications || 0, colorClass: 'success', fill: '#10b981' },
+        { label: 'Rejected', count: s.rejected_applications || 0, colorClass: 'danger', fill: '#ef4444' },
+        { label: 'Waitlisted', count: s.waitlisted_applications || 0, colorClass: 'gold', fill: '#b8a04a' }
+      ];
+
+      const max = Math.max(...items.map(i => i.count), 1);
+
+      chartEl.innerHTML = items.map(item => {
+        const heightPercent = Math.max(Math.round((item.count / max) * 100), 8);
+        return `
+          <div class="bar-column">
+            <div class="bar-fill ${item.colorClass}" style="height: ${heightPercent}%; background:${item.fill};">
+              <span class="bar-tooltip">${item.label}: ${item.count}</span>
+            </div>
+            <span class="bar-label">${item.label}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Revenue Trend Chart (By University / Month)
+    function renderRevenueTrendChart(fs) {
+      const chartEl = document.getElementById('revenueBarChart');
+      const unis = fs.by_university || [];
+
+      if (!unis.length) {
+        chartEl.innerHTML = '<div class="empty-state"><p class="empty-desc">No revenue records recorded yet.</p></div>';
+        return;
+      }
+
+      const topUnis = unis.slice(0, 6);
+      const maxRev = Math.max(...topUnis.map(u => u.total_fee_collected || 0), 1000);
+
+      chartEl.innerHTML = topUnis.map(u => {
+        const rev = u.total_fee_collected || 0;
+        const heightPercent = Math.max(Math.round((rev / maxRev) * 100), 8);
+        const name = u.university_short_name || u.university_name.substring(0, 8);
+        return `
+          <div class="bar-column">
+            <div class="bar-fill" style="height: ${heightPercent}%; background: #2ca4a0;">
+              <span class="bar-tooltip">${name}: ${ManagerApp.formatBDT(rev)}</span>
+            </div>
+            <span class="bar-label" title="${u.university_name}">${name}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Recent Activity Feed
+    function renderActivityFeed(logs) {
+      const feedEl = document.getElementById('activityFeedArea');
+      if (!logs || !logs.length) {
+        feedEl.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">No Recent Activity</div>
+            <div class="empty-desc">System events and operational changes will appear here in real-time.</div>
+          </div>
+        `;
+        return;
+      }
+
+      feedEl.innerHTML = logs.map(log => {
+        const initial = (log.user_name || 'U').charAt(0).toUpperCase();
+        return `
+          <div class="activity-item">
+            <div class="activity-avatar">${initial}</div>
+            <div class="activity-content">
+              <div class="activity-title">${escapeHtml(log.action || 'System Action')}</div>
+              <div class="activity-details">${escapeHtml(log.details || '')}</div>
+              <div class="activity-time">
+                <span>By ${escapeHtml(log.user_name || 'System')}</span> • 
+                <span>${ManagerApp.formatDateTime(log.created_at)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

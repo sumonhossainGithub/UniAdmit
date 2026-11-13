@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit Admin - Manage Records</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <style>
+    .tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all var(--transition-fast);
+    }
+    .tab-btn.active {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+    }
+    .audit-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: monospace;
+      background: var(--color-primary-subtle);
+      color: var(--color-primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout" id="appLayout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="/admin/dashboard.html" class="sidebar-brand">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="sidebar-logo" style="background:#06152b !important; border:1px solid rgba(255,255,255,0.22) !important;">
+          <div class="brand-text">
+            <span class="brand-name">Uni<span>Admit</span></span>
+            <span class="brand-role-badge badge-admin">Admin</span>
+          </div>
+        </a>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-menu-item">
+            <a href="/admin/dashboard.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              <span class="sidebar-menu-text">Manage Students</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/managers.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="sidebar-menu-text">Manage Managers</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/students.html?filter=unverified" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="sidebar-menu-text">Verify Documents</span>
+              <span class="sidebar-badge" id="sidebarDocBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/notices.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="sidebar-menu-text">Admission Notices</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span class="sidebar-menu-text">Verify Applications</span>
+              <span class="sidebar-badge" id="sidebarAppBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/applications.html?filter=approved_no_id" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+              <span class="sidebar-menu-text">Assign IDs</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/records.html" class="sidebar-menu-link active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span class="sidebar-menu-text">Manage Records</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="/admin/payments.html" class="sidebar-menu-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span class="sidebar-menu-text">Verify Payments</span>
+              <span class="sidebar-badge" id="sidebarPayBadge" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item" style="margin-top: 1rem;">
+            <a href="#" class="sidebar-menu-link" id="logoutBtn" style="color: #f87171;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="sidebar-menu-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="sidebarUserAvatar">AD</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">System Admin</div>
+            <div class="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn btn-sm" id="quickLogoutBtn" title="Logout" style="background:transparent; border:none; color:rgba(255,255,255,0.7); font-size:1.15rem; cursor:pointer;">
+          🚪
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-item"><a href="/admin/dashboard.html">Admin</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Records & Audit</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="avatar avatar-md" id="topbarUserAvatar" style="background:var(--color-primary-dark); color:#fff; font-weight:700;">
+            AD
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="page-header">
+          <div class="page-header-content">
+            <h1 class="page-title">
+              <span>📁</span> Manage Student Records & Audit Trail
+            </h1>
+            <p class="page-subtitle">Directly update candidate credentials, address records, and inspect complete system activity history</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs: Records Table vs Audit Trail -->
+        <div class="tab-nav">
+          <button class="tab-btn active" id="tabBtnRecords" onclick="switchTab('records')">
+            📑 Student Records
+          </button>
+          <button class="tab-btn" id="tabBtnAudit" onclick="switchTab('audit')">
+            📜 Audit Trail & Activity Logs
+          </button>
+        </div>
+
+        <!-- TAB 1: Student Records Section -->
+        <section id="sectionRecords">
+          <!-- Search Bar -->
+          <div class="content-card" style="padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+              <div style="position: relative; flex: 1; min-width: 260px;">
+                <input type="text" id="recordSearch" class="form-control" placeholder="Search student records by name, email, or phone..." onkeyup="handleRecordSearch(event)">
+              </div>
+              <div id="recordCountBadge" class="badge badge-teal">0 Records</div>
+            </div>
+          </div>
+
+          <!-- Records Table -->
+          <div class="table-card">
+            <div id="loadingRecordsIndicator" style="text-align: center; padding: 3rem 0;">
+              <div class="spinner"></div>
+              <p style="margin-top: 1rem; color: var(--color-text-secondary);">Loading student records...</p>
+            </div>
+
+            <div class="table-responsive" id="recordsTableWrap" style="display: none;">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Record ID</th>
+                    <th>Candidate Name</th>
+                    <th>Email Address</th>
+                    <th>Phone</th>
+                    <th>SSC GPA / Group</th>
+                    <th>HSC GPA / Group</th>
+                    <th>Doc Status</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recordsTableBody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: Audit Trail Section -->
+        <section id="sectionAudit" style="display: none;">
+          <div class="table-card">
+            <div class="table-card-header">
+              <div>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-primary-dark); margin:0;">
+                  System Audit Trail & Log History
+                </h3>
+                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 2px;">
+                  Immutable record of user actions, status changes, and administrator edits
+                </p>
+              </div>
+              <button class="btn btn-sm btn-outline" onclick="loadAuditLogs()">
+                🔄 Refresh Logs
+              </button>
+            </div>
+
+            <div id="loadingAuditIndicator" style="text-align: center; padding: 3rem 0;">
+              <div class="spinner"></div>
+              <p style="margin-top: 1rem; color: var(--color-text-secondary);">Fetching audit history...</p>
+            </div>
+
+            <div class="table-responsive" id="auditTableWrap" style="display: none;">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                    <th>User / Performed By</th>
+                    <th>Event Details</th>
+                  </tr>
+                </thead>
+                <tbody id="auditTableBody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Edit Record Modal -->
+  <div class="modal-overlay" id="editRecordModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editRecordTitle">Edit Student Record</h3>
+        <button class="modal-close-btn" onclick="closeModal('editRecordModal')">&times;</button>
+      </div>
+      <form id="editRecordForm" onsubmit="handleSaveRecord(event)">
+        <input type="hidden" id="editStudentId">
+        <div class="modal-body">
+          <!-- Personal Information -->
+          <h5 style="margin:0 0 0.75rem 0; color:var(--color-primary-dark); font-weight:700; border-bottom:1px solid var(--color-border); padding-bottom:4px;">
+            Personal Details
+          </h5>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+            <div class="form-group">
+              <label class="form-label">Full Name <span style="color:var(--color-danger);">*</span></label>
+              <input type="text" id="recFullName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="text" id="recPhone" class="form-control">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Present Address</label>
+              <input type="text" id="recPresentAddress" class="form-control">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Permanent Address</label>
+              <input type="text" id="recPermanentAddress" class="form-control">
+            </div>
+          </div>
+
+          <!-- Academic Record: SSC -->
+          <h5 style="margin:0 0 0.75rem 0; color:var(--color-primary-dark); font-weight:700; border-bottom:1px solid var(--color-border); padding-bottom:4px;">
+            Secondary School Certificate (SSC)
+          </h5>
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
+            <div class="form-group">
+              <label class="form-label">SSC Board</label>
+              <input type="text" id="recSscBoard" class="form-control" placeholder="e.g. Dhaka">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SSC Roll</label>
+              <input type="text" id="recSscRoll" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SSC GPA</label>
+              <input type="number" step="0.01" min="0" max="5" id="recSscGpa" class="form-control" placeholder="5.00">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SSC Group</label>
+              <input type="text" id="recSscGroup" class="form-control" placeholder="Science">
+            </div>
+          </div>
+
+          <!-- Academic Record: HSC -->
+          <h5 style="margin:0 0 0.75rem 0; color:var(--color-primary-dark); font-weight:700; border-bottom:1px solid var(--color-border); padding-bottom:4px;">
+            Higher Secondary Certificate (HSC)
+          </h5>
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
+            <div class="form-group">
+              <label class="form-label">HSC Board</label>
+              <input type="text" id="recHscBoard" class="form-control" placeholder="e.g. Dhaka">
+            </div>
+            <div class="form-group">
+              <label class="form-label">HSC Roll</label>
+              <input type="text" id="recHscRoll" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label">HSC GPA</label>
+              <input type="number" step="0.01" min="0" max="5" id="recHscGpa" class="form-control" placeholder="5.00">
+            </div>
+            <div class="form-group">
+              <label class="form-label">HSC Group</label>
+              <input type="text" id="recHscGroup" class="form-control" placeholder="Science">
+            </div>
+          </div>
+
+          <!-- Verification Toggle -->
+          <div class="form-group">
+            <label class="form-label">Document Verification Status</label>
+            <select id="recDocVerified" class="form-control">
+              <option value="1">Verified</option>
+              <option value="0">Pending Verification</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('editRecordModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveRecordSubmitBtn">Update Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/admin/admin-common.js"></script>
+  <script>
+    let studentRecords = [];
+    let searchTimeout = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAdminAuth();
+      if (user) {
+        loadRecords();
+      }
+    });
+
+    function switchTab(tab) {
+      const recTab = document.getElementById('tabBtnRecords');
+      const audTab = document.getElementById('tabBtnAudit');
+      const recSec = document.getElementById('sectionRecords');
+      const audSec = document.getElementById('sectionAudit');
+
+      if (tab === 'records') {
+        recTab.classList.add('active');
+        audTab.classList.remove('active');
+        recSec.style.display = 'block';
+        audSec.style.display = 'none';
+      } else {
+        audTab.classList.add('active');
+        recTab.classList.remove('active');
+        audSec.style.display = 'block';
+        recSec.style.display = 'none';
+        loadAuditLogs();
+      }
+    }
+
+    function handleRecordSearch(e) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadRecords();
+      }, 350);
+    }
+
+    async function loadRecords() {
+      const loading = document.getElementById('loadingRecordsIndicator');
+      const wrap = document.getElementById('recordsTableWrap');
+      const tbody = document.getElementById('recordsTableBody');
+      const countBadge = document.getElementById('recordCountBadge');
+      const query = document.getElementById('recordSearch').value.trim();
+
+      loading.style.display = 'block';
+      wrap.style.display = 'none';
+
+      try {
+        const res = await fetch(`/api/admin/students?search=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error('Failed to load records.');
+
+        const data = await res.json();
+        studentRecords = data.students || [];
+
+        countBadge.textContent = `${studentRecords.length} Student Record${studentRecords.length === 1 ? '' : 's'}`;
+        tbody.innerHTML = '';
+
+        if (studentRecords.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align:center; padding:2.5rem; color:var(--color-text-secondary);">
+                No matching student records found.
+              </td>
+            </tr>
+          `;
+        } else {
+          studentRecords.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><strong>#${s.id}</strong></td>
+              <td>
+                <div class="table-user-cell">
+                  <div class="table-user-avatar">${escapeHtml((s.full_name || 'S').charAt(0).toUpperCase())}</div>
+                  <div class="table-user-details">
+                    <span class="table-user-name">${escapeHtml(s.full_name)}</span>
+                    <span class="table-user-email">Registered ${formatDate(s.created_at)}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span style="font-size:0.85rem; color:var(--color-primary-dark);">${escapeHtml(s.email)}</span>
+              </td>
+              <td style="font-size:0.85rem;">${escapeHtml(s.phone || 'N/A')}</td>
+              <td>
+                <strong>${s.ssc_gpa ? parseFloat(s.ssc_gpa).toFixed(2) : 'N/A'}</strong>
+                <span style="font-size:0.75rem; color:var(--color-text-secondary); display:block;">${escapeHtml(s.ssc_group || '')}</span>
+              </td>
+              <td>
+                <strong>${s.hsc_gpa ? parseFloat(s.hsc_gpa).toFixed(2) : 'N/A'}</strong>
+                <span style="font-size:0.75rem; color:var(--color-text-secondary); display:block;">${escapeHtml(s.hsc_group || '')}</span>
+              </td>
+              <td>${getDocBadge(s.documents_verified)}</td>
+              <td style="text-align: right;">
+                <button class="btn btn-sm btn-primary" onclick="openEditRecordModal(${s.id})">
+                  ✏️ Edit Record
+                </button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        loading.style.display = 'none';
+        wrap.style.display = 'block';
+      } catch (err) {
+        console.error(err);
+        loading.innerHTML = `<div class="alert alert-danger" style="margin:2rem auto; max-width:450px;">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    async function openEditRecordModal(studentId) {
+      openModal('editRecordModal');
+      const submitBtn = document.getElementById('saveRecordSubmitBtn');
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(`/api/admin/students/${studentId}`);
+        if (!res.ok) throw new Error('Failed to load student details.');
+        const data = await res.json();
+
+        const s = data.student;
+        const p = data.profile || {};
+
+        document.getElementById('editStudentId').value = s.id;
+        document.getElementById('editRecordTitle').textContent = `Edit Record: ${s.full_name} (#${s.id})`;
+
+        document.getElementById('recFullName').value = s.full_name || '';
+        document.getElementById('recPhone').value = s.phone || '';
+        document.getElementById('recPresentAddress').value = p.present_address || '';
+        document.getElementById('recPermanentAddress').value = p.permanent_address || '';
+
+        document.getElementById('recSscBoard').value = p.ssc_board || '';
+        document.getElementById('recSscRoll').value = p.ssc_roll || '';
+        document.getElementById('recSscGpa').value = p.ssc_gpa !== null && p.ssc_gpa !== undefined ? p.ssc_gpa : '';
+        document.getElementById('recSscGroup').value = p.ssc_group || '';
+
+        document.getElementById('recHscBoard').value = p.hsc_board || '';
+        document.getElementById('recHscRoll').value = p.hsc_roll || '';
+        document.getElementById('recHscGpa').value = p.hsc_gpa !== null && p.hsc_gpa !== undefined ? p.hsc_gpa : '';
+        document.getElementById('recHscGroup').value = p.hsc_group || '';
+
+        document.getElementById('recDocVerified').value = p.documents_verified ? '1' : '0';
+
+        submitBtn.disabled = false;
+      } catch (err) {
+        showToast(err.message, 'error');
+        closeModal('editRecordModal');
+      }
+    }
+
+    async function handleSaveRecord(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('saveRecordSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const studentId = document.getElementById('editStudentId').value;
+      const payload = {
+        type: 'student',
+        data: {
+          full_name: document.getElementById('recFullName').value.trim(),
+          phone: document.getElementById('recPhone').value.trim(),
+          present_address: document.getElementById('recPresentAddress').value.trim(),
+          permanent_address: document.getElementById('recPermanentAddress').value.trim(),
+          ssc_board: document.getElementById('recSscBoard').value.trim(),
+          ssc_roll: document.getElementById('recSscRoll').value.trim(),
+          ssc_gpa: document.getElementById('recSscGpa').value,
+          ssc_group: document.getElementById('recSscGroup').value.trim(),
+          hsc_board: document.getElementById('recHscBoard').value.trim(),
+          hsc_roll: document.getElementById('recHscRoll').value.trim(),
+          hsc_gpa: document.getElementById('recHscGpa').value,
+          hsc_group: document.getElementById('recHscGroup').value.trim(),
+          documents_verified: parseInt(document.getElementById('recDocVerified').value, 10)
+        }
+      };
+
+      try {
+        const res = await fetch(`/api/admin/records/${studentId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Record update failed.');
+
+        showToast('Student record updated successfully!');
+        closeModal('editRecordModal');
+        loadRecords();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Update Record';
+      }
+    }
+
+    /**
+     * Audit Trail
+     */
+    async function loadAuditLogs() {
+      const loading = document.getElementById('loadingAuditIndicator');
+      const wrap = document.getElementById('auditTableWrap');
+      const tbody = document.getElementById('auditTableBody');
+
+      loading.style.display = 'block';
+      wrap.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/admin/activity-log');
+        if (!res.ok) throw new Error('Failed to load audit trail.');
+
+        const data = await res.json();
+        const logs = data.logs || [];
+
+        tbody.innerHTML = '';
+        if (logs.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="4" style="text-align:center; padding:2.5rem; color:var(--color-text-secondary);">
+                No activity logs recorded yet.
+              </td>
+            </tr>
+          `;
+        } else {
+          logs.forEach(l => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="font-size:0.85rem; color:var(--color-text-secondary); white-space:nowrap;">
+                ${formatDateTime(l.created_at)}
+              </td>
+              <td>
+                <span class="audit-badge">${escapeHtml(l.action)}</span>
+              </td>
+              <td>
+                <strong>${escapeHtml(l.user_name || 'System')}</strong>
+                ${l.user_role ? `<span style="font-size:0.75rem; color:var(--color-text-secondary); display:block;">(${escapeHtml(l.user_role)})</span>` : ''}
+              </td>
+              <td style="font-size:0.9rem; color:var(--color-text-main);">
+                ${escapeHtml(l.details || 'No description')}
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        loading.style.display = 'none';
+        wrap.style.display = 'block';
+      } catch (err) {
+        console.error(err);
+        loading.innerHTML = `<div class="alert alert-danger" style="margin:2rem auto; max-width:450px;">${escapeHtml(err.message)}</div>`;
+      }
+    }
+  </script>
+</body>
+</html>

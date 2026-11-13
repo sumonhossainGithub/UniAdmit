@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAdmit - Student Admission Management System</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+</head>
+<body class="auth-page">
+
+  <main class="auth-card-split auth-container">
+    <!-- Left Branding Panel -->
+    <section class="auth-brand-panel auth-brand role-student" id="brandPanel" aria-label="UniAdmit Branding">
+      <div class="brand-content">
+        <div class="brand-logo-wrapper">
+          <img src="/Logo.png" alt="UniAdmit Logo" class="brand-logo">
+        </div>
+        <h1 class="brand-title">Uni<span class="highlight">Admit</span></h1>
+        
+        <!-- Role Selector Tabs -->
+        <div class="role-selector-container">
+          <span class="role-selector-label">Login As</span>
+          <div class="role-selector" role="tablist" aria-label="User Role Selection">
+            <button type="button" class="role-tab active" data-role="student" role="tab" aria-selected="true" id="tab-student">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+              </svg>
+              <span>Student</span>
+            </button>
+            <button type="button" class="role-tab" data-role="manager" role="tab" aria-selected="false" id="tab-manager">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2H6a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span>Manager</span>
+            </button>
+            <button type="button" class="role-tab" data-role="admin" role="tab" aria-selected="false" id="tab-admin">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              <span>Admin</span>
+            </button>
+          </div>
+          <input type="hidden" name="role" id="selectedRole" value="student">
+        </div>
+        
+        <ul class="auth-features-list brand-features" id="brandFeaturesList">
+          <li class="auth-feature-item brand-feature-item">
+            <span class="auth-feature-icon"><img src="/images/icons/check-minimal.png" alt="" style="width:12px; height:12px; object-fit:contain;"></span>
+            <span>Centralized profile for multiple university applications</span>
+          </li>
+          <li class="auth-feature-item brand-feature-item">
+            <span class="auth-feature-icon"><img src="/images/icons/check-minimal.png" alt="" style="width:12px; height:12px; object-fit:contain;"></span>
+            <span>Real-time application status & merit list alerts</span>
+          </li>
+          <li class="auth-feature-item brand-feature-item">
+            <span class="auth-feature-icon"><img src="/images/icons/check-minimal.png" alt="" style="width:12px; height:12px; object-fit:contain;"></span>
+            <span>Encrypted document vault for certified credentials</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Right Login Form Panel -->
+    <section class="auth-form-panel auth-panel" aria-label="Login Form Section">
+      <div class="auth-form-wrapper">
+        <header class="auth-form-header auth-header">
+          <h2 class="auth-form-title auth-title">Welcome to UniAdmit</h2>
+          <p class="auth-form-subtitle auth-subtitle">Your Gateway to Higher Education - Apply to Multiple Universities with One Profile</p>
+        </header>
+
+        <!-- Dynamic Alert Container -->
+        <div id="authAlert" class="alert" style="display: none;" role="alert">
+          <svg id="alertIcon" class="alert-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="alertMessage"></span>
+        </div>
+
+        <!-- Login Form -->
+        <form class="auth-form" id="loginForm" novalidate>
+          <!-- Email Group -->
+          <div class="form-group">
+            <label for="email" class="form-label">
+              <span>Email Address</span>
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+              </svg>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                class="form-control" 
+                placeholder="name@example.com" 
+                required 
+                autocomplete="email"
+              >
+            </div>
+            <span class="field-error" id="emailError"></span>
+          </div>
+
+          <!-- Password Group -->
+          <div class="form-group">
+            <label for="password" class="form-label">
+              <span>Password</span>
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-control" 
+                placeholder="Enter your password" 
+                required 
+                autocomplete="current-password"
+              >
+              <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="Toggle password visibility">
+                <svg id="eyeIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+            <span class="field-error" id="passwordError"></span>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="form-options">
+            <label class="form-check checkbox-label">
+              <input type="checkbox" id="rememberMe" name="rememberMe">
+              <span>Remember me</span>
+            </label>
+            <a href="javascript:void(0)" class="auth-link" style="font-size: 0.85rem;" id="forgotPasswordLink">Forgot password?</a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">
+            <span class="spinner" id="loginSpinner" style="display: none;" aria-hidden="true"></span>
+            <span id="loginBtnText">Sign In as Student</span>
+          </button>
+        </form>
+
+        <!-- Footer Links -->
+        <footer class="auth-footer">
+          <p>Don't have an account? <a href="/register.html" class="auth-link">Register as a Student</a></p>
+          <p class="auth-notice">Note: Admin and Manager accounts are provisioned by university administrators.</p>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <!-- Inline Script for Login and Interactions -->
+  <script>
+    (function () {
+      'use strict';
+
+      // DOM Elements
+      const loginForm = document.getElementById('loginForm');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const selectedRoleInput = document.getElementById('selectedRole');
+      const roleTabs = document.querySelectorAll('.role-tab');
+      const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+      const eyeIcon = document.getElementById('eyeIcon');
+      const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+      const loginSpinner = document.getElementById('loginSpinner');
+      const loginBtnText = document.getElementById('loginBtnText');
+      const authAlert = document.getElementById('authAlert');
+      const alertMessage = document.getElementById('alertMessage');
+      const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+
+      const brandPanel = document.getElementById('brandPanel');
+      const brandFeaturesList = document.getElementById('brandFeaturesList');
+      const formTitle = document.querySelector('.auth-form-title');
+      const formSubtitle = document.querySelector('.auth-form-subtitle');
+
+      // Role configuration for dynamic motto, features & theme
+      const roleConfigs = {
+        student: {
+          title: 'Welcome to UniAdmit',
+          subtitle: 'Your Gateway to Higher Education - Apply to Multiple Universities with One Profile',
+          btnText: 'Sign In as Student',
+          features: [
+            'Centralized profile for multiple university applications',
+            'Real-time application status & merit list alerts',
+            'Encrypted document vault for certified credentials'
+          ]
+        },
+        manager: {
+          title: 'University Manager Portal',
+          subtitle: 'Review applications, verify applicant credentials, and publish merit rankings',
+          btnText: 'Sign In as Manager',
+          features: [
+            'Review & verify applicant credentials and documents in real-time',
+            'Publish merit lists, seat allocations & department quotas',
+            'Track program enrollment metrics & payment verification'
+          ]
+        },
+        admin: {
+          title: 'UniAdmit Administration',
+          subtitle: 'Configure universities, oversee admission cycles, and manage user access',
+          btnText: 'Sign In as Administrator',
+          features: [
+            'Centralized university onboarding & faculty program configurations',
+            'Role-based access control & manager permission provisioning',
+            'System audit logs, admission cycle deadlines & data security'
+          ]
+        }
+      };
+
+      function applyRoleTheme(role) {
+        const config = roleConfigs[role] || roleConfigs.student;
+
+        // Change background color of brand panel
+        if (brandPanel) {
+          brandPanel.classList.remove('role-student', 'role-manager', 'role-admin');
+          brandPanel.classList.add('role-' + role);
+        }
+
+        // Change motto / features dynamically with smooth transition
+        if (brandFeaturesList) {
+          brandFeaturesList.classList.add('switching');
+          setTimeout(() => {
+            brandFeaturesList.innerHTML = config.features.map(f => `
+              <li class="auth-feature-item brand-feature-item">
+                <span class="auth-feature-icon"><img src="/images/icons/check-minimal.png" alt="" style="width:12px; height:12px; object-fit:contain;"></span>
+                <span>${f}</span>
+              </li>
+            `).join('');
+            brandFeaturesList.classList.remove('switching');
+          }, 150);
+        }
+
+        // Update form header title & subtitle
+        if (formTitle) formTitle.textContent = config.title;
+        if (formSubtitle) formSubtitle.textContent = config.subtitle;
+        if (loginBtnText && !loginSubmitBtn.disabled) {
+          loginBtnText.textContent = config.btnText;
+        }
+      }
+
+      // Role Tabs Toggle
+      roleTabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          roleTabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+          const chosenRole = tab.getAttribute('data-role');
+          selectedRoleInput.value = chosenRole;
+          applyRoleTheme(chosenRole);
+          hideAlert();
+        });
+      });
+
+      // Toggle Password Visibility
+      togglePasswordBtn.addEventListener('click', function () {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        
+        if (isPassword) {
+          // Eye-slash icon
+          eyeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+          `;
+        } else {
+          // Normal eye icon
+          eyeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          `;
+        }
+      });
+
+      // Forgot Password Notice
+      if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          showAlert('info', 'To reset your credentials, please contact your university admissions desk or system administrator.');
+        });
+      }
+
+      // Alert Helpers
+      function showAlert(type, message) {
+        authAlert.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-danger');
+        alertMessage.textContent = message;
+        authAlert.style.display = 'flex';
+        authAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function hideAlert() {
+        authAlert.style.display = 'none';
+        alertMessage.textContent = '';
+      }
+
+      function showMinimalSuccess(message) {
+        hideAlert();
+        let toast = document.getElementById('minimalToast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'minimalToast';
+          toast.className = 'minimal-toast';
+          document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<span class="toast-check">✓</span><span>${message || 'Signed in successfully'}</span>`;
+        requestAnimationFrame(function () {
+          toast.classList.add('show');
+        });
+      }
+
+      function setLoading(loading) {
+        loginSubmitBtn.disabled = loading;
+        if (loading) {
+          loginSpinner.style.display = 'inline-block';
+          loginBtnText.textContent = 'Signing In...';
+          loginSubmitBtn.classList.add('loading');
+        } else {
+          loginSpinner.style.display = 'none';
+          const currentRole = selectedRoleInput.value || 'student';
+          loginBtnText.textContent = (roleConfigs[currentRole] || roleConfigs.student).btnText;
+          loginSubmitBtn.classList.remove('loading');
+        }
+      }
+
+      // Form Submit Handler
+      loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        hideAlert();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const role = selectedRoleInput.value || 'student';
+        const rememberMe = document.getElementById('rememberMe').checked;
+
+        // Validation
+        if (!email) {
+          showAlert('danger', 'Please enter your email address.');
+          emailInput.classList.add('input-error');
+          emailInput.focus();
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showAlert('danger', 'Please enter a valid email address format.');
+          emailInput.classList.add('input-error');
+          emailInput.focus();
+          return;
+        }
+        emailInput.classList.remove('input-error');
+
+        if (!password) {
+          showAlert('danger', 'Please enter your password.');
+          passwordInput.classList.add('input-error');
+          passwordInput.focus();
+          return;
+        }
+        passwordInput.classList.remove('input-error');
+
+        setLoading(true);
+
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+              role: role,
+              rememberMe: rememberMe
+            })
+          });
+
+          const result = await response.json().catch(function () {
+            return {};
+          });
+
+          if (response.ok && (result.success !== false)) {
+            // Minimal floating pill notification & button state
+            showMinimalSuccess('Signed in successfully');
+            loginSpinner.style.display = 'none';
+            loginBtnText.textContent = '✓ Success';
+            loginSubmitBtn.style.backgroundColor = 'var(--color-accent, #2ca4a0)';
+            loginSubmitBtn.style.borderColor = 'var(--color-accent, #2ca4a0)';
+            
+            // Persist token & user profile if provided by the backend API
+            if (result.token) {
+              const storage = rememberMe ? localStorage : sessionStorage;
+              storage.setItem('uniadmit_token', result.token);
+            }
+            if (result.user) {
+              const storage = rememberMe ? localStorage : sessionStorage;
+              storage.setItem('uniadmit_user', JSON.stringify(result.user));
+            }
+
+            // Redirect on success
+            const destination = result.redirectUrl || '/dashboard';
+            setTimeout(function () {
+              window.location.href = destination;
+            }, 600);
+          } else {
+            const errMessage = result.message || result.error || 'Authentication failed. Please check your credentials.';
+            showAlert('danger', errMessage);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('Login request failed:', error);
+          showAlert('danger', 'Network error: Unable to connect to server. Please try again.');
+          setLoading(false);
+        }
+      });
+
+      // Clear input error class on typing
+      emailInput.addEventListener('input', function () {
+        emailInput.classList.remove('input-error');
+      });
+      passwordInput.addEventListener('input', function () {
+        passwordInput.classList.remove('input-error');
+      });
+
+    })();
+  </script>
+</body>
+</html>
