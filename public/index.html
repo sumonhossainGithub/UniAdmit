@@ -162,6 +162,12 @@
     (function () {
       'use strict';
 
+      // Intercept OAuth callback hash if landing on /index.html
+      if (window.location.hash && (window.location.hash.includes('access_token=') || window.location.hash.includes('error='))) {
+        window.location.replace('/auth-callback.html' + window.location.hash);
+        return;
+      }
+
       // DOM Elements
       const loginForm = document.getElementById('loginForm');
       const emailInput = document.getElementById('email');
