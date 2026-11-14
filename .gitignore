@@ -1,9 +1,13 @@
 node_modules
 .next
+.env
 .env.local
 .env*.local
+*.env
 *.db
 *.db-shm
 *.db-wal
 migrate-to-neon.mjs
 seed-neon.mjs
+sync_to_kyan.js
+clean_secrets.js

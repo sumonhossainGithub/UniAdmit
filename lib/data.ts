@@ -1,16 +1,6 @@
-import { neon } from '@neondatabase/serverless';
 import { createId } from '@paralleldrive/cuid2';
 import { supabase } from './supabase';
-
-const DEFAULT_DATABASE_URL = "postgresql://neondb_owner:npg_CX28zBtFYoUx@ep-wandering-leaf-bffq3q3n-pooler.c-5.us-west-2.aws.neon.tech/neondb?sslmode=require";
-
-function getNeonSql() {
-  const connectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
-  if (connectionString && connectionString.startsWith('postgres')) {
-    return neon(connectionString);
-  }
-  return null;
-}
+import { getNeonSql } from './db';
 
 export async function recordLogin(userId: string, email: string, role: string, userAgent?: string, ip?: string, status: string = 'success') {
   try {

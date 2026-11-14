@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
-
-const DEFAULT_DATABASE_URL = "postgresql://neondb_owner:npg_CX28zBtFYoUx@ep-wandering-leaf-bffq3q3n-pooler.c-5.us-west-2.aws.neon.tech/neondb?sslmode=require";
+import { getNeonSql } from '@/lib/db';
 
 function getSql() {
-  const connectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
-  return neon(connectionString);
+  return getNeonSql();
 }
 
 export async function GET() {

@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getSessionUser } from '@/lib/auth';
 import { getStudentProfile, findUserByEmail } from '@/lib/data';
-import { neon } from '@neondatabase/serverless';
+import { getNeonSql } from '@/lib/db';
 import { supabase } from '@/lib/supabase';
 
-const DEFAULT_DATABASE_URL = "postgresql://neondb_owner:npg_CX28zBtFYoUx@ep-wandering-leaf-bffq3q3n-pooler.c-5.us-west-2.aws.neon.tech/neondb?sslmode=require";
-
 function getSql() {
-  const connectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
-  return neon(connectionString);
+  return getNeonSql();
 }
 
 export async function GET(req: Request) {

@@ -2,16 +2,10 @@ import { NextResponse } from 'next/server';
 import { findUserByEmail, createUser, recordLogin } from '@/lib/data';
 import { hashPassword, signSession, COOKIE_NAME } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
-import { neon } from '@neondatabase/serverless';
+import { getNeonSql } from '@/lib/db';
 
-const DEFAULT_DATABASE_URL = "postgresql://neondb_owner:npg_CX28zBtFYoUx@ep-wandering-leaf-bffq3q3n-pooler.c-5.us-west-2.aws.neon.tech/neondb?sslmode=require";
-
-function getNeonSql() {
-  const connectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
-  if (connectionString && connectionString.startsWith('postgres')) {
-    return neon(connectionString);
-  }
-  return null;
+function getSql() {
+  return getNeonSql();
 }
 
 export async function POST(req: Request) {
@@ -78,7 +72,7 @@ export async function POST(req: Request) {
       console.warn('Supabase profile init error:', e);
     }
 
-    const sql = getNeonSql();
+    const sql = getSql();
     if (sql) {
       try {
         await sql`
