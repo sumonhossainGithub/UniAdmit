@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authenticating with Google - UniAdmit</title>
+  <link rel="icon" type="image/png" href="/Logo.png">
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+    }
+    .auth-card {
+      background: #ffffff;
+      padding: 36px 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+    }
+    .auth-spinner {
+      width: 42px;
+      height: 42px;
+      border: 3.5px solid #e2e8f0;
+      border-top-color: #2ca4a0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    p {
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="auth-spinner" id="spinner"></div>
+    <h2 id="statusTitle">Connecting with Google...</h2>
+    <p id="statusMsg">Please wait while we verify your Google credentials and prepare your student portal.</p>
+  </div>
+
+  <script>
+    (async function () {
+      const SUPABASE_URL = 'https://qztxpsertvuluvhwdhee.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dHhwc2VydHZ1bHV2aHdkaGVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNzI5MDAsImV4cCI6MjEwNzc0ODkwMH0._XlC0D1I7HnpnE1VNUZI-9myrc6FcH8IYs4FgVM1HL8';
+
+      const statusTitle = document.getElementById('statusTitle');
+      const statusMsg = document.getElementById('statusMsg');
+
+      try {
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Listen or get existing session from OAuth callback
+        const { data, error } = await client.auth.getSession();
+
+        if (error || !data || !data.session) {
+          // If hash has error
+          const hash = window.location.hash;
+          if (hash && hash.includes('error_description')) {
+            const params = new URLSearchParams(hash.substring(1));
+            const desc = params.get('error_description') || 'Google authentication failed';
+            throw new Error(desc.replace(/\+/g, ' '));
+          }
+          throw new Error('Unable to obtain Google session. Please try logging in again.');
+        }
+
+        const user = data.session.user;
+        const meta = user.user_metadata || {};
+
+        // Send to backend to synchronize with database and set session cookie
+        const res = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            fullName: meta.full_name || meta.name || user.email.split('@')[0],
+            photoUrl: meta.avatar_url || meta.picture || null,
+            user_id: user.id
+          })
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          if (result.token) localStorage.setItem('token', result.token);
+          if (result.user) localStorage.setItem('user', JSON.stringify(result.user));
+
+          statusTitle.textContent = 'Signed in successfully!';
+          statusMsg.textContent = 'Redirecting to your dashboard...';
+
+          setTimeout(() => {
+            window.location.href = result.redirectUrl || '/student/dashboard.html';
+          }, 400);
+        } else {
+          throw new Error(result.message || 'Authentication error');
+        }
+      } catch (err) {
+        console.error('Callback error:', err);
+        statusTitle.textContent = 'Sign-In Failed';
+        statusMsg.textContent = err.message || 'An error occurred during Google sign-in.';
+        statusTitle.style.color = '#ef4444';
+
+        setTimeout(() => {
+          window.location.href = '/login.html?error=' + encodeURIComponent(err.message);
+        }, 3000);
+      }
+    })();
+  </script>
+</body>
+</html>
