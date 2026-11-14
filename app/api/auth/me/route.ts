@@ -1,10 +1,20 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { getSession, verifySession } from '@/lib/auth';
 import { findUserByEmail, getStudentProfile } from '@/lib/data';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const session = await getSession();
+    let session = await getSession();
+
+    // If cookie wasn't present, check Authorization header (e.g. Bearer token from localStorage)
+    if (!session) {
+      const authHeader = req.headers.get('authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        session = await verifySession(token);
+      }
+    }
+
     if (!session) {
       return NextResponse.json({ success: false, authenticated: false, user: null }, { status: 401 });
     }
@@ -26,8 +36,8 @@ export async function GET() {
       user: {
         id: String(user.id),
         email: user.email,
-        fullName: user.full_name,
-        full_name: user.full_name,
+        fullName: user.full_name || session.fullName,
+        full_name: user.full_name || session.fullName,
         role: user.role,
         phone: user.phone,
         profile_completed: Boolean(user.profile_completed),

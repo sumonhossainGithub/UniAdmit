@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { findUserByEmail } from '@/lib/data';
+import { findUserByEmail, recordLogin } from '@/lib/data';
 import { verifyPassword, signSession, COOKIE_NAME } from '@/lib/auth';
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(4),
+  password: z.string().min(1),
   role: z.string().optional(),
 });
 
@@ -14,34 +14,44 @@ export async function POST(req: Request) {
     const body = await req.json();
     const result = loginSchema.safeParse(body);
     if (!result.success) {
-      return NextResponse.json({ success: false, error: 'Invalid email or password format' }, { status: 400 });
+      return NextResponse.json({ success: false, message: 'Invalid email or password format' }, { status: 400 });
     }
 
     const { email, password, role } = result.data;
-    const user = await findUserByEmail(email);
+    const cleanEmail = email.trim().toLowerCase();
+    const user = await findUserByEmail(cleanEmail);
+
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const userAgent = req.headers.get('user-agent') || 'browser';
 
     if (!user) {
-      return NextResponse.json({ success: false, error: 'Invalid email or password' }, { status: 401 });
+      await recordLogin('unknown', cleanEmail, role || 'unknown', userAgent, ip, 'failed_user_not_found');
+      return NextResponse.json({ success: false, message: 'Invalid email or password.' }, { status: 401 });
     }
 
     const valid = await verifyPassword(password, user.password);
     if (!valid) {
-      return NextResponse.json({ success: false, error: 'Invalid email or password' }, { status: 401 });
+      await recordLogin(String(user.id), cleanEmail, user.role, userAgent, ip, 'failed_wrong_password');
+      return NextResponse.json({ success: false, message: 'Invalid email or password.' }, { status: 401 });
     }
 
     // Role check if provided
     if (role && user.role !== role) {
       const userRoleCap = user.role.charAt(0).toUpperCase() + user.role.slice(1);
       const reqRoleCap = role.charAt(0).toUpperCase() + role.slice(1);
+      await recordLogin(String(user.id), cleanEmail, user.role, userAgent, ip, 'failed_role_mismatch');
       return NextResponse.json({
         success: false,
-        error: `Role mismatch: This account belongs to a ${userRoleCap}, but you are logging in under the ${reqRoleCap} tab.`
+        message: `Role mismatch: This account belongs to a ${userRoleCap}, but you are logging in under the ${reqRoleCap} tab. Please select the ${userRoleCap} tab to login.`
       }, { status: 403 });
     }
 
-    let redirectUrl = '/student/dashboard';
-    if (user.role === 'admin') redirectUrl = '/admin/dashboard';
-    else if (user.role === 'manager') redirectUrl = '/manager/dashboard';
+    // Record SUCCESSFUL login in Supabase!
+    await recordLogin(String(user.id), cleanEmail, user.role, userAgent, ip, 'success');
+
+    let redirectUrl = '/student/dashboard.html';
+    if (user.role === 'admin') redirectUrl = '/admin/dashboard.html';
+    else if (user.role === 'manager') redirectUrl = '/manager/dashboard.html';
 
     const sessionPayload = {
       id: String(user.id),
@@ -59,7 +69,8 @@ export async function POST(req: Request) {
       user: {
         id: String(user.id),
         email: user.email,
-        fullName: user.full_name,
+        fullName: user.full_name || user.fullName,
+        full_name: user.full_name || user.fullName,
         role: user.role,
         profile_completed: Boolean(user.profile_completed),
       },
@@ -79,6 +90,6 @@ export async function POST(req: Request) {
     return response;
   } catch (error: any) {
     console.error('Login error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message || 'Internal server error during login.' }, { status: 500 });
   }
 }
