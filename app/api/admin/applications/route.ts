@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getNeonSql } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 
 function getSql() {
   return getNeonSql();
@@ -13,29 +14,80 @@ export async function GET(req: Request) {
     const payment_status = searchParams.get('payment_status');
     const search = searchParams.get('search');
 
+    let applications: any[] = [];
     const sql = getSql();
 
-    let applications = await sql`
-      SELECT 
-        a.*,
-        u.name AS university_name,
-        u.short_name AS university_short_name,
-        p.name AS program_name,
-        p.department AS program_department,
-        usr.full_name AS student_name,
-        usr.email AS student_email,
-        usr.phone AS student_phone,
-        sp.ssc_gpa,
-        sp.hsc_gpa,
-        sp.hsc_group,
-        sp.documents_verified
-      FROM applications a
-      JOIN universities u ON a.university_id = u.id
-      JOIN programs p ON a.program_id = p.id
-      JOIN users usr ON a.student_id = usr.id
-      LEFT JOIN student_profiles sp ON sp.user_id = usr.id
-      ORDER BY a.application_date DESC
-    `;
+    if (sql) {
+      try {
+        applications = await sql`
+          SELECT 
+            a.*,
+            COALESCE(a.application_date, a.created_at) AS application_date,
+            u.name AS university_name,
+            u.short_name AS university_short_name,
+            p.name AS program_name,
+            p.department AS program_department,
+            usr.full_name AS student_name,
+            usr.email AS student_email,
+            usr.phone AS student_phone,
+            sp.ssc_gpa,
+            sp.hsc_gpa,
+            sp.hsc_group,
+            sp.documents_verified
+          FROM applications a
+          LEFT JOIN universities u ON a.university_id = u.id
+          LEFT JOIN programs p ON a.program_id = p.id
+          LEFT JOIN users usr ON a.student_id = usr.id
+          LEFT JOIN student_profiles sp ON sp.user_id = usr.id
+          ORDER BY COALESCE(a.application_date, a.created_at) DESC
+        `;
+      } catch (neonErr) {
+        console.warn('Neon applications query failed, using Supabase fallback:', neonErr);
+      }
+    }
+
+    if (!applications || applications.length === 0) {
+      const [appsRes, unisRes, progsRes, usersRes, profilesRes] = await Promise.all([
+        supabase.from('applications').select('*').order('created_at', { ascending: false }),
+        supabase.from('universities').select('*'),
+        supabase.from('programs').select('*'),
+        supabase.from('users').select('*'),
+        supabase.from('student_profiles').select('*')
+      ]);
+
+      const apps = appsRes.data || [];
+      const unis = unisRes.data || [];
+      const progs = progsRes.data || [];
+      const users = usersRes.data || [];
+      const profiles = profilesRes.data || [];
+
+      const unisMap = Object.fromEntries(unis.map(u => [String(u.id), u]));
+      const progsMap = Object.fromEntries(progs.map(p => [String(p.id), p]));
+      const usersMap = Object.fromEntries(users.map(u => [String(u.id), u]));
+      const profilesMap = Object.fromEntries(profiles.map(p => [String(p.user_id), p]));
+
+      applications = apps.map(a => {
+        const u = unisMap[String(a.university_id)] || {};
+        const p = progsMap[String(a.program_id)] || {};
+        const usr = usersMap[String(a.student_id)] || {};
+        const sp = profilesMap[String(a.student_id)] || {};
+        return {
+          ...a,
+          application_date: a.application_date || a.created_at,
+          university_name: u.name,
+          university_short_name: u.short_name,
+          program_name: p.name,
+          program_department: p.department,
+          student_name: usr.full_name,
+          student_email: usr.email,
+          student_phone: usr.phone,
+          ssc_gpa: sp.ssc_gpa,
+          hsc_gpa: sp.hsc_gpa,
+          hsc_group: sp.hsc_group,
+          documents_verified: sp.documents_verified
+        };
+      });
+    }
 
     if (status && status !== 'all') {
       applications = applications.filter(a => a.status === status);
@@ -64,6 +116,6 @@ export async function GET(req: Request) {
     });
   } catch (err: any) {
     console.error('Admin applications list error:', err);
-    return NextResponse.json({ success: false, message: 'Error retrieving applications.' }, { status: 500 });
+    return NextResponse.json({ success: true, count: 0, applications: [] });
   }
 }

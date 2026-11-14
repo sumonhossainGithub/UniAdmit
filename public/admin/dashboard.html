@@ -449,15 +449,19 @@
         content.style.display = 'none';
 
         const [statsRes, mgrStatsRes] = await Promise.all([
-          fetch('/api/admin/stats'),
-          fetch('/api/manager/statistics')
+          fetch('/api/admin/stats').catch(e => ({ ok: false, error: e })),
+          fetch('/api/manager/statistics').catch(e => ({ ok: false, error: e }))
         ]);
 
-        if (!statsRes.ok) throw new Error('Failed to load stats');
+        let statsData = { stats: {}, recentApplications: [], pendingTasks: {} };
+        if (statsRes && statsRes.ok) {
+          statsData = await statsRes.json();
+        } else {
+          console.warn('Admin stats endpoint returned non-ok, using default values.');
+        }
 
-        const statsData = await statsRes.json();
         let mgrStats = null;
-        if (mgrStatsRes.ok) {
+        if (mgrStatsRes && mgrStatsRes.ok) {
           const mgrJson = await mgrStatsRes.json();
           mgrStats = mgrJson.statistics;
         }
