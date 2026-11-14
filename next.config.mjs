@@ -5,11 +5,18 @@ const nextConfig = {
     unoptimized: true
   },
   async rewrites() {
-    return [
-      { source: '/student/:path((?!.*\\.html$).*)', destination: '/student/:path.html' },
-      { source: '/manager/:path((?!.*\\.html$).*)', destination: '/manager/:path.html' },
-      { source: '/admin/:path((?!.*\\.html$).*)', destination: '/admin/:path.html' },
-    ];
+    return {
+      beforeFiles: [
+        { source: '/', destination: '/login.html' },
+        { source: '/login', destination: '/login.html' },
+        { source: '/register', destination: '/register.html' },
+      ],
+      afterFiles: [
+        { source: '/student/:path((?!.*\\.html$).*)', destination: '/student/:path.html' },
+        { source: '/manager/:path((?!.*\\.html$).*)', destination: '/manager/:path.html' },
+        { source: '/admin/:path((?!.*\\.html$).*)', destination: '/admin/:path.html' },
+      ]
+    };
   }
 };
 

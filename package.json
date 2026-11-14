@@ -4,6 +4,7 @@
   "description": "UniAdmit - Student Admission Management System",
   "main": "server.js",
   "scripts": {
+    "build": "next build",
     "start": "node server.js",
     "seed": "node database.js",
     "next:dev": "next dev",
