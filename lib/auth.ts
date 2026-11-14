@@ -41,10 +41,26 @@ export async function verifySession(token: string): Promise<UserSession | null> 
 }
 
 export async function getSession(): Promise<UserSession | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token) return null;
-  return verifySession(token);
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(COOKIE_NAME)?.value;
+    if (!token) return null;
+    return verifySession(token);
+  } catch {
+    return null;
+  }
+}
+
+export async function getSessionUser(req?: Request): Promise<UserSession | null> {
+  let session = await getSession();
+  if (!session && req) {
+    const authHeader = req.headers.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      session = await verifySession(token);
+    }
+  }
+  return session;
 }
 
 export { COOKIE_NAME };

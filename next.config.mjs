@@ -3,6 +3,13 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: true
+  },
+  async rewrites() {
+    return [
+      { source: '/student/:path((?!.*\\.html$).*)', destination: '/student/:path.html' },
+      { source: '/manager/:path((?!.*\\.html$).*)', destination: '/manager/:path.html' },
+      { source: '/admin/:path((?!.*\\.html$).*)', destination: '/admin/:path.html' },
+    ];
   }
 };
 
