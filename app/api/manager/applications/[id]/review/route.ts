@@ -9,6 +9,7 @@ function getSql() {
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const cleanId = String(id).trim();
     const body = await req.json();
     const { status, remarks } = body;
 
@@ -17,15 +18,49 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ success: false, message: 'Valid status is required.' }, { status: 400 });
     }
 
-    const sql = getSql();
+    let appRecord: any = null;
 
-    const [appRecord] = await sql`
-      SELECT a.*, u.short_name, u.name AS university_name, p.name AS program_name
-      FROM applications a
-      JOIN universities u ON a.university_id = u.id
-      JOIN programs p ON a.program_id = p.id
-      WHERE a.id = ${id}
-    `;
+    // 1. Try Neon
+    const sql = getSql();
+    if (sql) {
+      try {
+        const rows = await sql`
+          SELECT a.*, u.short_name, u.name AS university_name, p.name AS program_name
+          FROM applications a
+          LEFT JOIN universities u ON a.university_id::text = u.id::text
+          LEFT JOIN programs p ON a.program_id::text = p.id::text
+          WHERE a.id::text = ${cleanId}
+          LIMIT 1
+        `;
+        if (rows && rows.length > 0) {
+          appRecord = rows[0];
+        }
+      } catch (neonErr) {
+        console.warn('Neon review lookup failed:', neonErr);
+      }
+    }
+
+    // 2. Fallback to Supabase
+    if (!appRecord) {
+      const { data: supaApp } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('id', cleanId)
+        .maybeSingle();
+
+      if (supaApp) {
+        const [uniRes, progRes] = await Promise.all([
+          supabase.from('universities').select('name, short_name').eq('id', String(supaApp.university_id)).maybeSingle(),
+          supabase.from('programs').select('name').eq('id', String(supaApp.program_id)).maybeSingle()
+        ]);
+        appRecord = {
+          ...supaApp,
+          short_name: uniRes.data?.short_name || 'UNI',
+          university_name: uniRes.data?.name || 'University',
+          program_name: progRes.data?.name || 'Program'
+        };
+      }
+    }
 
     if (!appRecord) {
       return NextResponse.json({ success: false, message: 'Application not found.' }, { status: 404 });
@@ -34,44 +69,54 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     let assignedId = appRecord.assigned_id;
     let admitCardGen = appRecord.admit_card_generated;
     if (status === 'approved' && !assignedId) {
-      assignedId = `${appRecord.short_name}-2026-${String(id).padStart(5, '0')}`;
+      const shortName = appRecord.short_name || 'UNI';
+      assignedId = `${shortName}-2026-${cleanId.padStart(5, '0')}`;
       admitCardGen = true;
     }
 
-    await sql`
-      UPDATE applications
-      SET status = ${status},
-          remarks = COALESCE(${remarks || null}, remarks),
-          assigned_id = ${assignedId},
-          admit_card_generated = ${admitCardGen ? true : false}
-      WHERE id = ${id}
-    `;
+    // Update Neon if available
+    if (sql) {
+      try {
+        await sql`
+          UPDATE applications
+          SET status = ${status},
+              remarks = COALESCE(${remarks || null}, remarks),
+              assigned_id = ${assignedId},
+              admit_card_generated = ${admitCardGen ? true : false}
+          WHERE id::text = ${cleanId}
+        `;
+      } catch (neonUpdateErr) {
+        console.warn('Neon review update failed:', neonUpdateErr);
+      }
+    }
 
+    // Update Supabase
     try {
-      await supabase.from('applications').update({
+      const supaUpdate: any = {
         status,
-        remarks,
         assigned_id: assignedId,
         admit_card_generated: admitCardGen ? true : false
-      }).eq('id', String(id));
-    } catch {}
+      };
+      if (remarks !== undefined && remarks !== null) supaUpdate.remarks = remarks;
 
-    try {
+      await supabase.from('applications').update(supaUpdate).eq('id', cleanId);
+
       await supabase.from('notifications').insert({
         user_id: String(appRecord.student_id),
-        title: `Admission Application Decision: ${status.toUpperCase()}`,
-        message: `Your application for ${appRecord.program_name} at ${appRecord.university_name} has been reviewed and marked as ${status}.${remarks ? ' Note: ' + remarks : ''}`,
-        type: status === 'approved' ? 'success' : status === 'rejected' ? 'warning' : 'info'
+        title: `Application Status: ${status.toUpperCase().replace('_', ' ')}`,
+        message: `Your application #${cleanId} for ${appRecord.program_name} has been reviewed and updated to '${status.replace('_', ' ')}'.${remarks ? ' Remarks: ' + remarks : ''}`,
+        type: status === 'approved' ? 'success' : (status === 'rejected' ? 'error' : 'info')
       });
-    } catch {}
+    } catch (supaErr) {
+      console.warn('Supabase review update failed:', supaErr);
+    }
 
     return NextResponse.json({
       success: true,
-      message: `Application reviewed successfully. New status: ${status}`,
-      assigned_id: assignedId
+      message: `Application #${cleanId} status changed to ${status}.`
     });
   } catch (err: any) {
     console.error('Error reviewing application:', err);
-    return NextResponse.json({ success: false, message: 'Failed to submit review.' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Failed to update application review.' }, { status: 500 });
   }
 }

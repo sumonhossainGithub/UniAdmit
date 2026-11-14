@@ -10,6 +10,7 @@ function getSql() {
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const cleanId = String(id).trim();
     const body = await req.json();
     const { full_name, phone, password, is_active } = body;
 
@@ -22,23 +23,29 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     const activeBool = is_active !== undefined ? Boolean(is_active) : undefined;
 
-    if (hashed) {
-      await sql`
-        UPDATE users
-        SET full_name = COALESCE(${full_name ? full_name.trim() : null}, full_name),
-            phone = COALESCE(${phone ? phone.trim() : null}, phone),
-            password = ${hashed},
-            profile_completed = COALESCE(${activeBool ?? null}, profile_completed)
-        WHERE id = ${id}
-      `;
-    } else {
-      await sql`
-        UPDATE users
-        SET full_name = COALESCE(${full_name ? full_name.trim() : null}, full_name),
-            phone = COALESCE(${phone ? phone.trim() : null}, phone),
-            profile_completed = COALESCE(${activeBool ?? null}, profile_completed)
-        WHERE id = ${id}
-      `;
+    if (sql) {
+      try {
+        if (hashed) {
+          await sql`
+            UPDATE users
+            SET full_name = COALESCE(${full_name ? full_name.trim() : null}, full_name),
+                phone = COALESCE(${phone ? phone.trim() : null}, phone),
+                password = ${hashed},
+                profile_completed = COALESCE(${activeBool ?? null}, profile_completed)
+            WHERE id::text = ${cleanId}
+          `;
+        } else {
+          await sql`
+            UPDATE users
+            SET full_name = COALESCE(${full_name ? full_name.trim() : null}, full_name),
+                phone = COALESCE(${phone ? phone.trim() : null}, phone),
+                profile_completed = COALESCE(${activeBool ?? null}, profile_completed)
+            WHERE id::text = ${cleanId}
+          `;
+        }
+      } catch (neonErr) {
+        console.warn('Neon manager update failed:', neonErr);
+      }
     }
 
     try {
@@ -47,8 +54,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       if (phone) updateData.phone = phone.trim();
       if (hashed) updateData.password = hashed;
       if (activeBool !== undefined) updateData.profile_completed = activeBool;
-      await supabase.from('users').update(updateData).eq('id', String(id));
-    } catch {}
+      if (Object.keys(updateData).length > 0) {
+        await supabase.from('users').update(updateData).eq('id', cleanId);
+      }
+    } catch (supaErr) {
+      console.warn('Supabase manager update failed:', supaErr);
+    }
 
     return NextResponse.json({ success: true, message: 'Manager updated successfully.' });
   } catch (err: any) {
@@ -60,12 +71,22 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const cleanId = String(id).trim();
     const sql = getSql();
 
-    await sql`UPDATE users SET profile_completed = false WHERE id = ${id}`;
+    if (sql) {
+      try {
+        await sql`UPDATE users SET profile_completed = false WHERE id::text = ${cleanId}`;
+      } catch (neonErr) {
+        console.warn('Neon manager deactivate failed:', neonErr);
+      }
+    }
+
     try {
-      await supabase.from('users').update({ profile_completed: false }).eq('id', String(id));
-    } catch {}
+      await supabase.from('users').update({ profile_completed: false }).eq('id', cleanId);
+    } catch (supaErr) {
+      console.warn('Supabase manager deactivate failed:', supaErr);
+    }
 
     return NextResponse.json({ success: true, message: 'Manager deactivated successfully.' });
   } catch (err: any) {

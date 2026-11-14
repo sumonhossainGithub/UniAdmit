@@ -9,6 +9,7 @@ function getSql() {
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const cleanId = String(id).trim();
     const body = await req.json();
     const { title, content, university_id, is_active } = body;
 
@@ -16,14 +17,20 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const uniId = (university_id === '' || university_id === null || university_id === undefined) ? null : String(university_id);
     const activeBool = is_active !== undefined ? Boolean(is_active) : true;
 
-    await sql`
-      UPDATE notices
-      SET title = COALESCE(${title ? title.trim() : null}, title),
-          content = COALESCE(${content ? content.trim() : null}, content),
-          university_id = ${uniId},
-          is_active = ${activeBool}
-      WHERE id = ${id}
-    `;
+    if (sql) {
+      try {
+        await sql`
+          UPDATE notices
+          SET title = COALESCE(${title ? title.trim() : null}, title),
+              content = COALESCE(${content ? content.trim() : null}, content),
+              university_id = ${uniId},
+              is_active = ${activeBool}
+          WHERE id::text = ${cleanId}
+        `;
+      } catch (neonErr) {
+        console.warn('Neon notice update failed:', neonErr);
+      }
+    }
 
     try {
       await supabase.from('notices').update({
@@ -31,8 +38,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         content: content ? content.trim() : undefined,
         university_id: uniId,
         is_active: activeBool
-      }).eq('id', String(id));
-    } catch {}
+      }).eq('id', cleanId);
+    } catch (supaErr) {
+      console.warn('Supabase notice update failed:', supaErr);
+    }
 
     return NextResponse.json({ success: true, message: 'Notice updated successfully.' });
   } catch (err: any) {
@@ -44,12 +53,22 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const cleanId = String(id).trim();
     const sql = getSql();
 
-    await sql`DELETE FROM notices WHERE id = ${id}`;
+    if (sql) {
+      try {
+        await sql`DELETE FROM notices WHERE id::text = ${cleanId}`;
+      } catch (neonErr) {
+        console.warn('Neon notice delete failed:', neonErr);
+      }
+    }
+
     try {
-      await supabase.from('notices').delete().eq('id', String(id));
-    } catch {}
+      await supabase.from('notices').delete().eq('id', cleanId);
+    } catch (supaErr) {
+      console.warn('Supabase notice delete failed:', supaErr);
+    }
 
     return NextResponse.json({ success: true, message: 'Notice deleted successfully.' });
   } catch (err: any) {

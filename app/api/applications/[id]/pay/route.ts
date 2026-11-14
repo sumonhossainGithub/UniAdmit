@@ -10,57 +10,102 @@ function getSql() {
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const cleanId = String(id).trim();
     const body = await req.json().catch(() => ({}));
     const { payment_method = 'bKash', transaction_id } = body;
 
     const session = await getSessionUser(req);
     const sql = getSql();
 
-    const [application] = await sql`
-      SELECT a.*, u.name AS university_name, p.name AS program_name
-      FROM applications a
-      JOIN universities u ON a.university_id = u.id
-      JOIN programs p ON a.program_id = p.id
-      WHERE a.id = ${id}
-    `;
+    let application: any = null;
+
+    // 1. Try Neon
+    if (sql) {
+      try {
+        const rows = await sql`
+          SELECT a.*, u.name AS university_name, p.name AS program_name
+          FROM applications a
+          LEFT JOIN universities u ON a.university_id::text = u.id::text
+          LEFT JOIN programs p ON a.program_id::text = p.id::text
+          WHERE a.id::text = ${cleanId}
+          LIMIT 1
+        `;
+        if (rows && rows.length > 0) {
+          application = rows[0];
+        }
+      } catch (neonErr) {
+        console.warn('Neon pay lookup failed:', neonErr);
+      }
+    }
+
+    // 2. Fallback to Supabase
+    if (!application) {
+      const { data: supaApp } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('id', cleanId)
+        .maybeSingle();
+
+      if (supaApp) {
+        const [uniRes, progRes] = await Promise.all([
+          supabase.from('universities').select('name').eq('id', String(supaApp.university_id)).maybeSingle(),
+          supabase.from('programs').select('name').eq('id', String(supaApp.program_id)).maybeSingle()
+        ]);
+        application = {
+          ...supaApp,
+          university_name: uniRes.data?.name || 'University',
+          program_name: progRes.data?.name || 'Program'
+        };
+      }
+    }
 
     if (!application) {
       return NextResponse.json({ success: false, message: 'Application not found.' }, { status: 404 });
     }
 
     const generatedTxn = transaction_id || `TXN_${payment_method.toUpperCase()}_${Date.now().toString().slice(-6)}`;
+    const nowIso = new Date().toISOString();
 
-    await sql`
-      UPDATE applications
-      SET payment_status = 'paid',
-          payment_date = NOW(),
-          payment_transaction_id = ${generatedTxn}
-      WHERE id = ${id}
-    `;
+    // Update Neon if available
+    if (sql) {
+      try {
+        await sql`
+          UPDATE applications
+          SET payment_status = 'paid',
+              payment_date = NOW(),
+              payment_transaction_id = ${generatedTxn}
+          WHERE id::text = ${cleanId}
+        `;
+      } catch (neonUpdateErr) {
+        console.warn('Neon pay update failed:', neonUpdateErr);
+      }
+    }
 
+    // Update Supabase
     try {
       await supabase.from('applications').update({
         payment_status: 'paid',
-        payment_date: new Date().toISOString(),
+        payment_date: nowIso,
         payment_transaction_id: generatedTxn
-      }).eq('id', String(id));
+      }).eq('id', cleanId);
 
       await supabase.from('notifications').insert({
         user_id: String(application.student_id),
         title: 'Payment Received',
-        message: `Payment of ${application.payment_amount || 500} BDT for ${application.program_name} at ${application.university_name} has been confirmed. Transaction ID: ${generatedTxn}.`,
-        type: 'success'
+        message: `Your payment of ${application.payment_amount || 1000} BDT via ${payment_method} has been received. Transaction ID: ${generatedTxn}. Verification is in progress.`,
+        type: 'info'
       });
-    } catch {}
+    } catch (supaErr) {
+      console.warn('Supabase pay update failed:', supaErr);
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Payment received successfully!',
-      transaction_id: generatedTxn,
-      payment_status: 'paid'
+      message: 'Payment submitted successfully and pending verification.',
+      transaction_id: generatedTxn
     });
   } catch (err: any) {
-    console.error('Error processing payment:', err);
+    console.error('Payment processing error:', err);
     return NextResponse.json({ success: false, message: 'Failed to process payment.' }, { status: 500 });
   }
 }
