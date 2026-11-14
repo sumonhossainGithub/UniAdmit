@@ -18,7 +18,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       success: true,
-      user: user || { id: userId, email: 'student@uniadmit.com', full_name: 'Husna Morsaline', role: 'student', profile_completed: true },
+      user: user || { id: userId, email: session?.email || 'student@uniadmit.com', full_name: session?.fullName || 'Husna Morsaline', role: 'student', profile_completed: true },
       profile: profile || {}
     });
   } catch (err: any) {
@@ -44,8 +44,8 @@ async function handleSave(req: Request) {
       body = await req.json().catch(() => ({}));
     }
 
-    const sql = getSql();
-
+    const full_name = body.full_name || body.fullName || '';
+    const phone = body.phone || '';
     const father_name = body.father_name || '';
     const mother_name = body.mother_name || '';
     const date_of_birth = body.date_of_birth || '';
@@ -64,39 +64,68 @@ async function handleSave(req: Request) {
     const hsc_gpa = body.hsc_gpa ? Number(body.hsc_gpa) : 5.0;
     const hsc_group = body.hsc_group || 'Science';
 
-    await sql`
-      INSERT INTO student_profiles (
-        id, user_id, father_name, mother_name, date_of_birth, gender, nationality,
-        nid_number, present_address, permanent_address, ssc_board, ssc_roll,
-        ssc_year, ssc_gpa, ssc_group, hsc_board, hsc_roll, hsc_year, hsc_gpa, hsc_group
-      ) VALUES (
-        gen_random_uuid(), ${userId}, ${father_name}, ${mother_name},
-        ${date_of_birth}, ${gender}, 'Bangladeshi', ${nid_number},
-        ${present_address}, ${permanent_address}, ${ssc_board},
-        ${ssc_roll}, ${ssc_year}, ${ssc_gpa}, ${ssc_group},
-        ${hsc_board}, ${hsc_roll}, ${hsc_year}, ${hsc_gpa}, ${hsc_group}
-      )
-      ON CONFLICT (user_id) DO UPDATE SET
-        father_name = EXCLUDED.father_name,
-        mother_name = EXCLUDED.mother_name,
-        date_of_birth = EXCLUDED.date_of_birth,
-        gender = EXCLUDED.gender,
-        present_address = EXCLUDED.present_address,
-        permanent_address = EXCLUDED.permanent_address,
-        ssc_board = EXCLUDED.ssc_board,
-        ssc_roll = EXCLUDED.ssc_roll,
-        ssc_year = EXCLUDED.ssc_year,
-        ssc_gpa = EXCLUDED.ssc_gpa,
-        ssc_group = EXCLUDED.ssc_group,
-        hsc_board = EXCLUDED.hsc_board,
-        hsc_roll = EXCLUDED.hsc_roll,
-        hsc_year = EXCLUDED.hsc_year,
-        hsc_gpa = EXCLUDED.hsc_gpa,
-        hsc_group = EXCLUDED.hsc_group;
-    `;
+    // 1. Try Neon
+    const sql = getSql();
+    if (sql) {
+      try {
+        if (full_name || phone) {
+          await sql`
+            UPDATE users 
+            SET full_name = COALESCE(${full_name ? full_name.trim() : null}, full_name),
+                phone = COALESCE(${phone ? phone.trim() : null}, phone)
+            WHERE id::text = ${String(userId)}
+          `;
+        }
 
+        await sql`
+          INSERT INTO student_profiles (
+            id, user_id, father_name, mother_name, date_of_birth, gender, nationality,
+            nid_number, present_address, permanent_address, ssc_board, ssc_roll,
+            ssc_year, ssc_gpa, ssc_group, hsc_board, hsc_roll, hsc_year, hsc_gpa, hsc_group
+          ) VALUES (
+            gen_random_uuid(), ${String(userId)}, ${father_name}, ${mother_name},
+            ${date_of_birth}, ${gender}, 'Bangladeshi', ${nid_number},
+            ${present_address}, ${permanent_address}, ${ssc_board},
+            ${ssc_roll}, ${ssc_year}, ${ssc_gpa}, ${ssc_group},
+            ${hsc_board}, ${hsc_roll}, ${hsc_year}, ${hsc_gpa}, ${hsc_group}
+          )
+          ON CONFLICT (user_id) DO UPDATE SET
+            father_name = EXCLUDED.father_name,
+            mother_name = EXCLUDED.mother_name,
+            date_of_birth = EXCLUDED.date_of_birth,
+            gender = EXCLUDED.gender,
+            present_address = EXCLUDED.present_address,
+            permanent_address = EXCLUDED.permanent_address,
+            ssc_board = EXCLUDED.ssc_board,
+            ssc_roll = EXCLUDED.ssc_roll,
+            ssc_year = EXCLUDED.ssc_year,
+            ssc_gpa = EXCLUDED.ssc_gpa,
+            ssc_group = EXCLUDED.ssc_group,
+            hsc_board = EXCLUDED.hsc_board,
+            hsc_roll = EXCLUDED.hsc_roll,
+            hsc_year = EXCLUDED.hsc_year,
+            hsc_gpa = EXCLUDED.hsc_gpa,
+            hsc_group = EXCLUDED.hsc_group;
+        `;
+      } catch (neonErr) {
+        console.warn('Neon profile save error:', neonErr);
+      }
+    }
+
+    // 2. Always update Supabase
     try {
+      if (full_name || phone) {
+        const uUpdate: any = {};
+        if (full_name) uUpdate.full_name = full_name.trim();
+        if (phone) uUpdate.phone = phone.trim();
+        await supabase.from('users').update(uUpdate).eq('id', String(userId));
+      }
+
+      const { data: existingProf } = await supabase.from('student_profiles').select('id').eq('user_id', String(userId)).maybeSingle();
+      const profileId = existingProf?.id || Date.now().toString();
+
       await supabase.from('student_profiles').upsert({
+        id: profileId,
         user_id: String(userId),
         father_name,
         mother_name,
@@ -117,7 +146,9 @@ async function handleSave(req: Request) {
         hsc_gpa,
         hsc_group
       }, { onConflict: 'user_id' });
-    } catch {}
+    } catch (supaErr) {
+      console.warn('Supabase profile save error:', supaErr);
+    }
 
     const updatedProfile = await getStudentProfile(userId);
 

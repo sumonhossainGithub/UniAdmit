@@ -19,35 +19,65 @@ export async function POST(req: Request) {
     let recipientsCount = 0;
 
     if (user_id === 'all' || !user_id) {
-      const students = await sql`SELECT id FROM users WHERE role = 'student'`;
+      let students: any[] = [];
+
+      if (sql) {
+        try {
+          students = await sql`SELECT id FROM users WHERE role = 'student'`;
+        } catch (neonErr) {
+          console.warn('Neon students fetch for notify error:', neonErr);
+        }
+      }
+
+      if (!students || students.length === 0) {
+        const { data } = await supabase.from('users').select('id').eq('role', 'student');
+        students = data || [];
+      }
+
       for (const s of students) {
-        await sql`
-          INSERT INTO notifications (user_id, title, message, type)
-          VALUES (${s.id}, ${title.trim()}, ${message.trim()}, ${type})
-        `;
+        const sId = String(s.id);
+
+        if (sql) {
+          try {
+            await sql`
+              INSERT INTO notifications (user_id, title, message, type)
+              VALUES (${sId}, ${title.trim()}, ${message.trim()}, ${type})
+            `;
+          } catch {}
+        }
+
         try {
           await supabase.from('notifications').insert({
-            user_id: String(s.id),
+            user_id: sId,
             title: title.trim(),
             message: message.trim(),
             type
           });
         } catch {}
+
         recipientsCount++;
       }
     } else {
-      await sql`
-        INSERT INTO notifications (user_id, title, message, type)
-        VALUES (${user_id}, ${title.trim()}, ${message.trim()}, ${type})
-      `;
+      const sId = String(user_id);
+
+      if (sql) {
+        try {
+          await sql`
+            INSERT INTO notifications (user_id, title, message, type)
+            VALUES (${sId}, ${title.trim()}, ${message.trim()}, ${type})
+          `;
+        } catch {}
+      }
+
       try {
         await supabase.from('notifications').insert({
-          user_id: String(user_id),
+          user_id: sId,
           title: title.trim(),
           message: message.trim(),
           type
         });
       } catch {}
+
       recipientsCount = 1;
     }
 

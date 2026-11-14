@@ -155,24 +155,63 @@ export async function getPrograms(universityId?: string) {
 export async function getApplications(params?: { studentId?: string; role?: string }) {
   const sql = getNeonSql();
   if (sql) {
-    if (params?.studentId && params.role === 'student') {
-      return (await sql`
-        SELECT a.*, u.name as university_name, u.short_name as university_short_name, p.name as program_name, p.department
-        FROM applications a
-        JOIN universities u ON a.university_id = u.id
-        JOIN programs p ON a.program_id = p.id
-        WHERE a.student_id = ${String(params.studentId)}
-        ORDER BY a.created_at DESC
-      `) as any[];
+    try {
+      if (params?.studentId && params.role === 'student') {
+        const rows = await sql`
+          SELECT a.*, u.name as university_name, u.short_name as university_short_name, p.name as program_name, p.department
+          FROM applications a
+          LEFT JOIN universities u ON a.university_id = u.id
+          LEFT JOIN programs p ON a.program_id = p.id
+          WHERE a.student_id = ${String(params.studentId)}
+          ORDER BY a.created_at DESC
+        `;
+        if (rows && rows.length > 0) return rows as any[];
+      } else {
+        const rows = await sql`
+          SELECT a.*, u.name as university_name, u.short_name as university_short_name, p.name as program_name, p.department
+          FROM applications a
+          LEFT JOIN universities u ON a.university_id = u.id
+          LEFT JOIN programs p ON a.program_id = p.id
+          ORDER BY a.created_at DESC
+        `;
+        if (rows && rows.length > 0) return rows as any[];
+      }
+    } catch (e) {
+      console.warn('Neon getApplications error:', e);
     }
-    return (await sql`
-      SELECT a.*, u.name as university_name, u.short_name as university_short_name, p.name as program_name, p.department
-      FROM applications a
-      JOIN universities u ON a.university_id = u.id
-      JOIN programs p ON a.program_id = p.id
-      ORDER BY a.created_at DESC
-    `) as any[];
   }
+
+  // Supabase fallback
+  try {
+    let query = supabase.from('applications').select('*').order('created_at', { ascending: false });
+    if (params?.studentId && params.role === 'student') {
+      query = query.eq('student_id', String(params.studentId));
+    }
+    const [appsRes, unisRes, progsRes] = await Promise.all([
+      query,
+      supabase.from('universities').select('id, name, short_name'),
+      supabase.from('programs').select('id, name, department')
+    ]);
+
+    const apps = appsRes.data || [];
+    const unisMap: Record<string, any> = Object.fromEntries((unisRes.data || []).map(u => [String(u.id), u]));
+    const progsMap: Record<string, any> = Object.fromEntries((progsRes.data || []).map(p => [String(p.id), p]));
+
+    return apps.map(a => {
+      const u = unisMap[String(a.university_id)] || {};
+      const p = progsMap[String(a.program_id)] || {};
+      return {
+        ...a,
+        university_name: u.name || a.university_name || 'University',
+        university_short_name: u.short_name || a.university_short_name || 'UNI',
+        program_name: p.name || a.program_name || 'Program',
+        department: p.department || a.department || 'General'
+      };
+    });
+  } catch (supaErr) {
+    console.warn('Supabase getApplications error:', supaErr);
+  }
+
   return [];
 }
 
@@ -180,16 +219,56 @@ export async function trackApplication(query: string) {
   const trimmed = query.trim();
   const sql = getNeonSql();
   if (sql) {
-    return (await sql`
-      SELECT a.*, u.name as university_name, u.short_name as university_short_name, u.location as university_location,
-             p.name as program_name, p.department
-      FROM applications a
-      JOIN universities u ON a.university_id = u.id
-      JOIN programs p ON a.program_id = p.id
-      WHERE a.tracking_id = ${trimmed} OR a.applicant_phone = ${trimmed} OR a.assigned_id = ${trimmed}
-      ORDER BY a.created_at DESC
-    `) as any[];
+    try {
+      const rows = await sql`
+        SELECT a.*, u.name as university_name, u.short_name as university_short_name, u.location as university_location,
+               p.name as program_name, p.department
+        FROM applications a
+        LEFT JOIN universities u ON a.university_id = u.id
+        LEFT JOIN programs p ON a.program_id = p.id
+        WHERE a.tracking_id = ${trimmed} OR a.applicant_phone = ${trimmed} OR a.assigned_id = ${trimmed}
+        ORDER BY a.created_at DESC
+      `;
+      if (rows && rows.length > 0) return rows as any[];
+    } catch (e) {
+      console.warn('Neon trackApplication error:', e);
+    }
   }
+
+  // Supabase fallback
+  try {
+    const { data: apps } = await supabase
+      .from('applications')
+      .select('*')
+      .or(`tracking_id.eq.${trimmed},applicant_phone.eq.${trimmed},assigned_id.eq.${trimmed}`)
+      .order('created_at', { ascending: false });
+
+    if (apps && apps.length > 0) {
+      const [unisRes, progsRes] = await Promise.all([
+        supabase.from('universities').select('id, name, short_name, location'),
+        supabase.from('programs').select('id, name, department')
+      ]);
+
+      const unisMap: Record<string, any> = Object.fromEntries((unisRes.data || []).map(u => [String(u.id), u]));
+      const progsMap: Record<string, any> = Object.fromEntries((progsRes.data || []).map(p => [String(p.id), p]));
+
+      return apps.map(a => {
+        const u = unisMap[String(a.university_id)] || {};
+        const p = progsMap[String(a.program_id)] || {};
+        return {
+          ...a,
+          university_name: u.name || 'University',
+          university_short_name: u.short_name || 'UNI',
+          university_location: u.location || '',
+          program_name: p.name || 'Program',
+          department: p.department || 'General'
+        };
+      });
+    }
+  } catch (e) {
+    console.warn('Supabase trackApplication error:', e);
+  }
+
   return [];
 }
 

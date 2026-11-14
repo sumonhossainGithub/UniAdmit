@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getNeonSql } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 
 function getSql() {
   return getNeonSql();
@@ -11,15 +12,46 @@ export async function GET(req: Request) {
     const search = searchParams.get('search') || '';
     const type = searchParams.get('type') || 'all';
 
+    let universities: any[] = [];
+    let allPrograms: any[] = [];
     const sql = getSql();
 
-    let query = sql`SELECT * FROM universities WHERE is_active = true`;
-    if (type !== 'all') {
-      query = sql`SELECT * FROM universities WHERE is_active = true AND LOWER(type) = LOWER(${type})`;
+    if (sql) {
+      try {
+        let query = sql`SELECT * FROM universities WHERE is_active = true`;
+        if (type !== 'all') {
+          query = sql`SELECT * FROM universities WHERE is_active = true AND LOWER(type) = LOWER(${type})`;
+        }
+        universities = await query;
+        allPrograms = await sql`SELECT * FROM programs ORDER BY name ASC`;
+      } catch (neonErr) {
+        console.warn('Neon universities query error, using Supabase fallback:', neonErr);
+      }
     }
 
-    const universities = await query;
-    const allPrograms = await sql`SELECT * FROM programs ORDER BY name ASC`;
+    if (!universities || universities.length === 0) {
+      let uQuery = supabase.from('universities').select('*').eq('is_active', true);
+      if (type !== 'all') {
+        uQuery = uQuery.ilike('type', type);
+      }
+
+      const [uRes, pRes] = await Promise.all([
+        uQuery,
+        supabase.from('programs').select('*').order('name', { ascending: true })
+      ]);
+
+      universities = uRes.data || [];
+      allPrograms = pRes.data || [];
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim().toLowerCase();
+      universities = universities.filter(u =>
+        (u.name && u.name.toLowerCase().includes(q)) ||
+        (u.short_name && u.short_name.toLowerCase().includes(q)) ||
+        (u.location && u.location.toLowerCase().includes(q))
+      );
+    }
 
     const enriched = universities.map((u: any) => ({
       ...u,

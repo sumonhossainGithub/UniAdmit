@@ -16,16 +16,26 @@ export async function PUT(req: Request) {
 
     const sql = getSql();
 
-    if (id) {
-      await sql`UPDATE notifications SET is_read = true WHERE id = ${id} AND user_id = ${userId}`;
+    if (sql) {
       try {
+        if (id) {
+          await sql`UPDATE notifications SET is_read = true WHERE id::text = ${String(id)} AND user_id::text = ${String(userId)}`;
+        } else {
+          await sql`UPDATE notifications SET is_read = true WHERE user_id::text = ${String(userId)}`;
+        }
+      } catch (neonErr) {
+        console.warn('Neon mark read error:', neonErr);
+      }
+    }
+
+    try {
+      if (id) {
         await supabase.from('notifications').update({ is_read: true }).eq('id', String(id)).eq('user_id', String(userId));
-      } catch {}
-    } else {
-      await sql`UPDATE notifications SET is_read = true WHERE user_id = ${userId}`;
-      try {
+      } else {
         await supabase.from('notifications').update({ is_read: true }).eq('user_id', String(userId));
-      } catch {}
+      }
+    } catch (supaErr) {
+      console.warn('Supabase mark read error:', supaErr);
     }
 
     return NextResponse.json({ success: true, message: 'Notifications marked as read.' });

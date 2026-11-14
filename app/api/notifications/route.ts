@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getNeonSql } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 import { getSessionUser } from '@/lib/auth';
 
 function getSql() {
@@ -10,17 +11,41 @@ export async function GET(req: Request) {
   try {
     const session = await getSessionUser(req);
     const userId = session?.id || '3';
-    const sql = getSql();
+    let notifications: any[] = [];
 
-    const notifications = await sql`
-      SELECT * FROM notifications
-      WHERE user_id = ${userId} OR user_id IS NULL
-      ORDER BY created_at DESC
-      LIMIT 50
-    `;
+    const sql = getSql();
+    if (sql) {
+      try {
+        notifications = await sql`
+          SELECT * FROM notifications
+          WHERE user_id::text = ${String(userId)} OR user_id IS NULL
+          ORDER BY created_at DESC
+          LIMIT 50
+        `;
+      } catch (neonErr) {
+        console.warn('Neon notifications error:', neonErr);
+      }
+    }
+
+    if (!notifications || notifications.length === 0) {
+      try {
+        const { data } = await supabase
+          .from('notifications')
+          .select('*')
+          .or(`user_id.eq.${String(userId)},user_id.is.null`)
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (data && data.length > 0) {
+          notifications = data;
+        }
+      } catch (supaErr) {
+        console.warn('Supabase notifications error:', supaErr);
+      }
+    }
 
     if (notifications.length === 0) {
-      const defaultNotifs = [
+      notifications = [
         {
           id: 1,
           title: 'Centralized Admission Circular 2026-2027',
@@ -38,12 +63,6 @@ export async function GET(req: Request) {
           created_at: new Date().toISOString()
         }
       ];
-      return NextResponse.json({
-        success: true,
-        unread_count: 2,
-        unreadCount: 2,
-        notifications: defaultNotifs
-      });
     }
 
     const unread = notifications.filter(n => !n.is_read).length;
